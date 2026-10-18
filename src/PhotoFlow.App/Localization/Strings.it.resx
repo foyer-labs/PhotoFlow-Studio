@@ -6,7 +6,7 @@
   <resheader name="version"><value>2.0</value></resheader>
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
-  <data name="App.Title" xml:space="preserve"><value>PhotoFlow</value></data>
+  <data name="App.Title" xml:space="preserve"><value>PhotoFlow Studio</value></data>
   <data name="TitleBar.NoLibrary" xml:space="preserve"><value>Nessuna libreria</value></data>
   <data name="TitleBar.Search" xml:space="preserve"><value>Cerca ovunque</value></data>
   <data name="Nav.Home" xml:space="preserve"><value>Home</value></data>
@@ -1056,4 +1056,180 @@
   <data name="Signal.Brightness" xml:space="preserve"><value>Luminosità</value></data>
   <data name="Reason.exposure.frame.highlights" xml:space="preserve"><value>molte alte luci bruciate nella foto</value></data>
   <data name="Reason.exposure.frame.dark" xml:space="preserve"><value>foto molto scura (sottoesposta)</value></data>
+  <data name="Nav.Develop" xml:space="preserve"><value>Sviluppo</value></data>
+  <data name="Nav.Export" xml:space="preserve"><value>Esporta</value></data>
+  <data name="Command.Export" xml:space="preserve"><value>Esporta</value></data>
+  <data name="Browse.Develop" xml:space="preserve"><value>Sviluppa i risultati</value></data>
+  <data name="Browse.Develop.Tip" xml:space="preserve"><value>Manda allo Sviluppo le foto trovate (la foto selezionata si apre per prima)</value></data>
+  <data name="Review.DevelopBest" xml:space="preserve"><value>Sviluppa le migliori · {0}</value></data>
+  <data name="Review.DevelopBest.Tip" xml:space="preserve"><value>Manda allo Sviluppo le foto migliori e tenute (o con almeno 3 stelle): il passo successivo dopo la scelta</value></data>
+  <data name="Develop.Engine.Closed" xml:space="preserve"><value>Il motore di sviluppo si è chiuso: riprova, ripartirà da solo.</value></data>
+  <data name="Develop.Engine.Missing" xml:space="preserve"><value>Il motore di sviluppo non è installato (cartella «engine» accanto al programma). Reinstalla PhotoFlow Studio.</value></data>
+  <data name="Develop.Command.Photo" xml:space="preserve"><value>Foto precedente / successiva</value></data>
+  <data name="Develop.Command.Zoom" xml:space="preserve"><value>Adatta / 100%</value></data>
+  <data name="Develop.Command.Compare" xml:space="preserve"><value>Confronto</value></data>
+  <data name="Develop.Command.Noise" xml:space="preserve"><value>Rumore sì/no</value></data>
+  <data name="Develop.Command.Pick" xml:space="preserve"><value>Contagocce</value></data>
+  <data name="Develop.Command.Copy" xml:space="preserve"><value>Copia / incolla regolazioni</value></data>
+  <data name="Develop.Command.Paste" xml:space="preserve"><value>Incolla regolazioni</value></data>
+  <data name="Develop.Command.ApplySelected" xml:space="preserve"><value>Applica alle selezionate</value></data>
+  <data name="Develop.Command.Undo" xml:space="preserve"><value>Annulla / ripeti</value></data>
+  <data name="Develop.Command.Redo" xml:space="preserve"><value>Ripeti</value></data>
+  <data name="Develop.Command.Editor" xml:space="preserve"><value>Editor esterno</value></data>
+  <data name="Develop.Command.Escape" xml:space="preserve"><value>Esci dal contagocce o dal 100%</value></data>
+  <data name="Develop.Zoom" xml:space="preserve"><value>100%</value></data>
+  <data name="Develop.Compare" xml:space="preserve"><value>Confronto</value></data>
+  <data name="Develop.Pick" xml:space="preserve"><value>Contagocce</value></data>
+  <data name="Develop.Export" xml:space="preserve"><value>Esporta</value></data>
+  <data name="Develop.Tip.Zoom" xml:space="preserve"><value>Adatta alla finestra o pixel reali (100%), dove si giudica il rumore. Doppio clic: 100% su quel punto</value></data>
+  <data name="Develop.Tip.Compare" xml:space="preserve"><value>Tendina prima/dopo, solo dopo, solo prima, rumore tolto. Tieni premuto \ per vedere l'originale</value></data>
+  <data name="Develop.Tip.Pick" xml:space="preserve"><value>Fai clic su qualcosa che dovrebbe essere grigio o bianco: il bilanciamento lo rende neutro</value></data>
+  <data name="Develop.Label.Before" xml:space="preserve"><value>PRIMA</value></data>
+  <data name="Develop.Label.After" xml:space="preserve"><value>DOPO {0}</value></data>
+  <data name="Develop.Label.Developed" xml:space="preserve"><value>SVILUPPATA · RUMORE SPENTO</value></data>
+  <data name="Develop.Label.Computing" xml:space="preserve"><value>DOPO · CALCOLO IN CORSO</value></data>
+  <data name="Develop.Label.NotComputed" xml:space="preserve"><value>DOPO · DA CALCOLARE</value></data>
+  <data name="Develop.Opening" xml:space="preserve"><value>Apertura della foto…</value></data>
+  <data name="Develop.Missing" xml:space="preserve"><value>Il file della foto non si trova: la libreria è collegata?</value></data>
+  <data name="Develop.Counters" xml:space="preserve"><value>{0} foto · {1} sviluppate · {2} esportate</value></data>
+  <data name="Develop.Origin.Review" xml:space="preserve"><value>Da Revisione · {0} · {1} foto</value></data>
+  <data name="Develop.Origin.Browse" xml:space="preserve"><value>Da Consultazione · {0} foto</value></data>
+  <data name="Develop.Origin.Selected" xml:space="preserve"><value>Selezionate in Sviluppo · {0} foto</value></data>
+  <data name="Develop.Empty.Title" xml:space="preserve"><value>Nessuna foto da sviluppare</value></data>
+  <data name="Develop.Empty.Body" xml:space="preserve"><value>Scegli prima le foto: in Revisione premi «Sviluppa le migliori», oppure in Consultazione «Sviluppa i risultati».</value></data>
+  <data name="Develop.Empty.UseLatest" xml:space="preserve"><value>Usa le migliori dell'ultimo evento</value></data>
+  <data name="Develop.Empty.NoBest" xml:space="preserve"><value>Nell'ultimo evento non ci sono ancora foto migliori o tenute: scegli in Revisione.</value></data>
+  <data name="Develop.Developed" xml:space="preserve"><value>Regolata</value></data>
+  <data name="Develop.Exported" xml:space="preserve"><value>Esportata</value></data>
+  <data name="Develop.Curve.Reset" xml:space="preserve"><value>Curva lineare</value></data>
+  <data name="Develop.Reset" xml:space="preserve"><value>Ripristina lo sviluppo</value></data>
+  <data name="Develop.Section.Photo" xml:space="preserve"><value>FOTO</value></data>
+  <data name="Develop.Section.Start" xml:space="preserve"><value>PUNTO DI PARTENZA</value></data>
+  <data name="Develop.Section.Light" xml:space="preserve"><value>LUCE</value></data>
+  <data name="Develop.Section.Colour" xml:space="preserve"><value>COLORE</value></data>
+  <data name="Develop.Section.Tones" xml:space="preserve"><value>TONI</value></data>
+  <data name="Develop.Section.Noise" xml:space="preserve"><value>RIDUZIONE DEL RUMORE</value></data>
+  <data name="Develop.Section.Advanced" xml:space="preserve"><value>Avanzate</value></data>
+  <data name="Develop.Section.More" xml:space="preserve"><value>PIÙ FOTO</value></data>
+  <data name="Develop.NoiseMeasured" xml:space="preserve"><value>Rumore misurato: {0} ({1})</value></data>
+  <data name="Develop.Auto" xml:space="preserve"><value>Automatico: {0}, scelto dal rumore ({1}, ISO {2}). Cambia pure qualsiasi valore.</value></data>
+  <data name="Develop.Preset.Choose" xml:space="preserve"><value>Applica un preset…</value></data>
+  <data name="Develop.Exposure" xml:space="preserve"><value>Esposizione</value></data>
+  <data name="Develop.Highlights" xml:space="preserve"><value>Alte luci</value></data>
+  <data name="Develop.Shadows" xml:space="preserve"><value>Ombre</value></data>
+  <data name="Develop.Brightness" xml:space="preserve"><value>Luminosità</value></data>
+  <data name="Develop.AutoBrightness" xml:space="preserve"><value>Luminosità automatica del RAW</value></data>
+  <data name="Develop.Wb.Camera" xml:space="preserve"><value>Come scattato</value></data>
+  <data name="Develop.Wb.Auto" xml:space="preserve"><value>Automatico</value></data>
+  <data name="Develop.Wb.Daylight" xml:space="preserve"><value>Luce diurna</value></data>
+  <data name="Develop.Wb.Custom" xml:space="preserve"><value>Personalizzato</value></data>
+  <data name="Develop.Temperature" xml:space="preserve"><value>Temperatura</value></data>
+  <data name="Develop.Tint" xml:space="preserve"><value>Tinta</value></data>
+  <data name="Develop.Saturation" xml:space="preserve"><value>Saturazione</value></data>
+  <data name="Develop.Contrast" xml:space="preserve"><value>Contrasto</value></data>
+  <data name="Develop.Noise.On" xml:space="preserve"><value>Attiva · {0}</value></data>
+  <data name="Develop.Noise.Off" xml:space="preserve"><value>Spenta (R per riattivarla)</value></data>
+  <data name="Develop.Noise.Computing" xml:space="preserve"><value>Calcolo sulla foto intera… {0}%</value></data>
+  <data name="Develop.Method.ToDownload" xml:space="preserve"><value>{0} (da scaricare, {1} MB)</value></data>
+  <data name="Develop.Download" xml:space="preserve"><value>Scarica {0} ({1} MB, una sola volta)</value></data>
+  <data name="Develop.Download.Progress" xml:space="preserve"><value>Download… {0}%</value></data>
+  <data name="Develop.Grain" xml:space="preserve"><value>Grana</value></data>
+  <data name="Develop.ColorNoise" xml:space="preserve"><value>Macchie colore</value></data>
+  <data name="Develop.Grain.Hint" xml:space="preserve"><value>1 = il rumore misurato su questa foto. Meno lascia più grana, più leviga di più. Giudica al 100%.</value></data>
+  <data name="Develop.Detail" xml:space="preserve"><value>Dettaglio</value></data>
+  <data name="Develop.HotPixels" xml:space="preserve"><value>Togli i pixel caldi</value></data>
+  <data name="Develop.SensorStage" xml:space="preserve"><value>Riduci prima dello sviluppo (sui dati del sensore)</value></data>
+  <data name="Develop.Demosaic" xml:space="preserve"><value>Colori</value></data>
+  <data name="Develop.ApplySelected" xml:space="preserve"><value>Applica alle {0} selezionate</value></data>
+  <data name="Develop.ApplySelected.None" xml:space="preserve"><value>Seleziona prima altre foto nella striscia (Ctrl+clic).</value></data>
+  <data name="Develop.ApplySelected.NothingChanged" xml:space="preserve"><value>Non hai ancora cambiato nulla su questa foto.</value></data>
+  <data name="Develop.ApplySelected.Done" xml:space="preserve"><value>Applicato a {0} foto: {1}.</value></data>
+  <data name="Develop.ApplySelected.Undo" xml:space="preserve"><value>Annulla</value></data>
+  <data name="Develop.ApplySelected.Undone" xml:space="preserve"><value>Annullato: le altre foto hanno di nuovo le loro regolazioni.</value></data>
+  <data name="Develop.Copy" xml:space="preserve"><value>Copia regolazioni</value></data>
+  <data name="Develop.Paste" xml:space="preserve"><value>Incolla</value></data>
+  <data name="Develop.Copied" xml:space="preserve"><value>Regolazioni copiate: Ctrl Maiusc V per incollarle su un'altra foto.</value></data>
+  <data name="Develop.Field.wb_mode" xml:space="preserve"><value>bilanciamento</value></data>
+  <data name="Develop.Field.temperature" xml:space="preserve"><value>temperatura</value></data>
+  <data name="Develop.Field.tint" xml:space="preserve"><value>tinta</value></data>
+  <data name="Develop.Field.demosaic" xml:space="preserve"><value>colori</value></data>
+  <data name="Develop.Field.wb_custom" xml:space="preserve"><value>moltiplicatori</value></data>
+  <data name="Develop.Field.exposure_ev" xml:space="preserve"><value>esposizione</value></data>
+  <data name="Develop.Field.auto_brightness" xml:space="preserve"><value>luminosità automatica</value></data>
+  <data name="Develop.Field.contrast" xml:space="preserve"><value>contrasto</value></data>
+  <data name="Develop.Field.brightness" xml:space="preserve"><value>luminosità</value></data>
+  <data name="Develop.Field.highlights" xml:space="preserve"><value>alte luci</value></data>
+  <data name="Develop.Field.shadows" xml:space="preserve"><value>ombre</value></data>
+  <data name="Develop.Field.saturation" xml:space="preserve"><value>saturazione</value></data>
+  <data name="Develop.Field.curve" xml:space="preserve"><value>curva</value></data>
+  <data name="Develop.Field.algorithm" xml:space="preserve"><value>metodo</value></data>
+  <data name="Develop.Field.luma_strength" xml:space="preserve"><value>grana</value></data>
+  <data name="Develop.Field.chroma_strength" xml:space="preserve"><value>macchie di colore</value></data>
+  <data name="Develop.Field.detail" xml:space="preserve"><value>dettaglio</value></data>
+  <data name="Develop.Field.raw_stage" xml:space="preserve"><value>quando ridurre</value></data>
+  <data name="Develop.Field.hot_pixel_threshold" xml:space="preserve"><value>pixel caldi</value></data>
+  <data name="Develop.Field.params" xml:space="preserve"><value>parametri del metodo</value></data>
+  <data name="Develop.Field.noise_enabled" xml:space="preserve"><value>riduzione sì/no</value></data>
+  <data name="Export.Command.Start" xml:space="preserve"><value>Avvia l'esportazione</value></data>
+  <data name="Export.Command.Scope" xml:space="preserve"><value>Cosa esportare</value></data>
+  <data name="Export.Section.What" xml:space="preserve"><value>COSA ESPORTARE</value></data>
+  <data name="Export.Section.Recipe" xml:space="preserve"><value>RICETTA</value></data>
+  <data name="Export.Section.Format" xml:space="preserve"><value>FORMATO</value></data>
+  <data name="Export.Section.Where" xml:space="preserve"><value>DOVE E CON CHE NOME</value></data>
+  <data name="Export.Section.Queue" xml:space="preserve"><value>ESPORTAZIONI</value></data>
+  <data name="Export.Scope.Selection" xml:space="preserve"><value>Selezione di lavoro · {0}</value></data>
+  <data name="Export.Scope.Best" xml:space="preserve"><value>Migliori di {0}</value></data>
+  <data name="Export.Scope.Event" xml:space="preserve"><value>Tutto {0}</value></data>
+  <data name="Export.Recipe.Web" xml:space="preserve"><value>Web e social</value></data>
+  <data name="Export.Recipe.Web.Note" xml:space="preserve"><value>JPEG, lato lungo 2048 px, qualità 85, senza posizione GPS · sottocartella «web»</value></data>
+  <data name="Export.Recipe.Client" xml:space="preserve"><value>Cliente</value></data>
+  <data name="Export.Recipe.Client.Note" xml:space="preserve"><value>JPEG a piena risoluzione, qualità 92 · sottocartella «cliente»</value></data>
+  <data name="Export.Recipe.Print" xml:space="preserve"><value>Stampa</value></data>
+  <data name="Export.Recipe.Print.Note" xml:space="preserve"><value>TIFF 16 bit senza perdita · sottocartella «stampa»</value></data>
+  <data name="Export.Recipe.Lightroom" xml:space="preserve"><value>Lightroom (DNG ripulito)</value></data>
+  <data name="Export.Recipe.Lightroom.Note" xml:space="preserve"><value>RAW DNG con il rumore tolto dai dati del sensore, accanto all'originale ({nome}-PF-NR): Lightroom lo sviluppa come un RAW</value></data>
+  <data name="Export.Recipe.Custom" xml:space="preserve"><value>Personalizzata</value></data>
+  <data name="Export.Recipe.Custom.Note" xml:space="preserve"><value>Scegli tu formato, dimensione, cartella e nome</value></data>
+  <data name="Export.Format" xml:space="preserve"><value>Formato</value></data>
+  <data name="Export.Format.Dng" xml:space="preserve"><value>DNG (RAW ripulito, riapribile in Lightroom)</value></data>
+  <data name="Export.Bits" xml:space="preserve"><value>Bit per colore</value></data>
+  <data name="Export.Bits.8" xml:space="preserve"><value>8 bit (stampa e web)</value></data>
+  <data name="Export.Bits.16" xml:space="preserve"><value>16 bit (per ritoccare ancora)</value></data>
+  <data name="Export.Quality" xml:space="preserve"><value>Qualità JPEG</value></data>
+  <data name="Export.MaxSide" xml:space="preserve"><value>Lato lungo (px)</value></data>
+  <data name="Export.MaxSide.Tip" xml:space="preserve"><value>0 = piena risoluzione</value></data>
+  <data name="Export.NonRaw" xml:space="preserve"><value>Foto non RAW in</value></data>
+  <data name="Export.CopyMetadata" xml:space="preserve"><value>Copia i metadati dell'originale (data, fotocamera, parole chiave, persone…)</value></data>
+  <data name="Export.StripGps" xml:space="preserve"><value>Togli la posizione GPS</value></data>
+  <data name="Export.CameraRaw" xml:space="preserve"><value>Scrivi toni e curva come istruzioni per Lightroom</value></data>
+  <data name="Export.CameraRaw.Tip" xml:space="preserve"><value>Spento = «solo pulizia»: il DNG porta solo il bilanciamento, lo sviluppo lo fai tutto in Lightroom</value></data>
+  <data name="Export.NextToOriginals" xml:space="preserve"><value>Accanto agli originali</value></data>
+  <data name="Export.InFolder" xml:space="preserve"><value>In questa cartella:</value></data>
+  <data name="Export.ChooseFolder" xml:space="preserve"><value>Scegli una cartella…</value></data>
+  <data name="Export.ChooseFolderFirst" xml:space="preserve"><value>Scegli prima la cartella in cui salvare.</value></data>
+  <data name="Export.Browse" xml:space="preserve"><value>Sfoglia…</value></data>
+  <data name="Export.Subfolder" xml:space="preserve"><value>Sottocartella</value></data>
+  <data name="Export.Subfolder.None" xml:space="preserve"><value>nessuna (stessa cartella)</value></data>
+  <data name="Export.Name" xml:space="preserve"><value>Nome del file</value></data>
+  <data name="Export.Name.Hint" xml:space="preserve"><value>{nome} = nome dell'originale · {evento} · {seq} = 001, 002… · {stelle} · {data} · {iso} · {metodo}</value></data>
+  <data name="Export.Existing" xml:space="preserve"><value>Se il file esiste</value></data>
+  <data name="Export.Policy.Rename" xml:space="preserve"><value>Salva con un altro nome (_1, _2…)</value></data>
+  <data name="Export.Policy.Skip" xml:space="preserve"><value>Salta la foto</value></data>
+  <data name="Export.Policy.Overwrite" xml:space="preserve"><value>Sovrascrivi</value></data>
+  <data name="Export.Start" xml:space="preserve"><value>Esporta</value></data>
+  <data name="Export.Empty" xml:space="preserve"><value>Nessuna foto da esportare: manda prima le foto dalla Revisione o dalla Consultazione.</value></data>
+  <data name="Export.Summary" xml:space="preserve"><value>{0} foto · {1} con le loro regolazioni · {2} mai sviluppate (useranno il preset automatico) · {3} già esportate</value></data>
+  <data name="Export.DngNote" xml:space="preserve"><value>Nel DNG il bilanciamento vale in tutti i programmi; toni e curva diventano istruzioni per Lightroom e Photoshop.</value></data>
+  <data name="Export.RunTitle" xml:space="preserve"><value>{0} · {1} foto · {2}</value></data>
+  <data name="Export.Queued" xml:space="preserve"><value>{0} foto in coda: puoi continuare a lavorare.</value></data>
+  <data name="Export.Queue.Empty" xml:space="preserve"><value>Le esportazioni compaiono qui, con l'avanzamento. Girano in background, una alla volta.</value></data>
+  <data name="Export.Photos" xml:space="preserve"><value>{0} foto</value></data>
+  <data name="Export.Result" xml:space="preserve"><value>{0} esportate · {1} saltate · {2} con errori</value></data>
+  <data name="Export.Cancel" xml:space="preserve"><value>Annulla</value></data>
+  <data name="Export.OpenFolder" xml:space="preserve"><value>Apri cartella</value></data>
+  <data name="Export.State.Queued" xml:space="preserve"><value>In coda</value></data>
+  <data name="Export.State.Running" xml:space="preserve"><value>In corso</value></data>
+  <data name="Export.State.Completed" xml:space="preserve"><value>Completata</value></data>
+  <data name="Export.State.Cancelled" xml:space="preserve"><value>Interrotta: i file già scritti restano, nessun file a metà</value></data>
+  <data name="Export.State.Failed" xml:space="preserve"><value>Non riuscita</value></data>
 </root>

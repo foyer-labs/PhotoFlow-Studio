@@ -215,6 +215,7 @@ def export_one(
     progress: ProgressFn | None = None,
     taken: frozenset[Path] = frozenset(),
     name_values: dict[str, str] | None = None,
+    adjust=None,
 ) -> tuple[str, Path | None, list[str]]:
     """Esporta una foto di un'esportazione multipla.  ``name_values``: segnaposto in più per il nome. Restituisce (esito, file salvato, note); esito
     "ok" o "saltata".
@@ -234,6 +235,8 @@ def export_one(
             destination = unique_path(destination)
     notes = list(image.meta.notes)
     analysis = analyze(image)
+    if adjust is not None:  # es. il preset suggerito dal rumore misurato, per le foto mai sviluppate
+        settings = adjust(image, analysis, settings)
     saved = export_image(image, analysis, settings, destination, progress, notes)
     return "ok", saved, notes
 

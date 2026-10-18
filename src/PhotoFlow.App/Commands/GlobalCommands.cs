@@ -5,13 +5,14 @@ using PhotoFlow.App.ViewModels;
 
 namespace PhotoFlow.App.Commands;
 
-/// <summary>Global shortcuts of spec §12bis: Ctrl 1-7 sections, Ctrl K search, Ctrl I import folder, Ctrl , settings.</summary>
+/// <summary>Global shortcuts of spec §12bis: Ctrl 1-9 sections, Ctrl K search, Ctrl I import folder, Ctrl , settings.</summary>
 public static class GlobalCommands
 {
     public const string Navigate = "Global.Navigate";
     public const string FocusSearch = "Global.FocusSearch";
     public const string OpenSettings = "Global.OpenSettings";
     public const string ImportFolder = "Global.ImportFolder";
+    public const string Export = "Global.Export";
 
     public static CommandTable Create()
     {
@@ -32,6 +33,8 @@ public static class GlobalCommands
         }
 
         commands.Add(new(ImportFolder, new KeyGesture(Key.I, KeyModifiers.Control), "Home.QuickAction.ImportFolder", StatusGroupKey: "Home.QuickAction.ImportFolder"));
+        // Decision S13: export the photos of the current page from anywhere.
+        commands.Add(new(Export, new KeyGesture(Key.E, KeyModifiers.Control | KeyModifiers.Shift), "Command.Export", StatusGroupKey: "Command.Export"));
         commands.Add(new(OpenSettings, new KeyGesture(Key.OemComma, KeyModifiers.Control), "Command.Settings", StatusGroupKey: "Command.Settings"));
         return new CommandTable(commands);
     }

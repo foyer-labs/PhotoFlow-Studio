@@ -26,6 +26,16 @@ public abstract class PageViewModel : ObservableObject
     public virtual ICommand ResolveCommand(string id) => throw new ArgumentOutOfRangeException(nameof(id), id, "Unknown page command.");
 }
 
+/// <summary>
+/// A page whose photos can become the working selection (decision S5): Review (best and kept), Browse (the results),
+/// Develop (the selected ones). Used by «Sviluppa» and by Ctrl Maiusc E.
+/// </summary>
+public interface IPhotoSource
+{
+    /// <returns>False when the page has no photo to send.</returns>
+    Task<bool> SendToWorkingSetAsync(bool forExport);
+}
+
 /// <summary>Navigation requests from the pages to the window shell.</summary>
 public interface IShellNavigator
 {

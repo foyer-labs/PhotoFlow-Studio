@@ -180,9 +180,9 @@ public sealed record NoResultOption(string Label, Func<Task> Apply);
 /// Consultazione (boards 4d, 4e, 4e2; spec §12 view 6, P14): search field with tokens (people, tags, events = exact
 /// filters) and free text (words on names and labels, ordered by meaning with CLIP); filters for dates, camera,
 /// rating and outcome; virtualized grid; detail with editable tags (T), stars (1-5), faces on the preview, "Apri in
-/// Photoshop" (Ctrl E), default app (Ctrl Enter), Explorer (Ctrl Shift E), similar photos (S).
+/// Photoshop" (Ctrl E), default app (Ctrl Enter), Explorer (Ctrl Shift R), similar photos (S).
 /// </summary>
-public sealed partial class BrowseViewModel : PageViewModel
+public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
 {
     public const int PageSize = 1000;
     public const double CellSize = 168;
@@ -196,7 +196,7 @@ public sealed partial class BrowseViewModel : PageViewModel
         new("Browse.Move", new KeyGesture(Key.Down), "Browse.Command.Navigate", StatusGroupKey: "Browse.Command.Navigate", Parameter: "row"),
         new("Browse.Photoshop", new KeyGesture(Key.E, KeyModifiers.Control), "Browse.Command.Photoshop", StatusGroupKey: "Browse.Command.Photoshop"),
         new("Browse.Default", new KeyGesture(Key.Enter, KeyModifiers.Control), "Browse.Command.Default"),
-        new("Browse.Explorer", new KeyGesture(Key.E, KeyModifiers.Control | KeyModifiers.Shift), "Browse.Command.Explorer"),
+        new("Browse.Explorer", new KeyGesture(Key.R, KeyModifiers.Control | KeyModifiers.Shift), "Browse.Command.Explorer"),
         new("Browse.Tag", new KeyGesture(Key.T), "Browse.Command.Tag", StatusGroupKey: "Browse.Command.Tag"),
         new("Browse.Caption", new KeyGesture(Key.D), "Browse.Command.Caption", StatusGroupKey: "Browse.Command.Caption"),
         new("Browse.Similar", new KeyGesture(Key.S), "Browse.Command.Similar", StatusGroupKey: "Browse.Command.Similar"),
@@ -771,6 +771,30 @@ public sealed partial class BrowseViewModel : PageViewModel
 
     /// <summary>Navigation to the regeneration (set by the shell).</summary>
     public IShellNavigator? Navigator { get; set; }
+
+    /// <summary>The results of the search become the working selection (decision S5).</summary>
+    public Task<bool> SendToWorkingSetAsync(bool forExport)
+    {
+        var ids = _items.Select(i => i.AssetId).Distinct().ToList();
+        if (ids.Count == 0)
+        {
+            return Task.FromResult(false);
+        }
+
+        _host.WorkingSet.Set(Strings.Format("Develop.Origin.Browse", ids.Count), ids, Selected?.AssetId);
+        return Task.FromResult(true);
+    }
+
+    public bool HasResults => _items.Count > 0;
+
+    [RelayCommand]
+    private async Task DevelopResultsAsync()
+    {
+        if (await SendToWorkingSetAsync(forExport: false))
+        {
+            Navigator?.ShowSection(SectionCatalog.Develop);
+        }
+    }
 
     /// <summary>Regeneration of the photos found (spec §5: the perimeter can be a search result).</summary>
     [RelayCommand]

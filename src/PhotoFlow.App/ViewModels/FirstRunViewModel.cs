@@ -55,7 +55,7 @@ public sealed partial class FirstRunViewModel : ObservableObject
         Detector = new ModelChoiceViewModel(registry.Get(gpu ? "dfine-m-obj2coco" : "dfine-s-obj2coco"), false);
         Buffalo = new ModelChoiceViewModel(registry.Get("insightface-buffalo-l"), false);
         YuNet = new ModelChoiceViewModel(registry.Get("opencv-yunet-2023mar"), false);
-        _libraryRoot = host.Settings.Import.PrimaryRoot ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "PhotoFlow");
+        _libraryRoot = host.Settings.Import.PrimaryRoot ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "PhotoFlow Studio");
     }
 
     public ModelChoiceViewModel Detector { get; }

@@ -225,7 +225,12 @@
         <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding CoverageText}" />
       </Border>
 
-      <TextBlock Grid.Row="3" Classes="label tertiary" Margin="16,0,16,6" Text="{Binding ResultText}" />
+      <!-- The results, and the next step for them (decision S4): develop them -->
+      <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="16,0,16,6">
+        <TextBlock Classes="label tertiary" VerticalAlignment="Center" Text="{Binding ResultText}" />
+        <Button Grid.Column="1" Classes="secondary" Command="{Binding DevelopResultsCommand}" Content="{l:Tr Browse.Develop}" ToolTip.Tip="{l:Tr Browse.Develop.Tip}"
+                IsVisible="{Binding !IsEmpty}" />
+      </Grid>
 
       <Panel Grid.Row="4">
         <!-- 4e: no results -->
@@ -317,7 +322,7 @@
               <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Browse.Command.Default}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl ↵" /></Border></Grid>
             </Button>
             <Button Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding ShowInExplorerCommand}">
-              <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Browse.Command.Explorer}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl Maiusc E" /></Border></Grid>
+              <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Browse.Command.Explorer}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl Maiusc R" /></Border></Grid>
             </Button>
             <Button Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding FindSimilarCommand}">
               <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Browse.Command.Similar}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="S" /></Border></Grid>

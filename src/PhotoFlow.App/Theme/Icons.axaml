@@ -5,6 +5,8 @@
   <StreamGeometry x:Key="PF.Icon.Home">M2,8 L8,2.5 L14,8 M4,6.5 L4,13.5 L12,13.5 L12,6.5</StreamGeometry>
   <StreamGeometry x:Key="PF.Icon.Jobs">M2,4 L14,4 M2,8 L14,8 M2,12 L10,12</StreamGeometry>
   <StreamGeometry x:Key="PF.Icon.Review">M2,2 L7,2 L7,7 L2,7 Z M9,2 L14,2 L14,7 L9,7 Z M2,9 L7,9 L7,14 L2,14 Z M9,9 L14,9 L14,14 L9,14 Z</StreamGeometry>
+  <StreamGeometry x:Key="PF.Icon.Develop">M2,4 L14,4 M2,8 L14,8 M2,12 L14,12 M10,2.5 L10,5.5 M5,6.5 L5,9.5 M11,10.5 L11,13.5</StreamGeometry>
+  <StreamGeometry x:Key="PF.Icon.Export">M6,3 L2.5,3 L2.5,13.5 L13,13.5 L13,10 M8,8 L14,2 M9.5,2 L14,2 L14,6.5</StreamGeometry>
   <StreamGeometry x:Key="PF.Icon.People">M5,5.5 A3,3 0 1 0 11,5.5 A3,3 0 1 0 5,5.5 Z M2.5,14 Q8,7.5 13.5,14</StreamGeometry>
   <StreamGeometry x:Key="PF.Icon.Search">M7,2 A5,5 0 1 0 7,12 A5,5 0 1 0 7,2 Z M10.5,10.5 L14,14</StreamGeometry>
   <StreamGeometry x:Key="PF.Icon.Duplicates">M2,5 L10,5 L10,14 L2,14 Z M5,2 L14,2 L14,11</StreamGeometry>

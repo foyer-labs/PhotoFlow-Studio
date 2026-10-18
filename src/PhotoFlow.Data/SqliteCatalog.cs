@@ -42,6 +42,7 @@ public sealed class SqliteCatalog : ICatalog
         Motorsport = new MotorsportStore(this);
         Captions = new CaptionStore(this);
         Reanalysis = new ReanalysisStore(this);
+        Develop = new DevelopStore(this);
     }
 
     public ILibraryStore Libraries { get; }
@@ -75,6 +76,8 @@ public sealed class SqliteCatalog : ICatalog
     public ICaptionStore Captions { get; }
 
     public IReanalysisStore Reanalysis { get; }
+
+    public Core.Develop.IDevelopStore Develop { get; }
 
     public static async Task<SqliteCatalog> OpenAsync(CatalogOpenOptions options, CancellationToken ct)
     {

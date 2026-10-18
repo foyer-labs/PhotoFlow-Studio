@@ -11,10 +11,10 @@
 
     <Authors>Foyer Labs</Authors>
     <Company>Foyer Labs</Company>
-    <Product>PhotoFlow</Product>
+    <Product>PhotoFlow Studio</Product>
     <Version>0.1.0</Version>
     <Copyright>Copyright 2026 Foyer Labs</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/foyer-labs/PhotoFlow</RepositoryUrl>
+    <RepositoryUrl>https://github.com/foyer-labs/PhotoFlow-Studio</RepositoryUrl>
   </PropertyGroup>
 </Project>

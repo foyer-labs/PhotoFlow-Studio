@@ -47,4 +47,19 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
+
+  <!--
+    Development engine (D25): the folder made by PyInstaller (engine/packaging/engine.spec) goes next to the published
+    application as engine/. Not copied on build: from the build folder the engine runs from engine/.venv.
+  -->
+  <PropertyGroup>
+    <DevelopEngineDist>$(MSBuildThisFileDirectory)..\..\engine\dist\engine\</DevelopEngineDist>
+  </PropertyGroup>
+  <Target Name="PublishDevelopEngine" AfterTargets="Publish">
+    <Warning Condition="!Exists('$(DevelopEngineDist)photoflow-engine.exe')" Text="Development engine not built (engine/dist/engine): the published application cannot develop or export. Run scripts/build-studio.ps1." />
+    <ItemGroup>
+      <DevelopEngineFiles Include="$(DevelopEngineDist)**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DevelopEngineFiles)" DestinationFiles="@(DevelopEngineFiles->'$(PublishDir)engine\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

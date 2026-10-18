@@ -33,7 +33,7 @@ public enum ReviewMode
 /// P4), moving the discards on request (P6). Every action has a key (acceptance criterion: usable from the keyboard
 /// only). User decisions win over the automatic ones (I5); XMP are written only after the confirmation.
 /// </summary>
-public sealed partial class ReviewViewModel : PageViewModel, IDisposable
+public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisposable
 {
     public static readonly int[] CellSizes = [120, 168, 240];
     public const int CellGap = 4;
@@ -376,7 +376,7 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
         JobTitle = string.IsNullOrWhiteSpace(job.EventName) ? Strings.Get("Job.Unnamed") : job.EventName;
         JobMeta = Strings.Format("Review.Meta", job.EventDate?.ToString("d MMM yyyy", CultureInfo.CurrentCulture) ?? string.Empty,
             _all.Count.ToString("N0", CultureInfo.CurrentCulture), _host.ProfileName(_profileId),
-            Strings.Get(PrudentMode ? "Review.Mode.Prudent" : "Review.Mode.Normal"));
+            Strings.Get(PrudentMode ? "Review.Mode.Prudent" : "Review.Mode.Normal")).TrimStart(' ', '·'); // no date: no leading separator
         NewPeopleGroups = await CountNewPeopleAsync(items.Select(i => i.AssetId!.Value).ToHashSet());
         Rebuild();
         Selected = Selected is { } current && _all.Contains(current) ? current : Visible().FirstOrDefault();
@@ -384,7 +384,9 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
 
     private async Task LoadGroupsAsync(long jobId, Job job)
     {
-        var byAsset = _all.ToDictionary(p => p.AnalyzedAssetId);
+        // An exact copy in the same job (another location of the same asset) is a second item of the same asset:
+        // the group shows the first one.
+        var byAsset = _all.GroupBy(p => p.AnalyzedAssetId).ToDictionary(g => g.Key, g => g.First());
         var profiles = await _host.Catalog.Groups.GetPhotoProfilesAsync(jobId, CancellationToken.None);
         _groups = [];
         var number = 0;
@@ -1262,6 +1264,55 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
 
         ManualCount = _all.Count(i => i.IsManual);
         PendingXmp = _all.Count(i => i.XmpPending);
+        BestCount = _all.Count(IsChosen);
+    }
+
+    /// <summary>Best and kept photos (or rated 3+): the ones that go on to Develop (decision S3).</summary>
+    private static bool IsChosen(ReviewItemViewModel item) => item.Outcome is CullingOutcome.Best or CullingOutcome.Kept || item.Stars >= 3;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DevelopBestText), nameof(HasBest))]
+    private int _bestCount;
+
+    public bool HasBest => BestCount > 0;
+
+    public string DevelopBestText => Strings.Format("Review.DevelopBest", BestCount.ToString("N0", CultureInfo.CurrentCulture));
+
+    /// <summary>
+    /// The chosen photos become the working selection (decision S5): one per RAW+JPEG pair, the RAW; without chosen photos,
+    /// the selected one.
+    /// </summary>
+    public async Task<bool> SendToWorkingSetAsync(bool forExport)
+    {
+        var chosen = _all.Where(IsChosen).ToList();
+        if (chosen.Count == 0 && Selected is { } selected)
+        {
+            chosen = [selected];
+        }
+
+        if (chosen.Count == 0)
+        {
+            return false;
+        }
+
+        var ids = chosen.SelectMany(i => i.AssetIds).Distinct().ToList();
+        var assets = await _host.Catalog.Assets.GetManyAsync(ids, CancellationToken.None);
+        long Pick(ReviewItemViewModel item) =>
+            item.AssetIds.FirstOrDefault(id => assets.TryGetValue(id, out var a) && a.Handler == "raw") is var raw and not 0 ? raw : item.AnalyzedAssetId;
+        var picked = chosen.Select(Pick).Distinct().ToList();
+        var active = Selected is { } s && chosen.Contains(s) ? Pick(s) : (long?)null;
+        _host.WorkingSet.Set(Strings.Format("Develop.Origin.Review", JobTitle, picked.Count), picked, active, JobTitle);
+        return true;
+    }
+
+    /// <summary>«Sviluppa le migliori» (decision S4): the next step after choosing.</summary>
+    [RelayCommand]
+    private async Task DevelopBestAsync()
+    {
+        if (await SendToWorkingSetAsync(forExport: false))
+        {
+            _navigator?.ShowSection(SectionCatalog.Develop);
+        }
     }
 
     private int Count(CullingOutcome outcome) => _all.Count(i => i.Outcome == outcome);

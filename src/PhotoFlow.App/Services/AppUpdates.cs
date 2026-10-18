@@ -15,7 +15,7 @@ namespace PhotoFlow.App.Services;
 /// </summary>
 public sealed class AppUpdates
 {
-    public const string Feed = "https://github.com/foyer-labs/PhotoFlow";
+    public const string Feed = "https://github.com/foyer-labs/PhotoFlow-Studio";
 
     private UpdateManager? _manager;
     private bool _created;

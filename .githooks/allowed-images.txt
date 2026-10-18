@@ -18,3 +18,30 @@ docs/guida/img/10-vocabolario.png
 docs/guida/img/11-impostazioni-modelli.png
 docs/guida/img/12-impostazioni-catalogo.png
 docs/guida/img/13-import.png
+
+# PhotoFlow Studio: the engine (ex Denoiser) keeps its icon and the screenshots of its guide (engine/docs),
+# made on a public sample and on drawn pictures.
+engine/docs/icona.png
+engine/packaging/denoiser.ico
+engine/docs/screenshots/01-benvenuto.png
+engine/docs/screenshots/02-confronto.jpg
+engine/docs/screenshots/03-rumore-tolto.jpg
+engine/docs/screenshots/04-adatta.jpg
+engine/docs/screenshots/05-intelligenza-artificiale.jpg
+engine/docs/screenshots/06-esportazione.jpg
+engine/docs/screenshots/07-carosello.png
+engine/docs/screenshots/08-pannello-completo.png
+engine/docs/screenshots/09-guida.png
+engine/docs/screenshots/10-esporta.png
+engine/docs/screenshots/11-sviluppo.png
+
+# Screenshots of the PhotoFlow Studio workflow (docs/studio/flusso.md), made by
+# tests/PhotoFlow.Tests/Docs/StudioScreenshots.cs on the same demo catalog of drawn pictures.
+docs/studio/img/s01-home.png
+docs/studio/img/s02-revisione.png
+docs/studio/img/s03-sviluppo.png
+docs/studio/img/s04-sviluppo-modifiche.png
+docs/studio/img/s05-sviluppo-rumore.png
+docs/studio/img/s06-esporta.png
+docs/studio/img/s07-esporta-coda.png
+docs/studio/img/s08-consultazione.png

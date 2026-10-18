@@ -1,7 +1,11 @@
-PhotoFlow
+PhotoFlow Studio
 Copyright 2026 Foyer Labs
 
 This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The development engine in engine/ comes from Denoiser (Image-Denoiser), Copyright 2026 Foyer Labs,
+licensed under the MIT License (see engine/LICENSE). Its third-party components are listed in
+engine/THIRD-PARTY-NOTICES.md.
 
 Third-party components: see THIRD-PARTY-NOTICES.md for the full list with licenses.
 Third-party components bundled with this product:

@@ -33,6 +33,9 @@ using PhotoFlow.Tagging.Ocr;
 using PhotoFlow.Tagging.RamPlus;
 using PhotoFlow.Tagging.Vocabulary;
 
+using PhotoFlow.App.Services.Develop;
+using PhotoFlow.Core.Develop;
+
 namespace PhotoFlow.App.Services;
 
 /// <summary>Which models the analysis uses, for the status bar and the first run (3b).</summary>
@@ -124,7 +127,19 @@ public sealed class PhotoFlowHost : IAsyncDisposable
         FingerprintKeys = new FingerprintKeyStore(Path.Combine(paths.ConfigDirectory, "face-key.json"));
         Profiles = new ProfileLibrary(paths.ProfilesDirectory);
         FingerprintKeys.Open();
+        DevelopEngine = new DevelopEngineClient(paths);
     }
+
+    private ExportQueue? _exports;
+
+    /// <summary>Development and noise-reduction engine (PhotoFlow Studio, decision S1); replaceable in tests.</summary>
+    public IDevelopEngine DevelopEngine { get; set; }
+
+    /// <summary>The working selection shared by Develop and Export (decision S5).</summary>
+    public WorkingSet WorkingSet { get; } = new();
+
+    /// <summary>Exports running in the background, one at a time (decision S11).</summary>
+    public ExportQueue Exports => _exports ??= new ExportQueue(DevelopEngine, Catalog);
 
     /// <summary>Key of the face fingerprints (D12): locked on another account or PC until the password or a recompute.</summary>
     public FingerprintKeyStore FingerprintKeys { get; }
@@ -614,6 +629,10 @@ public sealed class PhotoFlowHost : IAsyncDisposable
         await _shutdown.CancelAsync().ConfigureAwait(false);
         Cards.Dispose();
         await Jobs.DisposeAsync().ConfigureAwait(false);
+        if (DevelopEngine is IAsyncDisposable engine)
+        {
+            await engine.DisposeAsync().ConfigureAwait(false);
+        }
         try
         {
             await _maintenance.ConfigureAwait(false);

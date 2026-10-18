@@ -23,6 +23,8 @@
     <DataTemplate DataType="vm:HomeViewModel"><v:HomeView /></DataTemplate>
     <DataTemplate DataType="vm:ImportWizardViewModel"><v:ImportWizardView /></DataTemplate>
     <DataTemplate DataType="vm:JobsViewModel"><v:JobsView /></DataTemplate>
+    <DataTemplate DataType="vm:DevelopViewModel"><v:DevelopView /></DataTemplate>
+    <DataTemplate DataType="vm:ExportViewModel"><v:ExportView /></DataTemplate>
     <DataTemplate DataType="vm:ReviewViewModel"><v:ReviewView /></DataTemplate>
     <DataTemplate DataType="vm:LibrariesViewModel"><v:LibrariesView /></DataTemplate>
     <DataTemplate DataType="vm:SettingsViewModel"><v:SettingsView /></DataTemplate>

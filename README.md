@@ -1,25 +1,32 @@
-# PhotoFlow
+# PhotoFlow Studio
 
-### Le tue foto, scelte, taggate e ritrovate in un attimo. Senza che lascino mai il tuo PC.
+### Dalla scheda SD alla consegna: importa, scegli, sviluppa, esporta. Senza che le foto lascino mai il tuo PC.
 
-PhotoFlow importa le foto dalla scheda SD, ti aiuta a scegliere le migliori, le tagga in italiano e riconosce le persone. Lo fa con un'intelligenza artificiale che gira **sul tuo computer**: niente cloud, niente account.
+PhotoFlow Studio unisce **PhotoFlow** (import verificato, scelta assistita delle migliori, tag in italiano, persone, ricerca, duplicati) e **Denoiser** (sviluppo RAW, riduzione del rumore classica e neurale, esportazione) in un solo programma che copre tutto il ciclo di una foto. L'intelligenza artificiale gira **sul tuo computer**: niente cloud, niente account.
 
-[![Versione 0.1.0](https://img.shields.io/badge/versione-0.1.0-informational)](https://github.com/foyer-labs/PhotoFlow/releases/latest)
+[![Versione 0.1.0](https://img.shields.io/badge/versione-0.1.0-informational)](https://github.com/foyer-labs/PhotoFlow-Studio/releases/latest)
 [![Windows 10 | 11](https://img.shields.io/badge/piattaforma-Windows%2010%20%7C%2011%20(64%20bit)-0078D6)](#-scarica-e-installa)
 [![Licenza Apache 2.0](https://img.shields.io/badge/licenza-Apache%202.0-blue)](LICENSE)
 
-**[⬇️ Scarica PhotoFlow 0.1.0](https://github.com/foyer-labs/PhotoFlow/releases/latest)** · [Guida utente](docs/guida/README.md) · [Domande frequenti](docs/guida/faq.md) · [Per sviluppatori](docs/SVILUPPO.md)
+**[⬇️ Scarica PhotoFlow Studio 0.1.0](https://github.com/foyer-labs/PhotoFlow-Studio/releases/latest)** · [Il flusso di lavoro](docs/studio/flusso.md) · [Guida utente](docs/guida/README.md) · [Domande frequenti](docs/guida/faq.md) · [Per sviluppatori](docs/SVILUPPO.md)
 
 <p align="center">
-  <img src="docs/guida/img/03-consultazione.png" alt="La Consultazione di PhotoFlow: filtri per persone, eventi e tag a sinistra, la griglia delle foto al centro, a destra i dettagli della foto con didascalia in italiano e tag" width="100%">
+  <img src="docs/studio/img/s03-sviluppo.png" alt="Lo Sviluppo di PhotoFlow Studio: la foto al centro con il prima/dopo a tendina, la striscia della selezione in basso, a destra istogramma, curva e regolazioni di luce, colore e rumore" width="100%">
 </p>
 
-- 🔒 **Tutto sul tuo PC.** Le foto non escono mai dal computer. Nessun cloud, nessun account, nessuna telemetria.
-- 🛡️ **Non tocca mai i tuoi originali.** La scheda SD resta com'era, i RAW non vengono mai modificati, nessuna foto viene cancellata.
-- 🔎 **Trovi qualsiasi foto in un attimo.** Per persona, evento, tag, data o descrivendola a parole: *"bambini che ridono al tramonto"*.
-- 🤝 **Lavora con Lightroom e Bridge.** Stelle, parole chiave, persone e didascalie finiscono in file XMP, il formato standard che Lightroom, Bridge e Photoshop leggono già.
+```
+ Home → Import → Job → Revisione → Sviluppo → Esporta        Archivio: Persone · Consultazione · Duplicati
+ Ctrl 1   Ctrl I   Ctrl 2   Ctrl 3      Ctrl 4     Ctrl 5                 Ctrl 6     Ctrl 7          Ctrl 8
+```
 
-Pensato per chi scatta tanto (eventi, viaggi, motorsport), ha archivi di decine di migliaia di foto, RAW e JPEG, e non vuole cambiare il programma con cui le sviluppa.
+- 🔒 **Tutto sul tuo PC.** Le foto non escono mai dal computer. Nessun cloud, nessun account, nessuna telemetria.
+- 🛡️ **Non tocca mai i tuoi originali.** La scheda SD resta com'era, i RAW non vengono mai modificati, nessuna foto viene cancellata. Lo sviluppo vive nel catalogo e finisce solo nei file esportati.
+- 🎯 **Prima scegli, poi sviluppi.** La riduzione del rumore non si spreca sugli scarti: dalla Revisione un clic manda le migliori allo Sviluppo, e da lì all'Esportazione.
+- 🎚️ **Sviluppo e rumore insieme.** Esposizione, bilanciamento del bianco, contrasto, curva, saturazione, alte luci e ombre, con la riduzione del rumore già attiva su un preset scelto dal rumore misurato.
+- 📦 **Consegne in un gesto.** Ricette pronte (web, cliente, stampa, DNG ripulito per Lightroom) e una coda che lavora mentre tu continui.
+- 🔎 **Trovi qualsiasi foto in un attimo.** Per persona, evento, tag, data o descrivendola a parole: *"bambini che ridono al tramonto"*.
+
+Pensato per chi scatta tanto (eventi, viaggi, motorsport), ha archivi di decine di migliaia di foto, RAW e JPEG, e vuole un solo programma dalla scheda alla consegna, senza rinunciare a Lightroom quando serve.
 
 ---
 
@@ -36,6 +43,20 @@ Inserisci la scheda, scegli un nome per l'evento e via. PhotoFlow copia le foto,
 Nella **Revisione** PhotoFlow ha già fatto il primo giro: segnala le foto mosse o sfocate, gli occhi chiusi e i problemi di esposizione, raggruppa le raffiche e ti propone la migliore. Rosso per gli scarti, giallo per quelle da rivedere, verde per la migliore. L'ultima parola è tua, tutta da tastiera: **P** tieni, **X** scarta, **1-5** stelle, **C** confronta.
 
 <img src="docs/guida/img/02-revisione.png" alt="Revisione: griglia di foto con gli esiti colorati (scarto, da rivedere, migliore), le stelle e i filtri per esito" width="100%">
+
+Quando hai scelto, **«Sviluppa le migliori (N)»** porta le migliori e le tenute allo Sviluppo.
+
+### Sviluppa, con il rumore già sotto controllo
+
+La foto al centro con il **prima/dopo a tendina**, la striscia delle foto scelte in basso, il pannello a destra nell'ordine in cui si ragiona: istogramma e curva, luce, colore, toni, rumore. La riduzione del rumore è **attiva di serie** con un preset scelto dal rumore misurato (e ti dice perché), si spegne con **R**; il metodo neurale è una scelta tua. Le regolazioni si salvano da sole, con annulla per foto, e si estendono alle altre foto solo quando premi **«Applica alle selezionate»**.
+
+<img src="docs/studio/img/s04-sviluppo-modifiche.png" alt="Sviluppo con regolazioni di esposizione, saturazione e contrasto e alcune foto selezionate nella striscia per applicare le stesse regolazioni" width="100%">
+
+### Esporta con una ricetta
+
+**Web e social**, **Cliente**, **Stampa**, **Lightroom (DNG ripulito)** o personalizzata: scegli cosa esportare (le foto in lavorazione, le migliori dell'evento, tutto l'evento), la ricetta e la cartella, e premi **Ctrl Invio**. L'esportazione va in coda e tu continui a lavorare; alla fine sai quante foto sono uscite e apri la cartella con un clic. Mai un file sovrascritto di nascosto.
+
+<img src="docs/studio/img/s06-esporta.png" alt="La pagina Esporta: cosa esportare, le ricette di consegna, formato, cartella e nome dei file" width="100%">
 
 ### Trova qualsiasi foto
 
@@ -75,12 +96,12 @@ Trova le copie esatte e le foto quasi uguali, te le mette una accanto all'altra 
 
 ## ⬇️ Scarica e installa
 
-1. Vai alla pagina **[Releases](https://github.com/foyer-labs/PhotoFlow/releases/latest)** e scarica **`PhotoFlow-0.1.0-Setup.exe`**.
+1. Vai alla pagina **[Releases](https://github.com/foyer-labs/PhotoFlow-Studio/releases/latest)** e scarica **`PhotoFlowStudio-0.1.0-Setup.exe`**.
 2. Avvialo.
-3. Al primo avvio scegli dove salvare il catalogo. Poi PhotoFlow ti propone i modelli di intelligenza artificiale da scaricare e, se hai una scheda NVIDIA, il pacchetto GPU. Ogni licenza ti viene mostrata prima: decidi tu.
+3. Al primo avvio scegli dove salvare il catalogo. Poi PhotoFlow Studio ti propone i modelli di intelligenza artificiale da scaricare e, se hai una scheda NVIDIA, il pacchetto GPU. Ogni licenza ti viene mostrata prima: decidi tu.
 4. Inserisci una scheda e premi **Ctrl I**, oppure aggiungi una cartella di foto in **Librerie**.
 
-> **Windows dice «Windows ha protetto il PC»?** Niente paura. PhotoFlow 0.1.0 non è ancora firmato digitalmente, e SmartScreen avvisa per tutti i programmi in questa situazione. Fai clic su **Ulteriori informazioni** e poi su **Esegui comunque**. Il codice di PhotoFlow è tutto qui, pubblico, da leggere.
+> **Windows dice «Windows ha protetto il PC»?** Niente paura. PhotoFlow Studio 0.1.0 non è ancora firmato digitalmente, e SmartScreen avvisa per tutti i programmi in questa situazione. Fai clic su **Ulteriori informazioni** e poi su **Esegui comunque**. Il codice di PhotoFlow Studio è tutto qui, pubblico, da leggere.
 
 **Requisiti**
 
@@ -88,10 +109,12 @@ Trova le copie esatte e le foto quasi uguali, te le mette una accanto all'altra 
 |---|---|
 | Sistema | Windows 10 o 11, 64 bit |
 | Memoria | 8 GB di RAM (consigliati 16 GB) |
-| Disco | circa 1 GB, più i modelli (da ~0,4 a ~3,5 GB secondo le funzioni) e le miniature. Meglio un SSD |
+| Disco | circa 1,5 GB (programma e motore di sviluppo), più i modelli (da ~0,4 a ~3,5 GB secondo le funzioni) e le miniature. Meglio un SSD |
 | Scheda video | Non obbligatoria. Con una NVIDIA tutto è molto più veloce. Didascalie in italiano: NVIDIA con almeno 12 GB |
 
-PhotoFlow ti avvisa all'avvio quando esce una nuova versione (puoi spegnere il controllo in Impostazioni › Generali). L'aggiornamento lo installi tu, mai mentre sta lavorando.
+PhotoFlow Studio usa un catalogo e cartelle proprie (`%LOCALAPPDATA%\PhotoFlowStudio`): può convivere con PhotoFlow e con Denoiser già installati. I modelli neurali di riduzione del rumore si scaricano dallo Sviluppo, la prima volta che li scegli.
+
+PhotoFlow Studio ti avvisa all'avvio quando esce una nuova versione (puoi spegnere il controllo in Impostazioni › Generali). L'aggiornamento lo installi tu, mai mentre sta lavorando.
 
 ---
 
@@ -107,9 +130,11 @@ PhotoFlow ti avvisa all'avvio quando esce una nuova versione (puoi spegnere il c
 
 ## 📖 Guida e aiuto
 
-- **[Guida utente](docs/guida/README.md)**: tutto PhotoFlow, passo per passo, con le scorciatoie.
+- **[Il flusso di lavoro](docs/studio/flusso.md)**: da dove si parte e dove si arriva, con screenshot e schemi.
+- **[Guida utente](docs/guida/README.md)**: import, revisione, persone, ricerca e duplicati, passo per passo, con le scorciatoie.
+- **[Guida dello sviluppo e del rumore](engine/docs/guida.md)**: le regolazioni e i metodi di riduzione del rumore del motore (ex Denoiser).
 - **[Domande frequenti](docs/guida/faq.md)**: le risposte rapide ai dubbi più comuni.
-- Hai trovato un problema? Aprilo nelle [Issues](https://github.com/foyer-labs/PhotoFlow/issues).
+- Hai trovato un problema? Aprilo nelle [Issues](https://github.com/foyer-labs/PhotoFlow-Studio/issues).
 
 ---
 
@@ -128,7 +153,7 @@ PhotoFlow ti avvisa all'avvio quando esce una nuova versione (puoi spegnere il c
 
 ## 📄 Licenza e crediti
 
-PhotoFlow è open source con licenza **Apache 2.0**: vedi [`LICENSE`](LICENSE) e [`NOTICE`](NOTICE). È un progetto di **Foyer Labs**.
+PhotoFlow Studio è open source con licenza **Apache 2.0**: vedi [`LICENSE`](LICENSE) e [`NOTICE`](NOTICE). È un progetto di **Foyer Labs**, nato dall'unione di [PhotoFlow](https://github.com/foyer-labs/PhotoFlow) e [Image-Denoiser](https://github.com/foyer-labs/Image-Denoiser): la storia di entrambi è in questo repository, il motore di sviluppo in [`engine/`](engine/).
 
 PhotoFlow si appoggia a librerie e modelli di altri, ognuno con la propria licenza. I modelli non sono inclusi nel programma: si scaricano al primo uso, dopo averti mostrato la licenza. L'elenco completo è in [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md).
 

@@ -1,0 +1,144 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Export (decisions S11, S12): what to export, the delivery recipe, format, where and the name on the left; the queue
+     of the exports on the right, while the user goes on working. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.ExportView"
+             x:DataType="vm:ExportViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.panelHead">
+      <Setter Property="FontFamily" Value="{StaticResource PF.Font.Mono}" />
+      <Setter Property="FontSize" Value="{StaticResource PF.FontSize.Micro}" />
+      <Setter Property="Foreground" Value="{DynamicResource PF.Brush.TextTertiary}" />
+      <Setter Property="Margin" Value="0,18,0,6" />
+    </Style>
+    <Style Selector="Button.recipe">
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Left" />
+      <Setter Property="Padding" Value="12,8" />
+      <Setter Property="Margin" Value="0,0,0,6" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid ColumnDefinitions="*,380">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="24,12,24,24" MaxWidth="760" HorizontalAlignment="Left">
+        <TextBlock Classes="panelHead" Margin="0,4,0,6" Text="{l:Tr Export.Section.What}" />
+        <ItemsControl ItemsSource="{Binding Scopes}">
+          <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ExportScopeOption">
+              <Button Classes="chip" Classes.active="{Binding IsActive}" Margin="0,0,8,8"
+                      Command="{Binding $parent[UserControl].((vm:ExportViewModel)DataContext).ChooseScopeOptionCommand}" CommandParameter="{Binding}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <TextBlock Classes="label" Text="{Binding Label}" />
+                  <TextBlock Classes="data" Text="{Binding CountText}" />
+                </StackPanel>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{Binding Summary}" />
+
+        <TextBlock Classes="panelHead" Text="{l:Tr Export.Section.Recipe}" />
+        <ItemsControl ItemsSource="{Binding Recipes}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:ExportRecipeOption">
+              <Button Classes="chip recipe" Classes.active="{Binding IsActive}"
+                      Command="{Binding $parent[UserControl].((vm:ExportViewModel)DataContext).ChooseRecipeCommand}" CommandParameter="{Binding}">
+                <StackPanel Spacing="2">
+                  <TextBlock Classes="label" Text="{Binding Label}" />
+                  <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{Binding Description}" />
+                </StackPanel>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TextBlock Classes="panelHead" Text="{l:Tr Export.Section.Format}" />
+        <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="12">
+          <TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Export.Format}" />
+          <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding Formats}" SelectedItem="{Binding Format}" />
+          <TextBlock Grid.Row="1" Classes="label" VerticalAlignment="Center" Text="{l:Tr Export.Bits}" IsVisible="{Binding HasBits}" />
+          <ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding BitDepths}" SelectedItem="{Binding BitDepth}" IsVisible="{Binding HasBits}" />
+          <TextBlock Grid.Row="2" Classes="label" VerticalAlignment="Center" Text="{l:Tr Export.Quality}" IsVisible="{Binding IsJpeg}" />
+          <NumericUpDown Grid.Row="2" Grid.Column="1" Minimum="50" Maximum="100" Increment="1" FormatString="0" Value="{Binding JpegQuality}" IsVisible="{Binding IsJpeg}" />
+          <TextBlock Grid.Row="3" Classes="label" VerticalAlignment="Center" Text="{l:Tr Export.MaxSide}" IsVisible="{Binding !IsDng}" />
+          <NumericUpDown Grid.Row="3" Grid.Column="1" Minimum="0" Maximum="20000" Increment="256" FormatString="0" Value="{Binding MaxSide}" IsVisible="{Binding !IsDng}"
+                         ToolTip.Tip="{l:Tr Export.MaxSide.Tip}" />
+          <TextBlock Grid.Row="4" Classes="label" VerticalAlignment="Center" Text="{l:Tr Export.NonRaw}" IsVisible="{Binding IsDng}" />
+          <ComboBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding NonRawFormats}" SelectedItem="{Binding NonRawFormat}" IsVisible="{Binding IsDng}" />
+          <StackPanel Grid.Row="5" Grid.Column="1" Spacing="4">
+            <CheckBox IsChecked="{Binding CopyMetadata}" Content="{l:Tr Export.CopyMetadata}" />
+            <CheckBox IsChecked="{Binding StripGps}" Content="{l:Tr Export.StripGps}" />
+            <CheckBox IsChecked="{Binding CameraRaw}" Content="{l:Tr Export.CameraRaw}" IsVisible="{Binding IsDng}" ToolTip.Tip="{l:Tr Export.CameraRaw.Tip}" />
+          </StackPanel>
+        </Grid>
+
+        <TextBlock Classes="panelHead" Text="{l:Tr Export.Section.Where}" />
+        <StackPanel Spacing="8">
+          <RadioButton GroupName="where" IsChecked="{Binding NextToOriginals}" Content="{l:Tr Export.NextToOriginals}" />
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+            <RadioButton GroupName="where" IsChecked="{Binding ChooseFolder, Mode=OneWay}" Content="{l:Tr Export.InFolder}" Click="OnFolderRadio" />
+            <TextBox Grid.Column="1" Classes="field" IsReadOnly="True" Text="{Binding Folder}" PlaceholderText="{l:Tr Export.ChooseFolder}" />
+            <Button Grid.Column="2" Classes="secondary" Click="OnBrowse" Content="{l:Tr Export.Browse}" />
+          </Grid>
+          <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="12">
+            <TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Export.Subfolder}" />
+            <TextBox Grid.Column="1" Classes="field" Text="{Binding Subfolder}" PlaceholderText="{l:Tr Export.Subfolder.None}" />
+            <TextBlock Grid.Row="1" Classes="label" VerticalAlignment="Center" Text="{l:Tr Export.Name}" />
+            <TextBox Grid.Row="1" Grid.Column="1" Classes="field" Text="{Binding NameTemplate}" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Export.Name.Hint}" />
+          </Grid>
+          <Grid ColumnDefinitions="140,*" ColumnSpacing="12">
+            <TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Export.Existing}" />
+            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding Policies}" SelectedItem="{Binding Policy}" />
+          </Grid>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,24,0,0">
+          <Button Classes="primary" Command="{Binding StartCommand}" IsEnabled="{Binding !IsPreparing}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{l:Tr Export.Start}" />
+              <Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="Ctrl ↵" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border>
+            </StackPanel>
+          </Button>
+          <TextBlock Classes="body secondary" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="460" Text="{Binding Message}" />
+        </StackPanel>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- The queue -->
+    <Border Grid.Column="1" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1,0,0,0" Background="{DynamicResource PF.Brush.Panel}">
+      <Grid RowDefinitions="Auto,*" Margin="14,10">
+        <TextBlock Classes="panelHead" Margin="0,4,0,8" Text="{l:Tr Export.Section.Queue}" />
+        <TextBlock Grid.Row="1" Classes="body tertiary" TextWrapping="Wrap" Text="{l:Tr Export.Queue.Empty}" IsVisible="{Binding !Runs.Count}" />
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+          <ItemsControl ItemsSource="{Binding Runs}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ExportRunViewModel">
+                <Border Classes="card" Margin="0,0,0,8" Padding="12">
+                  <StackPanel Spacing="4">
+                    <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding Title}" />
+                    <TextBlock Classes="micro secondary" Text="{Binding StateText}" />
+                    <ProgressBar Classes="thin" Minimum="0" Maximum="100" Value="{Binding Percent}" IsVisible="{Binding IsRunning}" />
+                    <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding IsRunning}" />
+                    <TextBlock Classes="micro" TextWrapping="Wrap" Text="{Binding ResultText}" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <Button Classes="ghost" IsVisible="{Binding CanCancel}" Content="{l:Tr Export.Cancel}"
+                              Command="{Binding $parent[UserControl].((vm:ExportViewModel)DataContext).CancelCommand}" CommandParameter="{Binding}" />
+                      <Button Classes="ghost" IsVisible="{Binding CanOpenFolder}" Content="{l:Tr Export.OpenFolder}"
+                              Command="{Binding $parent[UserControl].((vm:ExportViewModel)DataContext).OpenFolderCommand}" CommandParameter="{Binding}" />
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

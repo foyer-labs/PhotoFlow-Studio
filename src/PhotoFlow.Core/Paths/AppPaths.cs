@@ -40,7 +40,7 @@ public sealed record AppPathOverrides(string? CatalogPath = null, string? Models
 /// <summary>Default layout under the per-user local application data folder.</summary>
 public sealed class DefaultAppPaths : IAppPaths
 {
-    public const string ApplicationFolderName = "PhotoFlow";
+    public const string ApplicationFolderName = "PhotoFlowStudio";
     public const string CatalogFileName = "catalog.pfdb";
 
     public DefaultAppPaths(AppPathOverrides? overrides = null)

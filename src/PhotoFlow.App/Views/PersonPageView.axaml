@@ -89,7 +89,7 @@
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
               <SelectableTextBlock Classes="data" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PhotoPath}" IsVisible="{Binding HasPhotoPath}" />
               <Button Grid.Column="1" Classes="secondary" IsVisible="{Binding HasPhotoPath}" Command="{Binding ShowPhotoInExplorerCommand}">
-                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Browse.Command.Explorer}" /><Border Classes="key"><TextBlock Text="Ctrl Maiusc E" /></Border></StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Browse.Command.Explorer}" /><Border Classes="key"><TextBlock Text="Ctrl Maiusc R" /></Border></StackPanel>
               </Button>
             </Grid>
             <StackPanel Orientation="Horizontal" Spacing="16">

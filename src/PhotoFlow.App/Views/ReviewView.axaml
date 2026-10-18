@@ -68,7 +68,7 @@
     <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding !NoJob}">
       <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
         <!-- Header -->
-        <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="24" Margin="16,12">
+        <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="24" Margin="16,12">
           <StackPanel Spacing="2">
             <TextBlock Classes="subtitle" Text="{Binding JobTitle}" />
             <TextBlock Classes="micro tertiary" Text="{Binding JobMeta}" />
@@ -81,6 +81,9 @@
             <TextBlock Classes="micro tertiary" Text="{l:Tr Review.XmpPending}" />
             <TextBlock Classes="data" Text="{Binding PendingXmp}" />
           </StackPanel>
+          <Button Grid.Column="4" Classes="secondary" Command="{Binding DevelopBestCommand}" IsVisible="{Binding HasBest}" ToolTip.Tip="{l:Tr Review.DevelopBest.Tip}">
+            <TextBlock Text="{Binding DevelopBestText}" />
+          </Button>
           <Button x:Name="ConfirmButton" Grid.Column="3" Classes="primary" Command="{Binding ConfirmCommand}" IsEnabled="{Binding !IsWriting}">
             <StackPanel Orientation="Horizontal" Spacing="8">
               <TextBlock Text="{l:Tr Review.Confirm}" />

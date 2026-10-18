@@ -111,6 +111,18 @@ def suggest_preset(noise_level: str, is_raw: bool) -> str:
     return name if name in list_presets() else "Bilanciato"
 
 
+def _auto_preset(image, analysis, settings: Settings) -> Settings:
+    """Foto mai sviluppata: il preset proposto dal rumore misurato (stessa scelta di «open»)."""
+    level, _detail = noise_judgement(image, analysis)
+    name = suggest_preset(level, image.domain.value == "linear")
+    try:
+        adjusted = apply_preset(settings, preset_content(list_presets()[name][1]))
+    except (KeyError, PresetError):
+        return settings
+    adjusted.output = settings.output
+    return adjusted
+
+
 class Engine:
     """Esegue i comandi. Indipendente dal canale: i test lo usano direttamente."""
 
@@ -319,8 +331,9 @@ class Engine:
                     progress((i + fraction) / total, f"{name} ({i + 1} di {len(items)}): {message}")
 
             try:
+                adjust = _auto_preset if item.get("auto") else None
                 outcome, saved, notes = export_one(Path(path), s, policy, conv, use_dng_converter, step,
-                                                   frozenset(taken), item.get("name_values"))
+                                                   frozenset(taken), item.get("name_values"), adjust)
                 if saved is not None and outcome == "ok":
                     taken.append(saved)
                 results.append({"path": path, "outcome": outcome, "output": str(saved) if saved else None,

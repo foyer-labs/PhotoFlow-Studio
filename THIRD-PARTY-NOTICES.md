@@ -58,6 +58,16 @@ Public License (the version of each one, and its full text, is in `licenses/Magi
 - HEIC photos are decoded with libheif and libde265 (HEVC). Patent licensing of HEVC is a separate matter from these
   copyright licenses and is not covered by this file.
 
+## Development engine (engine/, PhotoFlow Studio)
+
+The development engine (`photoflow-engine.exe`, decision D25) is the code of Denoiser under the MIT License
+(`engine/LICENSE`), packaged with PyInstaller and shipped in the `engine` folder of the application. It bundles
+Python, rawpy/LibRaw (LGPL-2.1 or CDDL-1.0, as a separate replaceable library), NumPy, SciPy, OpenCV, scikit-image,
+PyWavelets, tifffile, Pillow, ONNX and ONNX Runtime with DirectML (for metadata it uses the ExifTool of the
+application, listed above); the complete list with licenses is
+[`engine/THIRD-PARTY-NOTICES.md`](engine/THIRD-PARTY-NOTICES.md). The engine of PhotoFlow Studio does not include
+Qt/PySide6 (no Denoiser window). Its neural denoising models are downloaded on first use, after the license is shown.
+
 ## Downloaded at first use (never bundled)
 
 | Component | License | Conditions |

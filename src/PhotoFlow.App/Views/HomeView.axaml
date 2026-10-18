@@ -122,11 +122,17 @@
                 <Button Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding OpenSectionCommand}" CommandParameter="browse">
                   <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Command.Search}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl K" /></Border></Grid>
                 </Button>
+                <Button Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding OpenSectionCommand}" CommandParameter="develop">
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Nav.Develop}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl 4" /></Border></Grid>
+                </Button>
+                <Button Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding OpenSectionCommand}" CommandParameter="export">
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Nav.Export}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl 5" /></Border></Grid>
+                </Button>
                 <Button Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding OpenSectionCommand}" CommandParameter="people">
-                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Nav.People}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl 4" /></Border></Grid>
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Nav.People}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl 6" /></Border></Grid>
                 </Button>
                 <Button Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding OpenSectionCommand}" CommandParameter="duplicates">
-                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Nav.Duplicates}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl 6" /></Border></Grid>
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Nav.Duplicates}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl 8" /></Border></Grid>
                 </Button>
               </UniformGrid>
             </StackPanel>

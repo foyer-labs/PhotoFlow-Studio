@@ -1,4 +1,4 @@
-# CLAUDE.md — PhotoFlow
+# CLAUDE.md — PhotoFlow Studio
 
 Istruzioni permanenti per Claude Code su questo repository. Leggile all'inizio di ogni sessione.
 
@@ -35,6 +35,7 @@ Il test di un'invariante si scrive **prima** del codice che la riguarda.
 - Ricerca testuale e vettoriale solo tramite `ISearchIndex` (predisposizione PostgreSQL).
 - Backend di inferenza solo tramite `IInferenceProvider` (CUDA / CoreML / CPU; nuovi backend solo dopo i test di parità).
   **Eccezione approvata dall'utente (13 ott 2026, decisione U4 in `docs/plans/fase-5b.md`):** le didascalie VLM (livello D, Qwen2.5-VL-7B) girano con ONNX Runtime GenAI in un processo separato (`PhotoFlow.Vlm`) dietro `IImageCaptioner`, con verifica approssimata contro il modello originale (spec §5) invece della parità esatta. Nessun altro modello può usare questa via senza una nuova decisione.
+  **Eccezione PhotoFlow Studio (18 ott 2026, decisione D25 e S1 in `docs/studio/progetto.md`):** sviluppo RAW, riduzione del rumore ed esportazione girano nel motore Python di `engine/` (ex Denoiser), un processo separato (`photoflow-engine.exe`, protocollo JSON su stdin/stdout) dietro `IDevelopEngine`. Il codice del motore segue le convenzioni Python di `engine/` e ha i suoi test (`engine/tests`, pytest).
 - Pipeline: fasi per foto collegate da `System.Threading.Channels` limitati; barriere di lotto come `IBatchStage`.
 - Dependency injection con `Microsoft.Extensions.DependencyInjection`; log con `ILogger` (Serilog come sink).
 

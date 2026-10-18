@@ -1,7 +1,12 @@
-# Guida utente di PhotoFlow 0.1.0
+# Guida utente di PhotoFlow Studio 0.1.0
 
 Benvenuto! Questa guida ti accompagna passo per passo, dall'installazione alla prima foto ritrovata in un secondo.
 Non serve essere esperti di computer: basta sapere come lavori con le tue foto.
+
+> **PhotoFlow Studio** è PhotoFlow con lo sviluppo e la consegna di Denoiser. Questa guida copre import, revisione,
+> ricerca, persone e duplicati (qui «PhotoFlow» è il programma). Per **Sviluppo** ed **Esporta**, e per l'ordine
+> in cui si usa tutto, leggi [Il flusso di lavoro](../studio/flusso.md); per le regolazioni e i metodi di riduzione
+> del rumore, la [guida del motore](../../engine/docs/guida.md).
 
 ---
 
@@ -315,7 +320,7 @@ Esempio: scegli **auto** e **moto** in OR, poi **pista** in AND. Ottieni *(auto 
 | `S` | Trova simili |
 | `Ctrl E` | Apri in Photoshop |
 | `Ctrl Invio` | Apri con l'app predefinita |
-| `Ctrl Maiusc E` | Mostra in Esplora risorse |
+| `Ctrl Maiusc R` | Mostra in Esplora risorse |
 
 ---
 
@@ -597,7 +602,8 @@ La barra di stato in basso mostra sempre i tasti della schermata. Ecco l'elenco 
 
 | Tasto | Azione |
 | --- | --- |
-| `Ctrl 1`-`7` | Passa da una sezione all'altra: `1` Home · `2` Job · `3` Revisione · `4` Persone · `5` Consultazione · `6` Duplicati · `7` Librerie |
+| `Ctrl 1`-`9` | Passa da una sezione all'altra: `1` Home · `2` Job · `3` Revisione · `4` Sviluppo · `5` Esporta · `6` Persone · `7` Consultazione · `8` Duplicati · `9` Librerie |
+| `Ctrl Maiusc E` | Esporta le foto della pagina (apre Esporta) |
 | `Ctrl K` | Cerca ovunque |
 | `Ctrl I` | Importa cartella |
 | `Ctrl ,` | Impostazioni |
@@ -651,7 +657,7 @@ La barra di stato in basso mostra sempre i tasti della schermata. Ecco l'elenco 
 | `1`-`5` | Stelle |
 | `Ctrl E` | Apri in Photoshop |
 | `Ctrl Invio` | Apri con l'app predefinita |
-| `Ctrl Maiusc E` | Mostra in Esplora risorse |
+| `Ctrl Maiusc R` | Mostra in Esplora risorse |
 
 ### Persone
 

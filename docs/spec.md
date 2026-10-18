@@ -70,6 +70,7 @@ Tutte le decisioni sotto sono confermate; ogni modifica richiede una valutazione
 | D22 | Piano di sviluppo | Fasi 0-5 (sezione 13), con fase 0 di setup e laboratorio e fase 5 per rigenerazione completa, didascalie, esportazione catalogo e sincronizzazione esterna | Distribuisce tutte le funzioni definite in fasi chiudibili e utilizzabili |
 | D23 | Passaggio a modalità normale | Si sblocca solo quando tutte e tre le metriche del culling sono entro obiettivo (intervallo di confidenza incluso) | Confermata in Design: evita di passare a rating -1 con metriche ancora incerte |
 | D24 | Decisioni di Design | P1-P20 (sezione 17) confermate e vincolanti per l'implementazione | Emerse durante la progettazione delle schermate, coerenti con i principi della sezione 1 |
+| D25 | PhotoFlow Studio (18 ott 2026) | Sviluppo RAW, riduzione del rumore ed esportazione vengono dal motore Python di Denoiser (`engine/`), avviato come processo separato `photoflow-engine.exe` dietro `IDevelopEngine`; eccezione a D1 limitata a questo motore, come U4 per le didascalie. Decisioni S1-S13 in `docs/studio/progetto.md` | Un solo programma per tutto il ciclo della foto (importa, scegli, sviluppa, consegna) senza riscrivere 9.000 righe di calcolo numerico già verificate |
 
 ## 3. Architettura
 

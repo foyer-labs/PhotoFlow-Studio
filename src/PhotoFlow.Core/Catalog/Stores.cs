@@ -35,6 +35,9 @@ public interface ICatalog : IAsyncDisposable
 
     IReanalysisStore Reanalysis { get; }
 
+    /// <summary>Development settings and exports (PhotoFlow Studio, decision S9).</summary>
+    Develop.IDevelopStore Develop { get; }
+
     /// <summary>Search over the photos of the catalog (spec §3: only through this interface).</summary>
     Search.ISearchIndex Search { get; }
 

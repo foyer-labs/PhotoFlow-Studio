@@ -8,7 +8,7 @@ namespace PhotoFlow.App.Commands;
 
 /// <summary>
 /// One command of a view: id, gesture, label and optional status-bar group. Commands sharing a group
-/// collapse into a single status-bar hint (e.g. "Ctrl 1–7 Sections").
+/// collapse into a single status-bar hint (e.g. "Ctrl 1–9 Sections").
 /// </summary>
 public sealed record CommandDefinition(string Id, KeyGesture Gesture, string LabelKey, string? StatusGroupKey = null, object? Parameter = null);
 

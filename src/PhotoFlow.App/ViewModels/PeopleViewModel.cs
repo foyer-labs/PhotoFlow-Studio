@@ -604,7 +604,7 @@ public sealed partial class PersonPageViewModel : PageViewModel
         new("Person.Order", new KeyGesture(Key.O), "People.Command.Order"),
         new("Person.Back", new KeyGesture(Key.Escape), "People.Command.Back", StatusGroupKey: "People.Command.Back"),
         new("Person.FaceBox", new KeyGesture(Key.V), "People.Command.FaceBox"),
-        new("Person.Explorer", new KeyGesture(Key.E, KeyModifiers.Control | KeyModifiers.Shift), "Browse.Command.Explorer"),
+        new("Person.Explorer", new KeyGesture(Key.R, KeyModifiers.Control | KeyModifiers.Shift), "Browse.Command.Explorer"),
     ]);
 
     private readonly PhotoFlowHost _host;
@@ -1085,7 +1085,7 @@ public sealed partial class PersonPageViewModel : PageViewModel
     [RelayCommand]
     private void ToggleFaceBox() => ShowFaceBox = !ShowFaceBox;
 
-    /// <summary>Ctrl Shift E: Explorer on the folder of the photo, the file selected.</summary>
+    /// <summary>Ctrl Shift R: Explorer on the folder of the photo, the file selected.</summary>
     [RelayCommand]
     private async Task ShowPhotoInExplorerAsync()
     {

@@ -1,0 +1,209 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Develop (decisions S6-S10): toolbar, the photo with before/after, the filmstrip below, the panel on the right with
+     histogram and curve on top, then photo, starting point, light, colour, tones, noise and the advanced options. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:d="using:PhotoFlow.App.Views.Develop"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.DevelopView"
+             x:DataType="vm:DevelopViewModel">
+  <UserControl.Styles>
+    <Style Selector="Grid.row">
+      <Setter Property="Margin" Value="0,2" />
+      <Setter Property="MinHeight" Value="28" />
+    </Style>
+    <Style Selector="Slider">
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="MinHeight" Value="24" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="TextBlock.value">
+      <Setter Property="FontFamily" Value="{StaticResource PF.Font.Mono}" />
+      <Setter Property="FontSize" Value="{StaticResource PF.FontSize.Micro}" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Foreground" Value="{DynamicResource PF.Brush.TextSecondary}" />
+    </Style>
+    <Style Selector="TextBlock.panelHead">
+      <Setter Property="FontFamily" Value="{StaticResource PF.Font.Mono}" />
+      <Setter Property="FontSize" Value="{StaticResource PF.FontSize.Micro}" />
+      <Setter Property="Foreground" Value="{DynamicResource PF.Brush.TextTertiary}" />
+      <Setter Property="Margin" Value="0,14,0,4" />
+    </Style>
+    <Style Selector="Border.strip">
+      <Setter Property="Width" Value="112" />
+      <Setter Property="Height" Value="96" />
+      <Setter Property="Margin" Value="0,0,6,0" />
+      <Setter Property="CornerRadius" Value="{StaticResource PF.Radius.Photo}" />
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Background" Value="{DynamicResource PF.Brush.Panel}" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="Border.strip.selected">
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.BorderStrong}" />
+    </Style>
+    <Style Selector="Border.strip.active">
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.Accent}" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid ColumnDefinitions="*,340">
+    <!-- ============================================================ photo, toolbar, filmstrip -->
+    <Grid RowDefinitions="Auto,*,Auto">
+      <Border BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,0,1" Padding="12,8">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+          <StackPanel Spacing="2" VerticalAlignment="Center">
+            <TextBlock Classes="label" Text="{Binding Origin}" TextTrimming="CharacterEllipsis" />
+            <TextBlock Classes="micro tertiary" Text="{Binding Counters}" />
+          </StackPanel>
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+            <Button Classes="chip" Classes.active="{Binding ActualSize}" Command="{Binding ToggleZoomCommand}" ToolTip.Tip="{l:Tr Develop.Tip.Zoom}">
+              <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Develop.Zoom}" /><TextBlock Classes="micro tertiary" Text="{l:Tr Review.Key.Space}" /></StackPanel>
+            </Button>
+            <Button Classes="chip" Command="{Binding CycleCompareCommand}" ToolTip.Tip="{l:Tr Develop.Tip.Compare}">
+              <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Develop.Compare}" /><TextBlock Classes="micro tertiary" Text="Y" /></StackPanel>
+            </Button>
+            <Button Classes="chip" Classes.active="{Binding IsPicking}" Command="{Binding PickCommand}" ToolTip.Tip="{l:Tr Develop.Tip.Pick}">
+              <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Develop.Pick}" /><TextBlock Classes="micro tertiary" Text="W" /></StackPanel>
+            </Button>
+            <Button Classes="ghost" Command="{Binding UndoCommand}" ToolTip.Tip="{l:Tr Develop.Command.Undo}"><TextBlock Classes="label" Text="↶" /></Button>
+            <Button Classes="ghost" Command="{Binding RedoCommand}" ToolTip.Tip="{l:Tr Develop.Command.Redo}"><TextBlock Classes="label" Text="↷" /></Button>
+            <Button Classes="primary" Command="{Binding ExportCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="{l:Tr Develop.Export}" />
+                <Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="Ctrl Maiusc E" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border>
+              </StackPanel>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <Panel Grid.Row="1">
+        <d:DevelopViewer x:Name="Viewer" Before="{Binding Before}" After="{Binding After}" Difference="{Binding Difference}" Region="{Binding Region}"
+                         ActualSize="{Binding ActualSize}" Mode="{Binding CompareMode}" ShowOriginal="{Binding ShowOriginal}" Picking="{Binding IsPicking}"
+                         BeforeLabel="{l:Tr Develop.Label.Before}" AfterLabel="{Binding AfterLabel}" />
+        <ProgressBar Classes="thin" VerticalAlignment="Top" Minimum="0" Maximum="1" Value="{Binding NoiseProgress}" IsVisible="{Binding IsComputing}" />
+        <!-- Empty: where the photos come from -->
+        <StackPanel IsVisible="{Binding IsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" Width="480">
+          <TextBlock Classes="subtitle" HorizontalAlignment="Center" Text="{l:Tr Develop.Empty.Title}" />
+          <TextBlock Classes="body tertiary" TextAlignment="Center" TextWrapping="Wrap" Text="{l:Tr Develop.Empty.Body}" />
+          <Button Classes="secondary" HorizontalAlignment="Center" Command="{Binding UseLatestBestCommand}" Content="{l:Tr Develop.Empty.UseLatest}" />
+        </StackPanel>
+        <TextBlock IsVisible="{Binding IsBusy}" HorizontalAlignment="Center" VerticalAlignment="Center" Classes="body secondary" Text="{l:Tr Develop.Opening}" />
+        <Border IsVisible="{Binding EngineProblem, Converter={x:Static ObjectConverters.IsNotNull}}" Classes="cardError" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520" Padding="16">
+          <TextBlock Classes="body" TextWrapping="Wrap" Text="{Binding EngineProblem}" />
+        </Border>
+        <Border IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="12"
+                Padding="12,6" CornerRadius="4" Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Classes="body" Text="{Binding Message}" TextWrapping="Wrap" MaxWidth="640" VerticalAlignment="Center" />
+            <Button Classes="ghost" IsVisible="{Binding UndoBulkVisible}" Command="{Binding UndoBulkCommand}" Content="{l:Tr Develop.ApplySelected.Undo}" />
+          </StackPanel>
+        </Border>
+      </Panel>
+
+      <!-- Filmstrip: the working selection; Ctrl+click selects more photos -->
+      <Border Grid.Row="2" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,1,0,0" Padding="8,8,8,6" IsVisible="{Binding !IsEmpty}">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+          <ItemsControl x:Name="Strip" ItemsSource="{Binding Photos}">
+            <ItemsControl.ItemsPanel><ItemsPanelTemplate><VirtualizingStackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:DevelopPhotoItem">
+                <Border Classes="strip" Classes.active="{Binding IsActive}" Classes.selected="{Binding IsSelected}" ToolTip.Tip="{Binding Name}"
+                        PointerPressed="OnStripPressed">
+                  <Grid RowDefinitions="*,Auto">
+                    <Image Source="{Binding Thumbnail}" Stretch="Uniform" Margin="2" />
+                    <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="4,0,4,2">
+                      <TextBlock Classes="micro tertiary" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="3">
+                        <TextBlock Classes="micro" Text="◐" IsVisible="{Binding IsDeveloped}" ToolTip.Tip="{l:Tr Develop.Developed}" />
+                        <TextBlock Classes="micro" Text="↗" IsVisible="{Binding IsExported}" ToolTip.Tip="{l:Tr Develop.Exported}" />
+                        <TextBlock Classes="micro" Text="✓" IsVisible="{Binding IsSelected}" />
+                      </StackPanel>
+                    </Grid>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Border>
+    </Grid>
+
+    <!-- ============================================================ panel -->
+    <Border Grid.Column="1" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1,0,0,0" Background="{DynamicResource PF.Brush.Panel}">
+      <ScrollViewer VerticalScrollBarVisibility="Auto" IsEnabled="{Binding HasPhoto}">
+        <StackPanel Margin="14,10,14,16">
+          <d:CurveEditor x:Name="Curve" Histogram="{Binding Histogram}" />
+          <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,0">
+            <Button Classes="ghost" Command="{Binding ResetCurveCommand}" Content="{l:Tr Develop.Curve.Reset}" />
+            <Button Grid.Column="1" Classes="ghost" Command="{Binding ResetDevelopmentCommand}" Content="{l:Tr Develop.Reset}" />
+          </Grid>
+
+          <TextBlock Classes="panelHead" Text="{l:Tr Develop.Section.Photo}" />
+          <TextBlock Classes="label" Text="{Binding PhotoTitle}" TextTrimming="CharacterEllipsis" />
+          <TextBlock Classes="micro tertiary" Text="{Binding PhotoFacts}" TextWrapping="Wrap" />
+          <TextBlock Classes="micro secondary" Text="{Binding NoiseFacts}" TextWrapping="Wrap" />
+          <TextBlock Classes="micro" Foreground="{DynamicResource PF.Brush.Accent}" Text="{Binding AutoText}" TextWrapping="Wrap"
+                     IsVisible="{Binding AutoText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+          <TextBlock Classes="panelHead" Text="{l:Tr Develop.Section.Start}" />
+          <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding Presets}" SelectedItem="{Binding Preset}" PlaceholderText="{l:Tr Develop.Preset.Choose}" />
+
+          <TextBlock Classes="panelHead" Text="{l:Tr Develop.Section.Light}" />
+          <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Exposure}" /><Slider Grid.Column="1" Minimum="-5" Maximum="5" SmallChange="0.05" Value="{Binding Exposure}" Tag="0" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Exposure, StringFormat={}{0:+0.00;-0.00;0.00}}" /></Grid>
+          <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Highlights}" /><Slider Grid.Column="1" Minimum="-100" Maximum="100" SmallChange="1" Value="{Binding Highlights}" Tag="0" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Highlights, StringFormat={}{0:+0;-0;0}}" /></Grid>
+          <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Shadows}" /><Slider Grid.Column="1" Minimum="-100" Maximum="100" SmallChange="1" Value="{Binding Shadows}" Tag="0" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Shadows, StringFormat={}{0:+0;-0;0}}" /></Grid>
+          <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Brightness}" /><Slider Grid.Column="1" Minimum="-100" Maximum="100" SmallChange="1" Value="{Binding Brightness}" Tag="0" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Brightness, StringFormat={}{0:+0;-0;0}}" /></Grid>
+          <CheckBox IsVisible="{Binding IsRaw}" IsChecked="{Binding AutoBrightness}" Content="{l:Tr Develop.AutoBrightness}" />
+
+          <TextBlock Classes="panelHead" Text="{l:Tr Develop.Section.Colour}" />
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+            <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding WhiteBalanceModes}" SelectedItem="{Binding WhiteBalance}" />
+            <Button Grid.Column="1" Classes="secondary" Classes.active="{Binding IsPicking}" Command="{Binding PickCommand}" ToolTip.Tip="{l:Tr Develop.Tip.Pick}" Content="{l:Tr Develop.Pick}" />
+          </Grid>
+          <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Temperature}" /><Slider Grid.Column="1" Minimum="2000" Maximum="15000" SmallChange="50" Value="{Binding Temperature}" Tag="5500" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Temperature, StringFormat={}{0:0} K}" /></Grid>
+          <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Tint}" /><Slider Grid.Column="1" Minimum="-150" Maximum="150" SmallChange="1" Value="{Binding Tint}" Tag="0" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Tint, StringFormat={}{0:+0;-0;0}}" /></Grid>
+          <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Saturation}" /><Slider Grid.Column="1" Minimum="-100" Maximum="100" SmallChange="1" Value="{Binding Saturation}" Tag="0" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Saturation, StringFormat={}{0:+0;-0;0}}" /></Grid>
+
+          <TextBlock Classes="panelHead" Text="{l:Tr Develop.Section.Tones}" />
+          <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Contrast}" /><Slider Grid.Column="1" Minimum="-100" Maximum="100" SmallChange="1" Value="{Binding Contrast}" Tag="0" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Contrast, StringFormat={}{0:+0;-0;0}}" /></Grid>
+
+          <Grid ColumnDefinitions="*,Auto" Margin="0,14,0,4">
+            <TextBlock Classes="panelHead" Margin="0" VerticalAlignment="Center" Text="{l:Tr Develop.Section.Noise}" />
+            <ToggleSwitch Grid.Column="1" IsChecked="{Binding NoiseEnabled}" OnContent="" OffContent="" ToolTip.Tip="{l:Tr Develop.Command.Noise}" />
+          </Grid>
+          <TextBlock Classes="micro secondary" Text="{Binding NoiseBadge}" />
+          <StackPanel IsEnabled="{Binding NoiseEnabled}" Spacing="2">
+            <ComboBox HorizontalAlignment="Stretch" Margin="0,4" ItemsSource="{Binding Methods}" SelectedItem="{Binding Method}" />
+            <Button Classes="secondary" HorizontalAlignment="Stretch" IsVisible="{Binding DownloadText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                    Command="{Binding DownloadMethodCommand}" Content="{Binding DownloadText}" />
+            <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Grain}" /><Slider Grid.Column="1" Minimum="0" Maximum="3" SmallChange="0.05" Value="{Binding Grain}" Tag="1" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Grain, StringFormat={}{0:0.00}}" /></Grid>
+            <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.ColorNoise}" /><Slider Grid.Column="1" Minimum="0" Maximum="4" SmallChange="0.05" Value="{Binding ColorNoise}" Tag="1" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding ColorNoise, StringFormat={}{0:0.00}}" /></Grid>
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Develop.Grain.Hint}" />
+          </StackPanel>
+
+          <Expander Margin="0,12,0,0" Header="{l:Tr Develop.Section.Advanced}" IsExpanded="{Binding ShowAdvanced}" HorizontalAlignment="Stretch">
+            <StackPanel Spacing="4">
+              <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Detail}" /><Slider Grid.Column="1" Minimum="0" Maximum="1" SmallChange="0.05" Value="{Binding Detail}" Tag="0" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Detail, StringFormat={}{0:0.00}}" /></Grid>
+              <CheckBox IsChecked="{Binding HotPixels}" Content="{l:Tr Develop.HotPixels}" />
+              <CheckBox IsVisible="{Binding IsRaw}" IsChecked="{Binding SensorStage}" Content="{l:Tr Develop.SensorStage}" />
+              <Grid IsVisible="{Binding IsRaw}" ColumnDefinitions="92,*"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Demosaic}" /><ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding DemosaicOptions}" SelectedItem="{Binding Demosaic}" /></Grid>
+            </StackPanel>
+          </Expander>
+
+          <TextBlock Classes="panelHead" Text="{l:Tr Develop.Section.More}" />
+          <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding ApplySelectedCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{Binding ApplySelectedText}" /><Border Classes="key"><TextBlock Text="Ctrl Maiusc S" /></Border></StackPanel>
+          </Button>
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="6" Margin="0,6,0,0">
+            <Button Classes="ghost" HorizontalAlignment="Stretch" Command="{Binding CopyCommand}" Content="{l:Tr Develop.Copy}" />
+            <Button Grid.Column="1" Classes="ghost" HorizontalAlignment="Stretch" Command="{Binding PasteCommand}" Content="{l:Tr Develop.Paste}" />
+          </Grid>
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</UserControl>

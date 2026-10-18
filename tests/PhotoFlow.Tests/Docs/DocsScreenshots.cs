@@ -59,7 +59,7 @@ public sealed class DocsScreenshots : IDisposable
         }
     }
 
-    private static string MountDemoDrive(string folder)
+    internal static string MountDemoDrive(string folder)
     {
         if (!OperatingSystem.IsWindows())
         {
@@ -77,7 +77,7 @@ public sealed class DocsScreenshots : IDisposable
         return folder;
     }
 
-    private static bool RunSubst(string arguments)
+    internal static bool RunSubst(string arguments)
     {
         using var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("subst", arguments) { UseShellExecute = false, CreateNoWindow = true })!;
         process.WaitForExit();
@@ -86,107 +86,16 @@ public sealed class DocsScreenshots : IDisposable
 
     private static async Task ShootAsync(string drive, string output, CancellationToken ct)
     {
-        var root = Path.Combine(drive, "Foto");
-        Directory.CreateDirectory(root);
-        var shots = DemoCatalog.Shots;
-        await using (var exif = ExifToolFixture.Start())
-        {
-            foreach (var shot in shots)
-            {
-                var folder = Path.Combine(root, shot.Folder);
-                Directory.CreateDirectory(folder);
-                var path = Path.Combine(folder, shot.File);
-                DemoScenes.Draw(shot.Scene, shot.Seed, path);
-                await exif.ExecuteAsync(["-overwrite_original", $"-DateTimeOriginal={shot.Taken:yyyy:MM:dd HH:mm:ss}", "-Make=Nikon", "-Model=Z 5_2",
-                    $"-ExposureTime={shot.Exposure}", $"-FNumber={shot.Aperture}", $"-ISO={shot.Iso}", $"-FocalLength={shot.Focal}", path], ct);
-            }
-        }
-
-        // An exact copy, for the duplicates.
-        Directory.CreateDirectory(Path.Combine(root, "Copia di sicurezza"));
-        File.Copy(Path.Combine(root, shots[0].Folder, shots[0].File), Path.Combine(root, "Copia di sicurezza", shots[0].File));
-
-        var paths = new DefaultAppPaths(Path.Combine(drive, "PhotoFlow"));
-        await using var host = await PhotoFlowHost.StartAsync(paths, ct);
-        await host.UpdateSettingsAsync(s => s with { SetupCompleted = true, Import = s.Import with { PrimaryRoot = root } }, ct);
-        host.ProcessorOverride = new DemoProcessor(host);
+        var (host, byFile, persons) = await PrepareAsync(drive, ct);
+        await using var _ = host;
         var catalog = host.Catalog;
-        var libraryId = await catalog.Libraries.AddAsync(new Library(0, "Foto", root, WritePolicy.SidecarOnly, false, LibraryOrigin.ExistingArchive, null), ct);
-        var jobId = await host.StartArchiveAnalysisAsync(libraryId, "events", ArchiveOrder.ByFolder, ct);
-        await WaitAsync(async () => (await catalog.Jobs.GetAsync(jobId, ct))?.State == JobState.Completed, 120);
-
-        // Events, people and the user's touches.
-        var byFile = new Dictionary<string, long>();
-        foreach (var item in await catalog.Jobs.GetItemsAsync(jobId, ct))
-        {
-            if (item.AssetId is { } id)
-            {
-                byFile.TryAdd(Path.GetFileName(item.SourcePath), id);
-            }
-        }
-
-        foreach (var byEvent in shots.GroupBy(s => s.Event))
-        {
-            var key = PhotoFlow.Tagging.Vocabulary.TaggingStage.EventPrefix + byEvent.Key;
-            await catalog.Tags.EnsureAsync(key, TagSource.Job, PhotoFlow.Tagging.Vocabulary.TaggingStage.EventCategory, byEvent.Key, reviewed: true, ct);
-            foreach (var shot in byEvent.Where(s => byFile.ContainsKey(s.File)))
-            {
-                await catalog.Tags.ReplaceAutomaticAsync(byFile[shot.File], TagSource.Job, null, [(key, null)], ct);
-            }
-        }
-
-        var persons = new Dictionary<string, long>();
-        foreach (var name in DemoCatalog.People)
-        {
-            persons[name] = await catalog.People.CreatePersonAsync(name, ct);
-        }
-
-        foreach (var shot in shots.Where(s => byFile.ContainsKey(s.File)))
-        {
-            var faces = await catalog.Analysis.GetFacesAsync(byFile[shot.File], ct);
-            for (var i = 0; i < Math.Min(faces.Count, shot.People.Length); i++)
-            {
-                if (shot.People[i] is { } person)
-                {
-                    await catalog.People.AssignManualAsync([faces[i].Id], persons[person], ct);
-                }
-            }
-        }
-
-        foreach (var shot in shots.Where(s => s.Stars > 0 && byFile.ContainsKey(s.File)))
-        {
-            await catalog.Decisions.SetUserAsync(byFile[shot.File], CullingOutcome.Kept, shot.Stars, null, ct);
-        }
-
-        foreach (var key in DemoCatalog.ReviewedTags)
-        {
-            if (await catalog.Tags.FindAsync(key, ct) is { } tag)
-            {
-                await catalog.Tags.UpdateAsync(tag.Id, tag.Italian, reviewed: true, tag.Category, tag.Blacklisted, ct);
-            }
-        }
+        var root = Path.Combine(drive, "Foto");
 
         // The tour of the screens.
         using var shell = new MainWindowViewModel(host);
         var window = new MainWindow { DataContext = shell, Width = 1440, Height = 900 };
         window.Show();
-        async Task Shot(string name, Func<Task>? settle = null)
-        {
-            for (var i = 0; i < 40; i++)
-            {
-                Dispatcher.UIThread.RunJobs();
-                await Task.Delay(25);
-            }
-
-            if (settle is not null)
-            {
-                await settle();
-            }
-
-            Dispatcher.UIThread.RunJobs();
-            var frame = window.CaptureRenderedFrame()!;
-            frame.Save(Path.Combine(output, name + ".png"), new Avalonia.Media.Imaging.PngBitmapEncoderOptions());
-        }
+        Task Shot(string name, Func<Task>? settle = null) => ShotAsync(window, output, name, settle);
 
         shell.ShowSection(SectionCatalog.Home);
         shell.RefreshStatus();
@@ -263,9 +172,117 @@ public sealed class DocsScreenshots : IDisposable
         await Shot("13-import");
     }
 
+    /// <summary>A screenshot of the window once the pending work of the interface has settled.</summary>
+    internal static async Task ShotAsync(Window window, string output, string name, Func<Task>? settle = null)
+    {
+        for (var i = 0; i < 40; i++)
+        {
+            Dispatcher.UIThread.RunJobs();
+            await Task.Delay(25);
+        }
+
+        if (settle is not null)
+        {
+            await settle();
+        }
+
+        Dispatcher.UIThread.RunJobs();
+        var frame = window.CaptureRenderedFrame()!;
+        frame.Save(Path.Combine(output, name + ".png"), new Avalonia.Media.Imaging.PngBitmapEncoderOptions());
+    }
+
+    /// <summary>
+    /// The demo catalog on <paramref name="drive"/>: the pictures, analyzed by a real archive job, then the events,
+    /// people, stars and reviewed tags a user would have set.
+    /// </summary>
+    internal static async Task<(PhotoFlowHost Host, Dictionary<string, long> ByFile, Dictionary<string, long> Persons)> PrepareAsync(string drive, CancellationToken ct)
+    {
+        var root = Path.Combine(drive, "Foto");
+        Directory.CreateDirectory(root);
+        var shots = DemoCatalog.Shots;
+        await using (var exif = ExifToolFixture.Start())
+        {
+            foreach (var shot in shots)
+            {
+                var folder = Path.Combine(root, shot.Folder);
+                Directory.CreateDirectory(folder);
+                var path = Path.Combine(folder, shot.File);
+                DemoScenes.Draw(shot.Scene, shot.Seed, path);
+                await exif.ExecuteAsync(["-overwrite_original", $"-DateTimeOriginal={shot.Taken:yyyy:MM:dd HH:mm:ss}", "-Make=Nikon", "-Model=Z 5_2",
+                    $"-ExposureTime={shot.Exposure}", $"-FNumber={shot.Aperture}", $"-ISO={shot.Iso}", $"-FocalLength={shot.Focal}", path], ct);
+            }
+        }
+
+        // An exact copy, for the duplicates.
+        Directory.CreateDirectory(Path.Combine(root, "Copia di sicurezza"));
+        File.Copy(Path.Combine(root, shots[0].Folder, shots[0].File), Path.Combine(root, "Copia di sicurezza", shots[0].File));
+
+        var paths = new DefaultAppPaths(Path.Combine(drive, "PhotoFlow"));
+        var host = await PhotoFlowHost.StartAsync(paths, ct);
+        await host.UpdateSettingsAsync(s => s with { SetupCompleted = true, Import = s.Import with { PrimaryRoot = root } }, ct);
+        host.ProcessorOverride = new DemoProcessor(host);
+        var catalog = host.Catalog;
+        var libraryId = await catalog.Libraries.AddAsync(new Library(0, "Foto", root, WritePolicy.SidecarOnly, false, LibraryOrigin.ExistingArchive, null), ct);
+        var jobId = await host.StartArchiveAnalysisAsync(libraryId, "events", ArchiveOrder.ByFolder, ct);
+        await WaitAsync(async () => (await catalog.Jobs.GetAsync(jobId, ct))?.State == JobState.Completed, 120);
+
+        // Events, people and the user's touches.
+        var byFile = new Dictionary<string, long>();
+        foreach (var item in await catalog.Jobs.GetItemsAsync(jobId, ct))
+        {
+            if (item.AssetId is { } id)
+            {
+                byFile.TryAdd(Path.GetFileName(item.SourcePath), id);
+            }
+        }
+
+        foreach (var byEvent in shots.GroupBy(s => s.Event))
+        {
+            var key = PhotoFlow.Tagging.Vocabulary.TaggingStage.EventPrefix + byEvent.Key;
+            await catalog.Tags.EnsureAsync(key, TagSource.Job, PhotoFlow.Tagging.Vocabulary.TaggingStage.EventCategory, byEvent.Key, reviewed: true, ct);
+            foreach (var shot in byEvent.Where(s => byFile.ContainsKey(s.File)))
+            {
+                await catalog.Tags.ReplaceAutomaticAsync(byFile[shot.File], TagSource.Job, null, [(key, null)], ct);
+            }
+        }
+
+        var persons = new Dictionary<string, long>();
+        foreach (var name in DemoCatalog.People)
+        {
+            persons[name] = await catalog.People.CreatePersonAsync(name, ct);
+        }
+
+        foreach (var shot in shots.Where(s => byFile.ContainsKey(s.File)))
+        {
+            var faces = await catalog.Analysis.GetFacesAsync(byFile[shot.File], ct);
+            for (var i = 0; i < Math.Min(faces.Count, shot.People.Length); i++)
+            {
+                if (shot.People[i] is { } person)
+                {
+                    await catalog.People.AssignManualAsync([faces[i].Id], persons[person], ct);
+                }
+            }
+        }
+
+        foreach (var shot in shots.Where(s => s.Stars > 0 && byFile.ContainsKey(s.File)))
+        {
+            await catalog.Decisions.SetUserAsync(byFile[shot.File], CullingOutcome.Kept, shot.Stars, null, ct);
+        }
+
+        foreach (var key in DemoCatalog.ReviewedTags)
+        {
+            if (await catalog.Tags.FindAsync(key, ct) is { } tag)
+            {
+                await catalog.Tags.UpdateAsync(tag.Id, tag.Italian, reviewed: true, tag.Category, tag.Blacklisted, ct);
+            }
+        }
+
+        return (host, byFile, persons);
+    }
+
     public void Dispose() => _temp.Dispose();
 
-    private static async Task WaitAsync(Func<Task<bool>> condition, int seconds)
+    internal static async Task WaitAsync(Func<Task<bool>> condition, int seconds)
     {
         var deadline = DateTime.UtcNow.AddSeconds(seconds);
         while (!await condition())

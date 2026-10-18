@@ -88,6 +88,8 @@ public sealed partial class MainWindowViewModel : ObservableObject, IShellNaviga
             ({ } host, SectionCatalog.Home) => new HomeViewModel(host, this, (card, folder) => new ImportWizardViewModel(host, this, card, folder)),
             ({ } host, SectionCatalog.Jobs) => new JobsViewModel(host, this),
             ({ } host, SectionCatalog.Review) => new ReviewViewModel(host, this),
+            ({ } host, SectionCatalog.Develop) => new DevelopViewModel(host, this),
+            ({ } host, SectionCatalog.Export) => new ExportViewModel(host, this),
             ({ } host, SectionCatalog.Libraries) => new LibrariesViewModel(host, this),
             ({ } host, SectionCatalog.People) => new PeopleViewModel(host, this),
             ({ } host, SectionCatalog.Profiles) => new ProfilesViewModel(host),
@@ -192,8 +194,21 @@ public sealed partial class MainWindowViewModel : ObservableObject, IShellNaviga
         GlobalCommands.FocusSearch => FocusSearchCommand,
         GlobalCommands.OpenSettings => OpenSettingsCommand,
         GlobalCommands.ImportFolder => ImportFolderCommand,
+        GlobalCommands.Export => ExportSelectionCommand,
         _ => throw new ArgumentOutOfRangeException(nameof(id), id, "Unknown command."),
     };
+
+    /// <summary>Ctrl Maiusc E: the photos of the current page become the working selection, then Export (decision S11).</summary>
+    [RelayCommand]
+    private async Task ExportSelectionAsync()
+    {
+        if (CurrentPage is IPhotoSource source)
+        {
+            await source.SendToWorkingSetAsync(forExport: true);
+        }
+
+        Navigate(SectionCatalog.Export);
+    }
 
     [RelayCommand]
     private void Navigate(string? sectionId)
