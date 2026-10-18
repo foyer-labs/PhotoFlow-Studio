@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Separate process for the scenario tests that terminate a job midway (spec §14, plans 1.8 and 1b.7). -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PhotoFlow.Core\PhotoFlow.Core.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Data\PhotoFlow.Data.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Sources\PhotoFlow.Sources.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Imaging\PhotoFlow.Imaging.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Analysis\PhotoFlow.Analysis.csproj" />
+  </ItemGroup>
+</Project>

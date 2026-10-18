@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Domain, interfaces and orchestration. No external dependencies (CLAUDE.md §3). -->
+  <PropertyGroup>
+    <RootNamespace>PhotoFlow.Core</RootNamespace>
+  </PropertyGroup>
+</Project>

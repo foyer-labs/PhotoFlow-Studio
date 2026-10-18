@@ -1,0 +1,384 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Review, boards 2a (grid by bursts), 2b (comparison), 2e (waiting), 2f (empty), 2g (confirmation), 2h (partial error).
+     Rows are virtualized: a row is a group header or N photos. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.ReviewView"
+             x:DataType="vm:ReviewViewModel">
+  <UserControl.Styles>
+    <Style Selector="Border.cell">
+      <Setter Property="Margin" Value="0,0,4,4" />
+      <Setter Property="CornerRadius" Value="{StaticResource PF.Radius.Photo}" />
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Background" Value="{DynamicResource PF.Brush.Panel}" />
+    </Style>
+    <Style Selector="Border.cell.best">
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.Outcome.Best}" />
+    </Style>
+    <Style Selector="Border.cell.selected">
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.Accent}" />
+    </Style>
+    <Style Selector="Border.badge">
+      <Setter Property="CornerRadius" Value="3" />
+      <Setter Property="Padding" Value="4,0" />
+      <Setter Property="Background" Value="{DynamicResource PF.Brush.Outcome.Kept}" />
+    </Style>
+    <Style Selector="Border.badge.Discard"><Setter Property="Background" Value="{DynamicResource PF.Brush.Outcome.Discard}" /></Style>
+    <Style Selector="Border.badge.ToReview"><Setter Property="Background" Value="{DynamicResource PF.Brush.Outcome.ToReview}" /></Style>
+    <Style Selector="Border.badge.Best"><Setter Property="Background" Value="{DynamicResource PF.Brush.Outcome.Best}" /></Style>
+    <Style Selector="Border.badge.Similar"><Setter Property="Background" Value="{DynamicResource PF.Brush.Outcome.Similar}" /></Style>
+    <Style Selector="Border.badge.None"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="Border.badge TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource PF.Brush.Window}" />
+      <Setter Property="FontFamily" Value="{StaticResource PF.Font.Mono}" />
+      <Setter Property="FontSize" Value="{StaticResource PF.FontSize.Micro}" />
+    </Style>
+    <Style Selector="Border.person">
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="10,2" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.BorderStrong}" />
+      <Setter Property="Background" Value="{DynamicResource PF.Brush.Control}" />
+    </Style>
+    <Style Selector="Border.compareCell"><Setter Property="BorderBrush" Value="Transparent" /></Style>
+    <Style Selector="Border.compareCell.focused"><Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.Accent}" /></Style>
+    <Style Selector="Border.person.suggestion">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.Outcome.ToReview}" />
+    </Style>
+  </UserControl.Styles>
+
+  <Panel>
+    <!-- 2f: nothing to review -->
+    <StackPanel IsVisible="{Binding NoJob}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" Width="460">
+      <TextBlock Classes="subtitle" HorizontalAlignment="Center" Text="{l:Tr Review.Empty.Title}" />
+      <TextBlock Classes="body tertiary" TextAlignment="Center" TextWrapping="Wrap" Text="{l:Tr Review.Empty.Body}" />
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+        <Button Classes="secondary" Command="{Binding LabelingCommand}">
+          <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Review.Mode.Labeling}" /><Border Classes="key"><TextBlock Text="L" /></Border></StackPanel>
+        </Button>
+      </StackPanel>
+      <TextBlock Classes="micro tertiary" TextAlignment="Center" TextWrapping="Wrap" Text="{l:Tr Review.Empty.Reopen}" />
+    </StackPanel>
+
+    <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding !NoJob}">
+      <Grid RowDefinitions="Auto,Auto,Auto,Auto,*">
+        <!-- Header -->
+        <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="24" Margin="16,12">
+          <StackPanel Spacing="2">
+            <TextBlock Classes="subtitle" Text="{Binding JobTitle}" />
+            <TextBlock Classes="micro tertiary" Text="{Binding JobMeta}" />
+          </StackPanel>
+          <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+            <TextBlock Classes="micro tertiary" Text="{l:Tr Review.YourDecisions}" />
+            <TextBlock Classes="data" Text="{Binding ManualCount}" />
+          </StackPanel>
+          <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
+            <TextBlock Classes="micro tertiary" Text="{l:Tr Review.XmpPending}" />
+            <TextBlock Classes="data" Text="{Binding PendingXmp}" />
+          </StackPanel>
+          <Button x:Name="ConfirmButton" Grid.Column="3" Classes="primary" Command="{Binding ConfirmCommand}" IsEnabled="{Binding !IsWriting}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{l:Tr Review.Confirm}" />
+              <Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="Ctrl ↵" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border>
+            </StackPanel>
+          </Button>
+        </Grid>
+
+        <!-- Modes, filters, sizes -->
+        <Border Grid.Row="1" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,1,0,1" Padding="16,8">
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <Button Classes="chip" Classes.active="{Binding IsGrid}" Command="{Binding ShowGridCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Review.Mode.Grid}" /><TextBlock Classes="micro tertiary" Text="G" /></StackPanel>
+              </Button>
+              <Button Classes="chip" Classes.active="{Binding IsCompare}" Command="{Binding CompareCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Review.Mode.Compare}" /><TextBlock Classes="micro tertiary" Text="C" /></StackPanel>
+              </Button>
+              <Button Classes="chip" Command="{Binding NumbersCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Review.Mode.Numbers}" /><TextBlock Classes="micro tertiary" Text="N" /></StackPanel>
+              </Button>
+              <Button Classes="chip" Command="{Binding LabelingCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Review.Mode.Labeling}" /><TextBlock Classes="micro tertiary" Text="L" /></StackPanel>
+              </Button>
+            </StackPanel>
+            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" IsVisible="{Binding !IsAnalyzing}">
+            <ItemsControl ItemsSource="{Binding Filters}">
+              <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="8" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:OutcomeFilterViewModel">
+                  <Button Classes="chip" Classes.active="{Binding IsActive}"
+                          Command="{Binding $parent[UserControl].((vm:ReviewViewModel)DataContext).SetFilterCommand}" CommandParameter="{Binding}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBlock Classes="label" Text="{Binding Label}" />
+                      <TextBlock Classes="micro tertiary" VerticalAlignment="Center" Text="{Binding Count}" />
+                    </StackPanel>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            </ScrollViewer>
+            <TextBlock Grid.Column="1" Classes="label tertiary" VerticalAlignment="Center" IsVisible="{Binding IsAnalyzing}" Text="{l:Tr Review.Analyzing.Filters}" />
+            <TextBlock Grid.Column="2" Classes="micro tertiary" VerticalAlignment="Center" Text="{Binding SizeLabel}" />
+          </Grid>
+        </Border>
+
+        <!-- 2e: still analyzing -->
+        <Border Grid.Row="2" Classes="card" Margin="16,12,16,0" Padding="16,12" IsVisible="{Binding IsAnalyzing}">
+          <StackPanel Spacing="4">
+            <TextBlock Classes="label" Text="{Binding AnalysisProgress}" />
+            <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{l:Tr Review.Analyzing.Body}" />
+          </StackPanel>
+        </Border>
+
+        <!-- 2h: result of the writing; status messages -->
+        <StackPanel Grid.Row="3" Margin="16,12,16,0" Spacing="8">
+          <Border Classes="card" Padding="16,12" IsVisible="{Binding ResultMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+            <StackPanel Spacing="8">
+              <TextBlock Classes="label" Text="{Binding ResultMessage}" />
+              <TextBlock Classes="label error" TextWrapping="Wrap" Text="{Binding ResultError}" IsVisible="{Binding ResultError, Converter={x:Static ObjectConverters.IsNotNull}}" />
+              <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding HasFailures}">
+                <Button Classes="secondary" Command="{Binding RetryXmpCommand}">
+                  <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Review.Retry}" /><Border Classes="key"><TextBlock Text="Ctrl R" /></Border></StackPanel>
+                </Button>
+                <Button Classes="secondary" Command="{Binding CatalogOnlyCommand}" Content="{l:Tr Review.CatalogOnly}" />
+              </StackPanel>
+              <Button Classes="ghost" HorizontalAlignment="Left" IsVisible="{Binding HasNewPeople}" Command="{Binding OpenPeopleCommand}" Content="{Binding OpenPeopleText}" />
+            </StackPanel>
+          </Border>
+          <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding StatusMessage}" IsVisible="{Binding StatusMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+        </StackPanel>
+
+        <!-- Grid by bursts -->
+        <Panel Grid.Row="4" IsVisible="{Binding IsGrid}">
+          <StackPanel IsVisible="{Binding !HasRows}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="6">
+            <TextBlock Classes="subtitle" HorizontalAlignment="Center" Text="{Binding EmptyText}" />
+            <TextBlock Classes="label tertiary" HorizontalAlignment="Center" Text="{l:Tr Review.Empty.FilterHint}" />
+          </StackPanel>
+          <ListBox x:Name="RowsList" ItemsSource="{Binding Rows}" Background="{DynamicResource PF.Brush.GridArea}" Padding="16,12,8,12" Focusable="False">
+            <ListBox.Styles>
+              <Style Selector="ListBoxItem">
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Focusable" Value="False" />
+              </Style>
+              <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter, ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="Transparent" />
+              </Style>
+            </ListBox.Styles>
+            <ListBox.DataTemplates>
+              <DataTemplate DataType="vm:ReviewHeaderRow">
+                <Border Margin="0,12,4,6" Padding="0,0,0,6" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,0,1">
+                  <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <StackPanel Spacing="2">
+                      <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Classes="label" Text="{Binding Group.Title}" />
+                        <TextBlock Classes="micro tertiary" VerticalAlignment="Center" Text="{Binding Group.Meta}" />
+                        <TextBlock Classes="micro tertiary" VerticalAlignment="Center" Text="{Binding Group.ProfileText}" />
+                      </StackPanel>
+                      <TextBlock Classes="label toReview" IsVisible="{Binding Group.HasNote}" Text="{Binding Group.Note}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                      <Border Classes="key" IsVisible="{Binding Group.HasSuggestion}"><TextBlock Text="{Binding Group.SuggestionText}" /></Border>
+                      <Border Classes="key"><TextBlock Text="C" /></Border>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+              <DataTemplate DataType="vm:ReviewRowViewModel">
+                <ItemsControl ItemsSource="{Binding Items}">
+                  <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ReviewItemViewModel">
+                      <Border Classes="cell" Classes.selected="{Binding IsSelected}" Classes.best="{Binding IsBest}" Tag="{Binding}" PointerPressed="OnCellPressed"
+                              Width="{Binding $parent[UserControl].((vm:ReviewViewModel)DataContext).CellSize}"
+                              Height="{Binding $parent[UserControl].((vm:ReviewViewModel)DataContext).CellSize}">
+                        <Panel>
+                          <Image Source="{Binding Thumbnail}" Stretch="Uniform" Margin="2" Opacity="{Binding IsDiscard, Converter={x:Static vm:Converters.DiscardOpacity}}" />
+                          <Rectangle IsVisible="{Binding IsToReview}" Stroke="{DynamicResource PF.Brush.Outcome.ToReview}" StrokeThickness="2" StrokeDashArray="3,2" />
+                          <Rectangle IsVisible="{Binding IsCompared}" Stroke="{DynamicResource PF.Brush.Accent}" StrokeThickness="1" StrokeDashArray="1,2" Margin="3" />
+                          <StackPanel Orientation="Horizontal" Spacing="3" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4">
+                            <Border Classes="badge"
+                                    Classes.Discard="{Binding OutcomeKey, Converter={x:Static vm:Converters.IsOutcome}, ConverterParameter=Discard}"
+                                    Classes.ToReview="{Binding OutcomeKey, Converter={x:Static vm:Converters.IsOutcome}, ConverterParameter=ToReview}"
+                                    Classes.Best="{Binding OutcomeKey, Converter={x:Static vm:Converters.IsOutcome}, ConverterParameter=Best}"
+                                    Classes.Similar="{Binding OutcomeKey, Converter={x:Static vm:Converters.IsOutcome}, ConverterParameter=Similar}"
+                                    Classes.None="{Binding OutcomeKey, Converter={x:Static vm:Converters.IsOutcome}, ConverterParameter=None}">
+                              <TextBlock Text="{Binding OutcomeGlyph}" />
+                            </Border>
+                            <Border Classes="badge" IsVisible="{Binding IsManual}"><TextBlock Text="M" /></Border>
+                          </StackPanel>
+                          <TextBlock Classes="micro" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6,4" Text="{Binding RankText}" />
+                          <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Bottom" Margin="6,2" Background="{DynamicResource PF.Brush.Veil}">
+                            <Panel>
+                              <TextBlock Classes="micro" Text="{Binding StarsText}" IsVisible="{Binding StarsText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                              <TextBlock Classes="micro tertiary" Text="{Binding Name}" TextTrimming="CharacterEllipsis" IsVisible="{Binding StarsText, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
+                            </Panel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                              <TextBlock Classes="micro tertiary" Text="{Binding ShortReason}" TextTrimming="CharacterEllipsis" MaxWidth="90" />
+                              <TextBlock Classes="micro tertiary" Text="RAW+JPG" IsVisible="{Binding HasPair}" />
+                              <TextBlock Classes="micro error" Text="XMP" IsVisible="{Binding XmpPending}" />
+                            </StackPanel>
+                          </Grid>
+                        </Panel>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </DataTemplate>
+            </ListBox.DataTemplates>
+          </ListBox>
+        </Panel>
+
+        <!-- 2b: comparison -->
+        <Grid Grid.Row="4" RowDefinitions="*,Auto" IsVisible="{Binding IsCompare}" Background="{DynamicResource PF.Brush.Viewer}">
+          <ItemsControl x:Name="CompareList" ItemsSource="{Binding CompareItems}" Margin="8">
+            <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Rows="1" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:CompareItemViewModel">
+                <Border Classes="compareCell" Classes.focused="{Binding IsFocused}" Margin="4" BorderThickness="2" CornerRadius="{StaticResource PF.Radius.Photo}">
+                  <Grid RowDefinitions="Auto,*,Auto">
+                    <StackPanel Orientation="Horizontal" Spacing="8" Margin="8,6">
+                      <Border Classes="key"><TextBlock Text="{Binding Number}" /></Border>
+                      <TextBlock Classes="label" Text="{Binding Photo.Name}" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Classes="label tertiary" Text="{Binding Photo.OutcomeLabel}" />
+                      <TextBlock Classes="micro" Text="{Binding Photo.StarsText}" />
+                    </StackPanel>
+                    <ScrollViewer Grid.Row="1" Classes="compare" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Tag="{Binding}">
+                      <Image Source="{Binding Preview}" Stretch="Uniform" />
+                    </ScrollViewer>
+                    <TextBlock Grid.Row="2" Classes="micro tertiary" Margin="8,4" Text="{Binding SignalsText}" />
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Grid.Row="1" Classes="micro tertiary" Margin="16,6" Text="{l:Tr Review.Compare.Hint}" />
+        </Grid>
+      </Grid>
+
+      <!-- Details panel (Tab) -->
+      <Border Grid.Column="1" Width="{StaticResource PF.Size.DetailsPanel}" Background="{DynamicResource PF.Brush.Window}" IsVisible="{Binding IsDetailsOpen}"
+              BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1,0,0,0">
+        <ScrollViewer>
+          <StackPanel Margin="12" Spacing="12" IsVisible="{Binding HasSelection}">
+            <Border Height="190" Background="{DynamicResource PF.Brush.Viewer}" CornerRadius="{StaticResource PF.Radius.Photo}">
+              <Image Source="{Binding SelectedPreview}" Stretch="Uniform" />
+            </Border>
+            <StackPanel Spacing="2">
+              <TextBlock Classes="data" Text="{Binding Selected.Name, FallbackValue=''}" TextTrimming="CharacterEllipsis" />
+              <TextBlock Classes="micro tertiary" Text="{Binding SelectedGroupText}" />
+              <TextBlock Classes="micro tertiary" Text="{Binding SelectedExif}" />
+            </StackPanel>
+            <StackPanel Spacing="2">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock x:Name="OutcomeText" Classes="label" Text="{Binding Selected.OutcomeLabel, FallbackValue=''}" />
+                <TextBlock Classes="micro tertiary" VerticalAlignment="Center" Text="{Binding Selected.OriginLabel, FallbackValue=''}" />
+              </StackPanel>
+              <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding Selected.Why, FallbackValue=''}" />
+            </StackPanel>
+            <UniformGrid Columns="2" ColumnSpacing="8">
+              <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding KeepCommand}">
+                <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Review.Keep}" /><TextBlock Grid.Column="1" Classes="micro tertiary" Text="P" /></Grid>
+              </Button>
+              <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding DiscardCommand}">
+                <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Review.Discard}" /><TextBlock Grid.Column="1" Classes="micro tertiary" Text="X" /></Grid>
+              </Button>
+            </UniformGrid>
+            <Border Classes="card" Padding="12,6">
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Classes="label" Text="{Binding Selected.StarsText, FallbackValue=''}" />
+                <TextBlock Grid.Column="1" Classes="micro tertiary" Text="1–5" />
+              </Grid>
+            </Border>
+            <TextBlock Classes="overline" Text="{l:Tr Review.People}" IsVisible="{Binding SelectedPeople.Count, Converter={x:Static vm:Converters.Positive}}" />
+            <ItemsControl ItemsSource="{Binding SelectedPeople}">
+              <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:PersonChipViewModel">
+                  <Border Classes="person" Classes.suggestion="{Binding IsSuggestion}" Margin="0,0,6,6">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBlock Classes="label" Text="{Binding Name}" />
+                      <TextBlock Classes="micro tertiary" Text="{Binding Similarity}" />
+                    </StackPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Review.People.Note}" IsVisible="{Binding SelectedPeople.Count, Converter={x:Static vm:Converters.Positive}}" />
+            <TextBlock Classes="overline" Text="{l:Tr Review.Signals}" />
+            <ItemsControl ItemsSource="{Binding SelectedSignals}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:SignalViewModel">
+                  <Grid ColumnDefinitions="118,96,*" ColumnSpacing="8" Margin="0,3">
+                    <TextBlock Classes="label tertiary" Text="{Binding Label}" TextTrimming="CharacterEllipsis" />
+                    <Panel Grid.Column="1" VerticalAlignment="Center">
+                      <ProgressBar Classes="thin" Minimum="0" Maximum="1" Value="{Binding Value}" />
+                      <Canvas Height="10" VerticalAlignment="Center">
+                        <Rectangle Width="1" Height="10" Fill="{DynamicResource PF.Brush.TextSecondary}"
+                                   Canvas.Left="{Binding Threshold, Converter={x:Static vm:Converters.ThresholdOffset}}" />
+                      </Canvas>
+                    </Panel>
+                    <TextBlock Grid.Column="2" Classes="micro" HorizontalAlignment="Right" Text="{Binding Text}" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Review.ThresholdNote}" />
+            <Button Classes="ghost" HorizontalAlignment="Left" Command="{Binding RequestMoveDiscardsCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Review.MoveDiscards}" /><Border Classes="key"><TextBlock Text="Ctrl Maiusc M" /></Border></StackPanel>
+            </Button>
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+    </Grid>
+
+    <!-- 2g: confirmation (dark veil 60 %, no blur) -->
+    <Border IsVisible="{Binding IsConfirming}" Background="{DynamicResource PF.Brush.Veil}">
+      <Border Classes="card" Width="600" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24" CornerRadius="{StaticResource PF.Radius.Dialog}">
+        <StackPanel Spacing="12">
+          <TextBlock Classes="sectionTitle" TextWrapping="Wrap" Text="{Binding ConfirmQuestion}" />
+          <TextBlock Classes="body secondary" TextWrapping="Wrap" Text="{l:Tr Review.Confirm.Policy}" />
+          <TextBlock Classes="data" TextWrapping="Wrap" Text="{Binding ConfirmCounts}" />
+          <TextBlock Classes="label toReview" TextWrapping="Wrap" Text="{Binding ConfirmToReview}" />
+          <CheckBox IsChecked="{Binding PrudentMode}">
+            <TextBlock Classes="label" TextWrapping="Wrap" Text="{l:Tr Review.Confirm.Prudent}" />
+          </CheckBox>
+          <CheckBox IsChecked="{Binding OpenPeopleAfter}" IsVisible="{Binding HasNewPeople}">
+            <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding OpenPeopleText}" />
+          </CheckBox>
+          <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+            <Button Classes="secondary" HorizontalAlignment="Left" Command="{Binding ShowToReviewCommand}" Content="{l:Tr Review.Confirm.GoToReview}" />
+            <Button Grid.Column="1" Classes="secondary" Command="{Binding CancelConfirmCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Common.Cancel}" /><Border Classes="key"><TextBlock Text="Esc" /></Border></StackPanel>
+            </Button>
+            <Button x:Name="WriteButton" Grid.Column="2" Classes="primary" Command="{Binding WriteXmpCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="{l:Tr Review.Confirm.Write}" />
+                <Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="Ctrl ↵" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border>
+              </StackPanel>
+            </Button>
+          </Grid>
+        </StackPanel>
+      </Border>
+    </Border>
+
+    <!-- P6: move the discards, on request -->
+    <Border IsVisible="{Binding MoveDiscardsQuestion, Converter={x:Static ObjectConverters.IsNotNull}}" Background="{DynamicResource PF.Brush.Veil}">
+      <Border Classes="card cardError" Width="560" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="24" CornerRadius="{StaticResource PF.Radius.Dialog}">
+        <StackPanel Spacing="12">
+          <TextBlock Classes="sectionTitle" TextWrapping="Wrap" Text="{Binding MoveDiscardsQuestion}" />
+          <TextBlock Classes="body secondary" TextWrapping="Wrap" Text="{l:Tr Review.MoveDiscards.Body}" />
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Classes="secondary" Command="{Binding EscapeCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Common.Cancel}" /><Border Classes="key"><TextBlock Text="Esc" /></Border></StackPanel>
+            </Button>
+            <Button Classes="secondary" Command="{Binding MoveDiscardsCommand}" Content="{l:Tr Review.MoveDiscards.Apply}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </Border>
+  </Panel>
+</UserControl>

@@ -1,0 +1,190 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Vocabulary, boards 5c (core review by rows), 5d (personal CLIP tags), 5d2 (core not formed yet). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.VocabularyView"
+             x:DataType="vm:VocabularyViewModel">
+  <UserControl.Styles>
+    <Style Selector="Border.row">
+      <Setter Property="Padding" Value="10,5" />
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Border.row.selected">
+      <Setter Property="Background" Value="{DynamicResource PF.Brush.Control}" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid ColumnDefinitions="*,380">
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Background="{DynamicResource PF.Brush.GridArea}">
+      <StackPanel Margin="20,16,20,8" Spacing="2">
+        <TextBlock Classes="pageTitle" Text="{l:Tr Nav.Vocabulary}" />
+        <TextBlock Classes="label tertiary" Text="{Binding Summary}" />
+      </StackPanel>
+
+      <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="20,0,20,8">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Button Classes="chip" Classes.active="{Binding IsCore}" Command="{Binding SetTabCommand}" CommandParameter="Core"><TextBlock Classes="label" Text="{Binding CoreText}" /></Button>
+          <Button Classes="chip" Classes.active="{Binding IsAll}" Command="{Binding SetTabCommand}" CommandParameter="All"><TextBlock Classes="label" Text="{Binding AllText}" /></Button>
+          <Button Classes="chip" Classes.active="{Binding IsCustom}" Command="{Binding SetTabCommand}" CommandParameter="Custom"><TextBlock Classes="label" Text="{Binding CustomText}" /></Button>
+          <Button Classes="chip" Classes.active="{Binding IsBlacklist}" Command="{Binding SetTabCommand}" CommandParameter="Blacklist"><TextBlock Classes="label" Text="{Binding BlacklistText}" /></Button>
+          <Button Classes="chip" Classes.active="{Binding IsCategories}" Command="{Binding SetTabCommand}" CommandParameter="Categories"><TextBlock Classes="label" Text="{Binding CategoriesText}" /></Button>
+        </StackPanel>
+      </ScrollViewer>
+
+      <Grid Grid.Row="2" ColumnDefinitions="220,*,120,80,120" Margin="30,0,30,4" IsVisible="{Binding IsRowsTab}">
+        <TextBlock Classes="micro tertiary" Text="{l:Tr Vocabulary.Column.Id}" />
+        <TextBlock Grid.Column="1" Classes="micro tertiary" Text="{l:Tr Vocabulary.Column.Italian}" />
+        <TextBlock Grid.Column="2" Classes="micro tertiary" Text="{l:Tr Vocabulary.Column.Category}" />
+        <TextBlock Grid.Column="3" Classes="micro tertiary" TextAlignment="Right" Text="{l:Tr Vocabulary.Column.Photos}" />
+        <TextBlock Grid.Column="4" Classes="micro tertiary" Margin="12,0,0,0" Text="{l:Tr Vocabulary.Column.State}" />
+      </Grid>
+
+      <Panel Grid.Row="3">
+        <!-- 5d2 -->
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8" MaxWidth="480">
+          <StackPanel.IsVisible>
+            <MultiBinding Converter="{x:Static BoolConverters.And}">
+              <Binding Path="IsCore" />
+              <Binding Path="IsCoreNotReady" />
+            </MultiBinding>
+          </StackPanel.IsVisible>
+          <TextBlock Classes="subtitle" HorizontalAlignment="Center" Text="{l:Tr Vocabulary.CoreNotReady.Title}" />
+          <TextBlock Classes="body tertiary" TextAlignment="Center" TextWrapping="Wrap" Text="{Binding CoreNotReadyText}" />
+        </StackPanel>
+
+        <ListBox ItemsSource="{Binding Rows}" IsVisible="{Binding IsRowsTab}" Background="Transparent" Padding="20,0,20,8" Focusable="False">
+          <ListBox.Styles>
+            <Style Selector="ListBoxItem">
+              <Setter Property="Padding" Value="0" />
+              <Setter Property="Focusable" Value="False" />
+            </Style>
+            <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter, ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+              <Setter Property="Background" Value="Transparent" />
+            </Style>
+          </ListBox.Styles>
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:VocabularyRow">
+              <Border Classes="row" Classes.selected="{Binding IsSelected}" Tag="{Binding}" PointerPressed="OnRowPressed">
+                <Grid ColumnDefinitions="220,*,120,80,120">
+                  <TextBlock Classes="data" Text="{Binding English}" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Grid.Column="1" Classes="label" Text="{Binding Italian}" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Grid.Column="2" Classes="label secondary" Text="{Binding Category}" />
+                  <TextBlock Grid.Column="3" Classes="data" TextAlignment="Right" Text="{Binding Photos}" />
+                  <TextBlock Grid.Column="4" Classes="micro tertiary" Margin="12,0,0,0" VerticalAlignment="Center" Text="{Binding StateText}" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- 5d: personal tags -->
+        <ScrollViewer IsVisible="{Binding IsCustom}" Padding="20,0,20,8">
+          <StackPanel Spacing="4">
+            <ItemsControl ItemsSource="{Binding CustomTags}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:CustomTagRow">
+                  <Button Classes="ghost" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                          Command="{Binding $parent[UserControl].((vm:VocabularyViewModel)DataContext).SelectCustomCommand}" CommandParameter="{Binding}">
+                    <Grid ColumnDefinitions="200,*,100,80,80">
+                      <TextBlock Classes="label" Text="{Binding Label}" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Grid.Column="1" Classes="micro tertiary" Text="{Binding Custom.ClipDescription}" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Grid.Column="2" Classes="label secondary" Text="{Binding Tag.Category}" />
+                      <TextBlock Grid.Column="3" Classes="data" Text="{Binding Threshold}" />
+                      <TextBlock Grid.Column="4" Classes="data" TextAlignment="Right" Text="{Binding Photos}" />
+                    </Grid>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Classes="secondary" HorizontalAlignment="Left" Command="{Binding NewCustomCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Vocabulary.Custom.New}" /><Border Classes="key"><TextBlock Text="Ctrl N" /></Border></StackPanel>
+            </Button>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- Categories -->
+        <ItemsControl IsVisible="{Binding IsCategories}" ItemsSource="{Binding Categories}" Margin="20,0">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:CategoryRow">
+              <Grid ColumnDefinitions="200,*" Margin="0,4">
+                <TextBlock Classes="label" Text="{Binding Name}" />
+                <TextBlock Grid.Column="1" Classes="data tertiary" Text="{Binding Tags}" />
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Panel>
+    </Grid>
+
+    <!-- Detail -->
+    <Border Grid.Column="1" Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1,0,0,0">
+      <ScrollViewer>
+        <Panel Margin="16">
+          <StackPanel Spacing="10" IsVisible="{Binding IsRowsTab}">
+            <TextBlock Classes="subtitle" Text="{Binding DetailTitle}" TextWrapping="Wrap" />
+            <TextBox x:Name="EditBox" Classes="field" IsVisible="{Binding IsEditing}" Text="{Binding EditText}">
+              <TextBox.KeyBindings>
+                <KeyBinding Gesture="Enter" Command="{Binding ApproveCommand}" />
+              </TextBox.KeyBindings>
+            </TextBox>
+            <TextBlock Classes="overline" Text="{l:Tr Vocabulary.Examples}" />
+            <ItemsControl ItemsSource="{Binding Examples}">
+              <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate><Image Source="{Binding}" Width="104" Height="78" Stretch="UniformToFill" Margin="0,0,6,6" /></DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding WrittenAs}" />
+            <TextBlock Classes="data" TextWrapping="Wrap" Text="{Binding Hierarchy}" />
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Vocabulary.EnglishUntilReviewed}" />
+            <TextBlock Classes="label secondary" Text="{Binding ThresholdText}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Classes="label tertiary" VerticalAlignment="Center" Text="{l:Tr Vocabulary.Adjustment}" />
+              <NumericUpDown Width="120" Minimum="-0.3" Maximum="0.3" Increment="0.01" FormatString="+0.00;-0.00;0.00" Value="{Binding GlobalAdjustment}" />
+            </StackPanel>
+            <StackPanel Spacing="6">
+              <Button Classes="primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding ApproveCommand}">
+                <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Vocabulary.Command.Approve}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="↵" /></Border></Grid>
+              </Button>
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <Button Classes="secondary" Command="{Binding EditCommand}"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Vocabulary.Command.Edit}" /><Border Classes="key"><TextBlock Text="F2" /></Border></StackPanel></Button>
+                <Button Classes="secondary" Command="{Binding BlacklistCommand}"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Vocabulary.Command.Blacklist}" /><Border Classes="key"><TextBlock Text="B" /></Border></StackPanel></Button>
+                <Button Classes="secondary" Command="{Binding CycleCategoryCommand}"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Vocabulary.Command.Category}" /><Border Classes="key"><TextBlock Text="K" /></Border></StackPanel></Button>
+              </StackPanel>
+            </StackPanel>
+            <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          </StackPanel>
+
+          <!-- 5d form -->
+          <StackPanel Spacing="8" IsVisible="{Binding IsCustom}">
+            <TextBlock Classes="overline" Text="{l:Tr Vocabulary.Custom.Title}" />
+            <TextBlock Classes="label tertiary" Text="{l:Tr Vocabulary.Custom.Label}" />
+            <TextBox Classes="field" Text="{Binding CustomLabel}" />
+            <TextBlock Classes="label tertiary" Text="{l:Tr Vocabulary.Custom.Description}" />
+            <TextBox Classes="field" TextWrapping="Wrap" AcceptsReturn="False" Text="{Binding CustomDescription}" />
+            <TextBlock Classes="label tertiary" Text="{l:Tr Vocabulary.Column.Category}" />
+            <ComboBox ItemsSource="{Binding CategoryOptions}" SelectedItem="{Binding CustomCategory}" MinWidth="160" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+              <StackPanel Spacing="4">
+                <TextBlock Classes="label tertiary" Text="{l:Tr Vocabulary.Custom.Threshold}" />
+                <NumericUpDown Minimum="0" Maximum="1" Increment="0.01" FormatString="0.00" Value="{Binding CustomThreshold}" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" Spacing="4">
+                <TextBlock Classes="label tertiary" Text="{l:Tr Vocabulary.Custom.Margin}" />
+                <NumericUpDown Minimum="0" Maximum="0.5" Increment="0.01" FormatString="0.00" Value="{Binding CustomMargin}" />
+              </StackPanel>
+            </Grid>
+            <TextBlock Classes="label" Text="{Binding TrialText}" IsVisible="{Binding TrialText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Classes="secondary" Command="{Binding TrialCommand}"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Vocabulary.Custom.TrialButton}" /><Border Classes="key"><TextBlock Text="Ctrl T" /></Border></StackPanel></Button>
+              <Button Classes="primary" Command="{Binding SaveCustomCommand}"><StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Vocabulary.Custom.Save}" /><Border Classes="key"><TextBlock Text="Ctrl S" /></Border></StackPanel></Button>
+            </StackPanel>
+            <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          </StackPanel>
+        </Panel>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</UserControl>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The only project that depends on ONNX Runtime (spec §3, decision A3). CUDA + CPU (decision F1-2). -->
+  <ItemGroup>
+    <ProjectReference Include="..\PhotoFlow.Core\PhotoFlow.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\models\gpu-runtime.json" LogicalName="PhotoFlow.Inference.gpu-runtime.json" />
+    <EmbeddedResource Include="..\..\models\manifest.json" LogicalName="PhotoFlow.Inference.manifest.json" />
+  </ItemGroup>
+</Project>

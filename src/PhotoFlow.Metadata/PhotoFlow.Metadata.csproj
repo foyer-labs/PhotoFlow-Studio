@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- EXIF reading, XMP read/write and sync via exiftool (phase 1). -->
+  <ItemGroup>
+    <ProjectReference Include="..\PhotoFlow.Core\PhotoFlow.Core.csproj" />
+    <PackageReference Include="System.IO.Hashing" />
+  </ItemGroup>
+  <!-- exiftool downloaded and verified at build time (F1-5). -->
+  <Import Project="..\..\build\ExifTool.targets" />
+</Project>

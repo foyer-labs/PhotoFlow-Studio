@@ -1,0 +1,142 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Duplicates, boards 4f (groups, copies side by side, which one to keep) and 4g (none found). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.DuplicatesView"
+             x:DataType="vm:DuplicatesViewModel">
+  <UserControl.Styles>
+    <Style Selector="Border.group">
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="CornerRadius" Value="{StaticResource PF.Radius.Control}" />
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Border.group.selected">
+      <Setter Property="Background" Value="{DynamicResource PF.Brush.Control}" />
+    </Style>
+    <Style Selector="Border.copy">
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.Border}" />
+      <Setter Property="CornerRadius" Value="{StaticResource PF.Radius.Control}" />
+      <Setter Property="Padding" Value="10" />
+      <Setter Property="Margin" Value="0,0,10,0" />
+      <Setter Property="Width" Value="300" />
+    </Style>
+    <Style Selector="Border.copy">
+      <Setter Property="Cursor" Value="Hand" />
+      <!-- Without a background the empty areas of the tile would not take the click. -->
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Border.copy:pointerover">
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.BorderStrong}" />
+    </Style>
+    <Style Selector="Border.copy.kept">
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.Outcome.Best}" />
+    </Style>
+  </UserControl.Styles>
+
+  <Panel>
+    <!-- 4g: none -->
+    <StackPanel IsVisible="{Binding IsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" MaxWidth="520">
+      <TextBlock Classes="subtitle" HorizontalAlignment="Center" Text="{l:Tr Duplicates.None}" />
+      <TextBlock Classes="body tertiary" TextAlignment="Center" TextWrapping="Wrap" Text="{Binding LastScanText}" />
+      <TextBlock Classes="label tertiary" TextAlignment="Center" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+      <Button Classes="secondary" HorizontalAlignment="Center" Command="{Binding RescanCommand}">
+        <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Duplicates.Command.Rescan}" /><Border Classes="key"><TextBlock Text="F5" /></Border></StackPanel>
+      </Button>
+    </StackPanel>
+
+    <TextBlock IsVisible="{Binding IsScanning}" HorizontalAlignment="Center" VerticalAlignment="Center" Classes="data" Text="{Binding ProgressText}" />
+
+    <Grid ColumnDefinitions="300,*" IsVisible="{Binding HasGroups}">
+      <!-- Groups -->
+      <Border Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,1,0">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Bottom" Classes="micro tertiary" Margin="12" TextWrapping="Wrap" Text="{Binding LastScanText}" />
+          <ScrollViewer>
+            <StackPanel Margin="8,12" Spacing="2">
+              <TextBlock Classes="overline" Margin="6,0,0,6" Text="{Binding ExactTitle}" />
+              <ItemsControl ItemsSource="{Binding ExactGroups}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:DuplicateGroupItem">
+                    <Border Classes="group" Classes.selected="{Binding IsSelected}" Tag="{Binding}" PointerPressed="OnGroupPressed">
+                      <StackPanel>
+                        <TextBlock Classes="label" Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Classes="micro tertiary" Text="{Binding Detail}" />
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Classes="overline" Margin="6,12,0,6" Text="{Binding NearTitle}" />
+              <ItemsControl ItemsSource="{Binding NearGroups}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:DuplicateGroupItem">
+                    <Border Classes="group" Classes.selected="{Binding IsSelected}" Tag="{Binding}" PointerPressed="OnGroupPressed">
+                      <StackPanel>
+                        <TextBlock Classes="label" Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Classes="micro tertiary" Text="{Binding Detail}" />
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </ScrollViewer>
+        </DockPanel>
+      </Border>
+
+      <!-- Copies side by side -->
+      <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto" Background="{DynamicResource PF.Brush.GridArea}">
+        <StackPanel Margin="20,14,20,10" Spacing="2">
+          <TextBlock Classes="pageTitle" Text="{Binding GroupTitle}" />
+          <TextBlock Classes="label tertiary" Text="{Binding GroupDetail}" />
+        </StackPanel>
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="20,0">
+          <ItemsControl ItemsSource="{Binding Copies}">
+            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:DuplicateCopyViewModel">
+                <Border Classes="copy" Classes.kept="{Binding IsKept}" Tag="{Binding}" PointerPressed="OnCopyPressed" ToolTip.Tip="{l:Tr Duplicates.ClickToKeep}">
+                  <StackPanel Spacing="6">
+                    <Grid ColumnDefinitions="Auto,*">
+                      <Border Classes="key"><TextBlock Text="{Binding Number}" /></Border>
+                      <TextBlock Grid.Column="1" Classes="label" Margin="8,0" Text="{Binding StateText}" />
+                    </Grid>
+                    <Border Height="220" Background="{DynamicResource PF.Brush.Viewer}">
+                      <Image Source="{Binding Image}" Stretch="Uniform" />
+                    </Border>
+                    <TextBlock Classes="data" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Classes="micro tertiary" Text="{Binding Folder}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Classes="label" Text="{Binding Facts}" />
+                    <TextBlock Classes="label secondary" Text="{Binding Extras}" TextWrapping="Wrap" />
+                    <TextBlock Classes="micro" Foreground="{DynamicResource PF.Brush.Outcome.Best}" IsVisible="{Binding IsRecommended}" Text="{l:Tr Duplicates.RecommendedBadge}" />
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+        <Border Grid.Row="2" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,1,0,0" Padding="20,10" Background="{DynamicResource PF.Brush.Window}">
+          <StackPanel Spacing="8">
+            <TextBlock Classes="label secondary" Text="{Binding Recommendation}" />
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Duplicates.MoveNote}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Classes="primary" Command="{Binding ConfirmCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Duplicates.Command.Confirm}" /><Border Classes="key"><TextBlock Text="↵" /></Border></StackPanel>
+              </Button>
+              <Button Classes="secondary" Command="{Binding IgnoreCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Duplicates.Command.Ignore}" /><Border Classes="key"><TextBlock Text="I" /></Border></StackPanel>
+              </Button>
+              <Button Classes="ghost" Command="{Binding RescanCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Duplicates.Command.Rescan}" /><Border Classes="key"><TextBlock Text="F5" /></Border></StackPanel>
+              </Button>
+            </StackPanel>
+            <TextBlock Classes="label" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          </StackPanel>
+        </Border>
+      </Grid>
+    </Grid>
+  </Panel>
+</UserControl>

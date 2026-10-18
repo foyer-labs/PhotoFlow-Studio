@@ -1,0 +1,278 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Home, boards 3a (card detected, jobs, to review, libraries), 3b (first run), 3c (resume after an unexpected close). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.HomeView"
+             x:DataType="vm:HomeViewModel">
+  <Panel>
+
+    <!-- 3a: normal state -->
+    <ScrollViewer IsVisible="{Binding IsNormal}">
+      <StackPanel Margin="24" Spacing="24">
+
+        <Border x:Name="CardBanner" Classes="card" Padding="20,16" IsVisible="{Binding HasCard}">
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+            <Border Width="44" Height="44" Classes="card" Background="{DynamicResource PF.Brush.Control}">
+              <TextBlock Classes="micro secondary" Text="SD" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+              <TextBlock Classes="subtitle" Text="{Binding Card.Title, FallbackValue=''}" />
+              <TextBlock Classes="data tertiary" Text="{Binding Card.Summary, FallbackValue=''}" />
+            </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+              <Button Classes="secondary" Command="{Binding IgnoreCardCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <TextBlock Text="{l:Tr Home.Card.Ignore}" />
+                  <Border Classes="key"><TextBlock Text="Esc" /></Border>
+                </StackPanel>
+              </Button>
+              <Button Classes="secondary" Command="{Binding ChooseWhatToImportCommand}" Content="{l:Tr Home.Card.Choose}" />
+              <Button x:Name="ImportCardButton" Classes="primary" Command="{Binding ImportCardCommand}" IsEnabled="{Binding Card.HasNew, FallbackValue=False}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <TextBlock Text="{Binding Card.ImportLabel, FallbackValue=''}" />
+                  <Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="↵" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border>
+                </StackPanel>
+              </Button>
+            </StackPanel>
+          </Grid>
+        </Border>
+
+        <Grid ColumnDefinitions="3*,2*" ColumnSpacing="24">
+          <StackPanel Spacing="24">
+            <StackPanel>
+              <TextBlock Classes="overline" Text="{Binding ActiveJobsHeader}" />
+              <Border Classes="card">
+                <Panel>
+                  <TextBlock Classes="body tertiary" Margin="16" Text="{l:Tr Home.NoActiveJobs}"
+                             IsVisible="{Binding NoActiveJobs}" />
+                  <ItemsControl ItemsSource="{Binding ActiveJobs}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:JobRowViewModel">
+                        <Button Classes="ghost" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Padding="16,12"
+                                Command="{Binding $parent[UserControl].((vm:HomeViewModel)DataContext).OpenJobsCommand}">
+                          <Grid ColumnDefinitions="*,220,80" ColumnSpacing="16">
+                            <StackPanel Spacing="2">
+                              <TextBlock Classes="label" Foreground="{DynamicResource PF.Brush.TextPrimary}" Text="{Binding Name}" />
+                              <TextBlock Classes="label tertiary" Text="{Binding Detail}" />
+                            </StackPanel>
+                            <ProgressBar Grid.Column="1" Classes="thin" Minimum="0" Maximum="1" Value="{Binding Progress}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Classes="micro tertiary" HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding Remaining}" />
+                          </Grid>
+                        </Button>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </Panel>
+              </Border>
+            </StackPanel>
+
+            <StackPanel IsVisible="{Binding HasToReview}">
+              <TextBlock Classes="overline" Text="{l:Tr Home.ToReview}" />
+              <Border Classes="card">
+                <ItemsControl ItemsSource="{Binding ToReview}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:JobRowViewModel">
+                      <Grid ColumnDefinitions="*,Auto" Margin="16,12">
+                        <StackPanel Spacing="2" VerticalAlignment="Center">
+                          <TextBlock Classes="label" Text="{Binding Name}" />
+                          <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Classes="data tertiary" Text="{Binding Detail}" />
+                            <TextBlock Classes="data toReview" Text="{Binding ToReviewText}" />
+                          </StackPanel>
+                        </StackPanel>
+                        <Button Grid.Column="1" Classes="secondary" Content="{l:Tr Home.OpenReview}"
+                                Command="{Binding $parent[UserControl].((vm:HomeViewModel)DataContext).OpenReviewCommand}"
+                                CommandParameter="{Binding}" />
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </Border>
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel Grid.Column="1" Spacing="24">
+            <StackPanel>
+              <TextBlock Classes="overline" Text="{l:Tr Home.Libraries}" />
+              <Border Classes="card">
+                <ItemsControl ItemsSource="{Binding Libraries}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:LibraryRowViewModel">
+                      <Grid ColumnDefinitions="*,Auto" Margin="16,12">
+                        <StackPanel Spacing="2">
+                          <TextBlock Classes="label" Text="{Binding Library.Name}" />
+                          <TextBlock Classes="micro tertiary" Text="{Binding Detail}" TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" Classes="data tertiary" Text="{Binding PhotosText}" />
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </Border>
+            </StackPanel>
+
+            <StackPanel>
+              <TextBlock Classes="overline" Text="{l:Tr Home.QuickActions}" />
+              <UniformGrid Columns="2" RowSpacing="8" ColumnSpacing="8">
+                <Button x:Name="ImportFolderButton" Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding RequestFolderCommand}">
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Home.QuickAction.ImportFolder}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl I" /></Border></Grid>
+                </Button>
+                <Button Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding OpenSectionCommand}" CommandParameter="browse">
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Command.Search}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl K" /></Border></Grid>
+                </Button>
+                <Button Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding OpenSectionCommand}" CommandParameter="people">
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Nav.People}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl 4" /></Border></Grid>
+                </Button>
+                <Button Classes="secondary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding OpenSectionCommand}" CommandParameter="duplicates">
+                  <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Nav.Duplicates}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl 6" /></Border></Grid>
+                </Button>
+              </UniformGrid>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- 3b: first run -->
+    <ScrollViewer IsVisible="{Binding IsFirstRun}">
+      <StackPanel Width="640" Margin="0,48" Spacing="16" DataContext="{Binding FirstRun}" x:DataType="vm:FirstRunViewModel">
+        <TextBlock Classes="pageTitle" Text="{l:Tr FirstRun.Title}" />
+        <TextBlock Classes="body secondary" TextWrapping="Wrap" Text="{l:Tr FirstRun.Intro}" />
+        <Border Classes="card">
+          <StackPanel>
+            <!-- 1 Hardware and GPU pack -->
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16" Margin="16">
+              <Border Width="24" Height="24" CornerRadius="12" Background="{DynamicResource PF.Brush.Control}" VerticalAlignment="Top">
+                <TextBlock Classes="micro" Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              </Border>
+              <StackPanel Grid.Column="1" Spacing="6">
+                <TextBlock Classes="label" Text="{l:Tr FirstRun.Hardware}" />
+                <TextBlock Classes="data secondary" Text="{Binding HardwareText}" />
+                <StackPanel Spacing="8" IsVisible="{Binding GpuPackNeeded}">
+                  <TextBlock Classes="label tertiary" TextWrapping="Wrap" Text="{l:Tr FirstRun.GpuPack}" />
+                  <CheckBox IsChecked="{Binding NvidiaLicensesAccepted}">
+                    <TextBlock Classes="label" TextWrapping="Wrap" Text="{l:Tr FirstRun.AcceptNvidiaLabel}" />
+                  </CheckBox>
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Classes="secondary" Command="{Binding InstallGpuPackCommand}" IsEnabled="{Binding !IsBusy}">
+                      <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{l:Tr FirstRun.DownloadGpuPack}" />
+                        <TextBlock Classes="micro tertiary" VerticalAlignment="Center" Text="{Binding GpuPackSize}" />
+                      </StackPanel>
+                    </Button>
+                  </StackPanel>
+                </StackPanel>
+              </StackPanel>
+            </Grid>
+
+            <!-- 2 Models -->
+            <Border Classes="divider">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16" Margin="16">
+                <Border Width="24" Height="24" CornerRadius="12" Background="{DynamicResource PF.Brush.Control}" VerticalAlignment="Top">
+                  <TextBlock Classes="micro" Text="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel Grid.Column="1" Spacing="8">
+                  <TextBlock Classes="label" Text="{l:Tr FirstRun.Models}" />
+                  <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{l:Tr FirstRun.ModelsIntro}" />
+                  <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                    <TextBlock Classes="label" Text="{Binding Detector.Name}" />
+                    <TextBlock Grid.Column="1" Classes="micro tertiary" Text="{Binding Detector.LicenseText}" />
+                    <TextBlock Grid.Column="2" Classes="micro tertiary" Text="{Binding Detector.SizeText}" />
+                  </Grid>
+                  <RadioButton GroupName="faces" IsChecked="{Binding UseBuffalo}">
+                    <StackPanel Spacing="2">
+                      <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Classes="label" Text="{Binding Buffalo.Name}" />
+                        <TextBlock Classes="micro warning" Text="{Binding Buffalo.LicenseText}" />
+                        <TextBlock Classes="micro tertiary" Text="{Binding Buffalo.SizeText}" />
+                      </StackPanel>
+                      <TextBlock Classes="label tertiary" TextWrapping="Wrap" Text="{l:Tr FirstRun.BuffaloNote}" />
+                    </StackPanel>
+                  </RadioButton>
+                  <CheckBox Margin="28,0,0,0" IsVisible="{Binding UseBuffalo}" IsChecked="{Binding Buffalo.LicenseAccepted}">
+                    <TextBlock Classes="label" TextWrapping="Wrap" Text="{l:Tr FirstRun.AcceptBuffalo}" />
+                  </CheckBox>
+                  <RadioButton GroupName="faces" IsChecked="{Binding UseYuNet}">
+                    <StackPanel Spacing="2">
+                      <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Classes="label" Text="{Binding YuNet.Name}" />
+                        <TextBlock Classes="micro tertiary" Text="{Binding YuNet.LicenseText}" />
+                        <TextBlock Classes="micro tertiary" Text="{Binding YuNet.SizeText}" />
+                      </StackPanel>
+                      <TextBlock Classes="label tertiary" TextWrapping="Wrap" Text="{l:Tr FirstRun.YuNetNote}" />
+                    </StackPanel>
+                  </RadioButton>
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button x:Name="DownloadModels" Classes="primary" Command="{Binding InstallModelsCommand}" IsEnabled="{Binding !IsBusy}" Content="{l:Tr FirstRun.DownloadModels}" />
+                    <Button x:Name="ImportOffline" Classes="secondary" IsEnabled="{Binding !IsBusy}" Content="{l:Tr FirstRun.ImportOffline}" />
+                  </StackPanel>
+                  <ProgressBar Classes="thin" Minimum="0" Maximum="1" Value="{Binding DownloadProgress}" IsVisible="{Binding IsBusy}" />
+                </StackPanel>
+              </Grid>
+            </Border>
+
+            <!-- 3 First library -->
+            <Border Classes="divider">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16" Margin="16">
+                <Border Width="24" Height="24" CornerRadius="12" Background="{DynamicResource PF.Brush.Control}" VerticalAlignment="Top">
+                  <TextBlock Classes="micro" Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel Grid.Column="1" Spacing="8">
+                  <TextBlock Classes="label" Text="{l:Tr FirstRun.Library}" />
+                  <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{l:Tr FirstRun.LibraryIntro}" />
+                  <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <TextBox x:Name="LibraryRoot" Classes="field" Text="{Binding LibraryRoot}" />
+                    <Button x:Name="BrowseLibrary" Grid.Column="1" Classes="secondary" Content="{l:Tr Common.Browse}" />
+                  </Grid>
+                </StackPanel>
+              </Grid>
+            </Border>
+          </StackPanel>
+        </Border>
+        <TextBlock Classes="label warning" TextWrapping="Wrap" Text="{Binding Status}" IsVisible="{Binding Status, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Classes="label tertiary" TextWrapping="Wrap" VerticalAlignment="Center" Text="{Binding CatalogLocation}" />
+          <Button x:Name="Finish" Grid.Column="1" Classes="primary" Command="{Binding FinishCommand}" Content="{l:Tr FirstRun.Finish}" />
+        </Grid>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- 3c: resume after an unexpected close -->
+    <Border IsVisible="{Binding IsRecovery}" Classes="card" Width="640" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="24">
+      <StackPanel Spacing="16">
+        <TextBlock Classes="sectionTitle" Text="{l:Tr Home.Recovery.Title}" />
+        <TextBlock Classes="body secondary" TextWrapping="Wrap" Text="{l:Tr Home.Recovery.Body}" />
+        <ItemsControl ItemsSource="{Binding Interrupted}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:JobRowViewModel">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,6">
+                <TextBlock Classes="label secondary" Text="✓" />
+                <StackPanel Grid.Column="1" Spacing="2">
+                  <TextBlock Classes="label" Text="{Binding Name}" />
+                  <TextBlock Classes="micro tertiary" Text="{Binding Detail}" />
+                </StackPanel>
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+          <Button x:Name="OpenLog" Classes="secondary" Content="{l:Tr Home.Recovery.OpenLog}" />
+          <Button Classes="secondary" Command="{Binding ResumeLaterCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{l:Tr Home.Recovery.Later}" />
+              <Border Classes="key"><TextBlock Text="Esc" /></Border>
+            </StackPanel>
+          </Button>
+          <Button x:Name="ResumeButton" Classes="primary" Command="{Binding ResumeInterruptedCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{Binding ResumeLabel}" />
+              <Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="↵" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </StackPanel>
+    </Border>
+  </Panel>
+</UserControl>

@@ -1,0 +1,112 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Libraries, boards 5a (detail and first in-place analysis) and 5b2 (no library). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.LibrariesView"
+             x:DataType="vm:LibrariesViewModel">
+  <Panel>
+    <!-- 5b2 -->
+    <StackPanel IsVisible="{Binding IsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" Width="420">
+      <TextBlock Classes="subtitle" HorizontalAlignment="Center" Text="{l:Tr Libraries.Empty.Title}" />
+      <TextBlock Classes="body tertiary" TextAlignment="Center" TextWrapping="Wrap" Text="{l:Tr Libraries.Empty.Body}" />
+      <Button Classes="primary" HorizontalAlignment="Center" Command="{Binding RequestNewCommand}">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="{l:Tr Libraries.AddFolder}" />
+          <Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="Ctrl N" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border>
+        </StackPanel>
+      </Button>
+      <Button Classes="ghost" HorizontalAlignment="Center" Command="{Binding RequestImportCatalogCommand}" Content="{l:Tr Libraries.ImportCatalog}" />
+    </StackPanel>
+
+    <Grid ColumnDefinitions="300,*" IsVisible="{Binding !IsEmpty}">
+      <Border BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,1,0" Background="{DynamicResource PF.Brush.Window}">
+        <DockPanel Margin="12">
+          <Button DockPanel.Dock="Bottom" Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding RequestNewCommand}" Content="{l:Tr Libraries.New}" />
+          <ListBox Classes="jobs" ItemsSource="{Binding Libraries}" SelectedItem="{Binding Selected}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:LibraryItemViewModel">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,6">
+                  <StackPanel Spacing="2">
+                    <TextBlock Classes="label" Text="{Binding Name}" />
+                    <TextBlock Classes="micro tertiary" Text="{Binding Detail}" TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
+                  <TextBlock Grid.Column="1" Classes="data tertiary" Text="{Binding Count}" />
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+      </Border>
+
+      <ScrollViewer Grid.Column="1" IsVisible="{Binding HasSelection}">
+        <StackPanel Margin="24" Spacing="20" MaxWidth="{StaticResource PF.Size.SettingsColumnMax}" HorizontalAlignment="Left">
+          <StackPanel Spacing="4">
+            <TextBlock Classes="sectionTitle" Text="{Binding Selected.Name, FallbackValue=''}" />
+            <TextBlock Classes="data tertiary" Text="{Binding Selected.Library.RootPath, FallbackValue=''}" />
+            <TextBlock Classes="micro tertiary" Text="{Binding Formats}" />
+          </StackPanel>
+
+          <TextBlock Classes="label warning" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+          <!-- First in-place analysis -->
+          <Border Classes="card" Padding="16">
+            <StackPanel Spacing="10">
+              <TextBlock Classes="label" Text="{l:Tr Libraries.Analysis.Title}" />
+              <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{l:Tr Libraries.Analysis.Body}" />
+              <Grid ColumnDefinitions="Auto,*,Auto,*" ColumnSpacing="12" RowDefinitions="Auto">
+                <TextBlock Classes="label tertiary" VerticalAlignment="Center" Text="{l:Tr Libraries.Analysis.Order}" />
+                <ComboBox Grid.Column="1" ItemsSource="{Binding Orders}" SelectedItem="{Binding Order}" HorizontalAlignment="Stretch">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate><TextBlock Text="{Binding Converter={x:Static vm:Converters.OrderLabel}}" /></DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Grid.Column="2" Classes="label tertiary" VerticalAlignment="Center" Text="{l:Tr Import.Profile}" />
+                <ComboBox Grid.Column="3" ItemsSource="{Binding Profiles}" SelectedItem="{Binding AnalysisProfile}" HorizontalAlignment="Stretch">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ProfileChoice"><TextBlock Text="{Binding Name}" /></DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </Grid>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Classes="primary" HorizontalAlignment="Left" Command="{Binding AnalyzeCommand}">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="{l:Tr Libraries.Analysis.Start}" />
+                    <Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="Ctrl ↵" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border>
+                  </StackPanel>
+                </Button>
+                <Button Classes="secondary" Command="{Binding RegenerateCommand}" Content="{l:Tr Libraries.Regenerate}" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <!-- Metadata writing -->
+          <StackPanel Spacing="8">
+            <TextBlock Classes="overline" Text="{l:Tr Libraries.Xmp}" />
+            <RadioButton GroupName="libxmp" IsChecked="{Binding PolicyEmbedded}">
+              <StackPanel><TextBlock Text="{l:Tr Import.Xmp.Embedded}" /><TextBlock Classes="micro tertiary" Text="{l:Tr Import.Xmp.EmbeddedNote}" /></StackPanel>
+            </RadioButton>
+            <RadioButton GroupName="libxmp" IsChecked="{Binding PolicySidecar}">
+              <StackPanel><TextBlock Text="{l:Tr Import.Xmp.Sidecar}" /><TextBlock Classes="micro tertiary" Text="{l:Tr Libraries.Xmp.SidecarNote}" /></StackPanel>
+            </RadioButton>
+            <RadioButton GroupName="libxmp" IsChecked="{Binding PolicyCatalog}">
+              <StackPanel><TextBlock Text="{l:Tr Import.Xmp.Catalog}" /><TextBlock Classes="micro tertiary" Text="{l:Tr Libraries.Xmp.CatalogNote}" /></StackPanel>
+            </RadioButton>
+            <Border Classes="card cardError" Padding="16" IsVisible="{Binding EmbedConfirmation, Converter={x:Static ObjectConverters.IsNotNull}}">
+              <StackPanel Spacing="10">
+                <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding EmbedConfirmation}" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <Button Classes="secondary" Command="{Binding CancelEmbedCommand}" Content="{l:Tr Common.Cancel}" />
+                  <Button Classes="primary" Command="{Binding ConfirmEmbedCommand}" Content="{l:Tr Libraries.EmbedConfirm.Apply}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+            <ToggleSwitch IsChecked="{Binding IsReadOnly}" OnContent="{l:Tr Libraries.ReadOnly}" OffContent="{l:Tr Libraries.ReadOnly}" />
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Libraries.ReadOnlyNote}" />
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </Panel>
+</UserControl>

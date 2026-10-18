@@ -1,0 +1,9 @@
+# Pinned packages for tools/vlm/convert.py (CUDA 13, Python 3.10-3.13). Installed by PhotoFlow in a private venv.
+--extra-index-url https://download.pytorch.org/whl/cu130
+torch==2.14.1
+transformers==5.19.0
+onnx==1.23.2
+onnxscript==0.7.2
+onnxruntime-gpu==1.31.0
+onnxruntime-genai-cuda==0.17.1
+olive-ai @ https://github.com/microsoft/Olive/archive/4a936581aaa5d030577e6f8e98871674c77032da.zip

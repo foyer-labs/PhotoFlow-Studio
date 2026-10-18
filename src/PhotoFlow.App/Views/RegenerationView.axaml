@@ -1,0 +1,96 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Regeneration (spec §5, board 5g: "Prova su campione → anteprima differenze → rianalisi"). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.RegenerationView"
+             x:DataType="vm:RegenerationViewModel">
+  <ScrollViewer>
+    <StackPanel Margin="24,20" Spacing="16" MaxWidth="900" HorizontalAlignment="Left">
+      <TextBlock Classes="pageTitle" Text="{l:Tr Regeneration.Title}" />
+      <TextBlock Classes="body secondary" TextWrapping="Wrap" Text="{l:Tr Regeneration.Intro}" />
+      <Border Classes="card" Padding="16" IsVisible="{Binding HasNote}">
+        <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding Note}" />
+      </Border>
+
+      <TextBlock Classes="overline" Text="{l:Tr Regeneration.Scope}" />
+      <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding !HasFixedScope}">
+        <ComboBox Width="260" ItemsSource="{Binding Libraries}" SelectedItem="{Binding Library}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate><TextBlock Text="{Binding Label}" /></DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBox Classes="field" Width="320" Text="{Binding Folder}" PlaceholderText="{l:Tr Regeneration.Folder}" IsEnabled="{Binding !IsAllCatalog}" />
+      </StackPanel>
+      <TextBlock Classes="label" Text="{Binding ScopeText}" IsVisible="{Binding HasFixedScope}" />
+
+      <TextBlock Classes="overline" Text="{l:Tr Regeneration.What}" />
+      <ItemsControl ItemsSource="{Binding Parts}">
+        <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:RegenerationPartViewModel">
+            <CheckBox Margin="0,0,16,6" IsChecked="{Binding IsChecked}" IsEnabled="{Binding IsAvailable}" Content="{Binding Label}" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <StackPanel Spacing="6">
+        <RadioButton GroupName="mode" IsChecked="{Binding !ForceAll}">
+          <StackPanel><TextBlock Text="{l:Tr Regeneration.OlderOnly}" /><TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Regeneration.OlderOnlyNote}" /></StackPanel>
+        </RadioButton>
+        <RadioButton GroupName="mode" IsChecked="{Binding ForceAll}" Content="{l:Tr Regeneration.ForceAll}" />
+        <CheckBox IsChecked="{Binding ExcludeReviewed}" Content="{l:Tr Regeneration.ExcludeReviewed}" />
+        <CheckBox IsChecked="{Binding ResetPeople}" IsVisible="{Binding CanResetPeople}">
+          <StackPanel><TextBlock Text="{l:Tr Regeneration.Reset}" /><TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Regeneration.Reset.Note}" /></StackPanel>
+        </CheckBox>
+      </StackPanel>
+      <Border Classes="card" Padding="16" IsVisible="{Binding ResetPeople}">
+        <StackPanel Spacing="8">
+          <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding ResetText}" />
+          <TextBlock Classes="micro secondary" TextWrapping="Wrap" Text="{l:Tr Regeneration.Reset.Warning}" />
+          <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding AsksResetConfirmation}">
+            <Button Classes="secondary" Command="{Binding ConfirmResetCommand}" Content="{l:Tr Regeneration.Reset.Confirm}" />
+            <Button Classes="ghost" Command="{Binding CancelResetCommand}" Content="{l:Tr Regeneration.Reset.Cancel}" />
+          </StackPanel>
+          <TextBlock Classes="micro" TextWrapping="Wrap" IsVisible="{Binding ResetConfirmed}" Text="{l:Tr Regeneration.Reset.Confirmed}" />
+        </StackPanel>
+      </Border>
+      <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Regeneration.Protections}" />
+
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Classes="secondary" Command="{Binding SampleCommand}" IsEnabled="{Binding !IsRunning}">
+          <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Regeneration.Sample}" /><Border Classes="key"><TextBlock Text="Ctrl P" /></Border></StackPanel>
+        </Button>
+        <Button Classes="primary" Command="{Binding RunCommand}" IsEnabled="{Binding !IsRunning}">
+          <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Regeneration.Run}" /><Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="Ctrl R" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border></StackPanel>
+        </Button>
+      </StackPanel>
+      <TextBlock Classes="data" Text="{Binding ProgressText}" IsVisible="{Binding IsRunning}" />
+
+      <Border Classes="card" Padding="16" IsVisible="{Binding HasPreview}">
+        <StackPanel Spacing="8">
+          <TextBlock Classes="sectionTitle" Text="{l:Tr Regeneration.Preview}" />
+          <ItemsControl ItemsSource="{Binding PreviewLines}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String"><TextBlock Classes="label" Margin="0,0,0,4" TextWrapping="Wrap" Text="{Binding}" /></DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="overline" Text="{l:Tr Regeneration.Examples}" IsVisible="{Binding Examples.Count}" />
+          <ItemsControl ItemsSource="{Binding Examples}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String"><TextBlock Classes="micro secondary" Margin="0,0,0,2" TextWrapping="Wrap" Text="{Binding}" /></DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Regeneration.PreviewNote}" />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Classes="primary" Command="{Binding ApplyCommand}" IsEnabled="{Binding !IsBusy}">
+              <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Regeneration.Apply}" /><Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="Ctrl ↵" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border></StackPanel>
+            </Button>
+            <Button Classes="ghost" Command="{Binding DiscardCommand}" Content="{l:Tr Regeneration.Discard}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+      <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding ResultText}" IsVisible="{Binding ResultText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

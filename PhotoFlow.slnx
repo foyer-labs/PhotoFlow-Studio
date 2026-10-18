@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PhotoFlow.Analysis/PhotoFlow.Analysis.csproj" />
+    <Project Path="src/PhotoFlow.App/PhotoFlow.App.csproj" />
+    <Project Path="src/PhotoFlow.Core/PhotoFlow.Core.csproj" />
+    <Project Path="src/PhotoFlow.Data/PhotoFlow.Data.csproj" />
+    <Project Path="src/PhotoFlow.Faces/PhotoFlow.Faces.csproj" />
+    <Project Path="src/PhotoFlow.Imaging/PhotoFlow.Imaging.csproj" />
+    <Project Path="src/PhotoFlow.Inference/PhotoFlow.Inference.csproj" />
+    <Project Path="src/PhotoFlow.Metadata/PhotoFlow.Metadata.csproj" />
+    <Project Path="src/PhotoFlow.Sources/PhotoFlow.Sources.csproj" />
+    <Project Path="src/PhotoFlow.Tagging/PhotoFlow.Tagging.csproj" />
+    <Project Path="src/PhotoFlow.Vlm/PhotoFlow.Vlm.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PhotoFlow.ScenarioHost/PhotoFlow.ScenarioHost.csproj" />
+    <Project Path="tests/PhotoFlow.Tests/PhotoFlow.Tests.csproj" />
+  </Folder>
+</Solution>

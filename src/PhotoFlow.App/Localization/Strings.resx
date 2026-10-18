@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Neutral resources: English. -->
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="App.Title" xml:space="preserve"><value>PhotoFlow</value></data>
+  <data name="TitleBar.NoLibrary" xml:space="preserve"><value>No library</value></data>
+  <data name="TitleBar.Search" xml:space="preserve"><value>Search everywhere</value></data>
+  <data name="Nav.Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Nav.Jobs" xml:space="preserve"><value>Jobs</value></data>
+  <data name="Nav.Review" xml:space="preserve"><value>Review</value></data>
+  <data name="Nav.People" xml:space="preserve"><value>People</value></data>
+  <data name="Nav.Browse" xml:space="preserve"><value>Browse</value></data>
+  <data name="Nav.Duplicates" xml:space="preserve"><value>Duplicates</value></data>
+  <data name="Nav.Libraries" xml:space="preserve"><value>Libraries</value></data>
+  <data name="Nav.Vocabulary" xml:space="preserve"><value>Vocabulary</value></data>
+  <data name="Nav.Profiles" xml:space="preserve"><value>Profiles</value></data>
+  <data name="Nav.Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Nav.Collapse" xml:space="preserve"><value>Collapse navigation</value></data>
+  <data name="Nav.Expand" xml:space="preserve"><value>Expand navigation</value></data>
+  <data name="Command.Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Command.Sections" xml:space="preserve"><value>Sections</value></data>
+  <data name="Command.Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Page.Empty" xml:space="preserve"><value>This section will be available in a later phase.</value></data>
+  <data name="Status.Ready" xml:space="preserve"><value>Ready</value></data>
+  <data name="Key.Ctrl" xml:space="preserve"><value>Ctrl</value></data>
+  <data name="Key.Shift" xml:space="preserve"><value>Shift</value></data>
+  <data name="Key.Alt" xml:space="preserve"><value>Alt</value></data>
+  <data name="Common.Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Common.Browse" xml:space="preserve"><value>Browse…</value></data>
+  <data name="Common.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Common.Next" xml:space="preserve"><value>Next</value></data>
+  <data name="Page.ComesWithPhase" xml:space="preserve"><value>This section comes with phase {0}.</value></data>
+  <data name="Duration.UnderMinute" xml:space="preserve"><value>&lt; 1 min</value></data>
+  <data name="Duration.Minutes" xml:space="preserve"><value>~{0} min</value></data>
+  <data name="Duration.HoursMinutes" xml:space="preserve"><value>~{0} h {1} min</value></data>
+  <data name="Status.Summary" xml:space="preserve"><value>{0} · {1} · local catalog</value></data>
+  <data name="Status.Faces.Eyes" xml:space="preserve"><value>faces and eyes</value></data>
+  <data name="Status.Faces.NoEyes" xml:space="preserve"><value>faces without eyes</value></data>
+  <data name="Status.Faces.None" xml:space="preserve"><value>no face model</value></data>
+  <data name="Status.CatalogLocked" xml:space="preserve"><value>The catalog is open in another PhotoFlow window.</value></data>
+  <data name="Status.StartupFailed" xml:space="preserve"><value>Startup failed: {0}</value></data>
+  <data name="FirstRun.Title" xml:space="preserve"><value>Set up PhotoFlow</value></data>
+  <data name="FirstRun.Intro" xml:space="preserve"><value>Three steps, then insert a card. Everything stays on this PC: no cloud, no telemetry.</value></data>
+  <data name="FirstRun.Hardware" xml:space="preserve"><value>Hardware</value></data>
+  <data name="FirstRun.NoGpu" xml:space="preserve"><value>no NVIDIA GPU</value></data>
+  <data name="FirstRun.Cpus" xml:space="preserve"><value>{0} logical CPUs</value></data>
+  <data name="FirstRun.GpuPack" xml:space="preserve"><value>To use the NVIDIA GPU, PhotoFlow downloads the CUDA and cuDNN libraries from NVIDIA (verified with SHA-256).</value></data>
+  <data name="FirstRun.AcceptNvidiaLabel" xml:space="preserve"><value>I accept the NVIDIA licenses (CUDA Toolkit EULA, cuDNN Software License Agreement)</value></data>
+  <data name="FirstRun.AcceptNvidia" xml:space="preserve"><value>Accept the NVIDIA licenses to download the GPU pack.</value></data>
+  <data name="FirstRun.DownloadGpuPack" xml:space="preserve"><value>Download GPU pack</value></data>
+  <data name="FirstRun.GpuPackRestart" xml:space="preserve"><value>GPU pack installed: restart PhotoFlow to use the GPU.</value></data>
+  <data name="FirstRun.Models" xml:space="preserve"><value>Models</value></data>
+  <data name="FirstRun.ModelsIntro" xml:space="preserve"><value>Basic models: subject detection and faces. One face model is for non-commercial use only (buffalo_l): accept its license before the download, or choose YuNet.</value></data>
+  <data name="FirstRun.BuffaloNote" xml:space="preserve"><value>Detects closed eyes.</value></data>
+  <data name="FirstRun.YuNetNote" xml:space="preserve"><value>Permissive license; closed eyes are not detected (eyes always unknown).</value></data>
+  <data name="FirstRun.AcceptBuffalo" xml:space="preserve"><value>I accept the InsightFace license: non-commercial research use only</value></data>
+  <data name="FirstRun.AcceptModelLicense" xml:space="preserve"><value>Accept the license of {0} to download it.</value></data>
+  <data name="FirstRun.DownloadModels" xml:space="preserve"><value>Review licenses and download</value></data>
+  <data name="FirstRun.ImportOffline" xml:space="preserve"><value>Import offline pack</value></data>
+  <data name="FirstRun.Downloading" xml:space="preserve"><value>Downloading {0}…</value></data>
+  <data name="FirstRun.ModelsReady" xml:space="preserve"><value>Models ready.</value></data>
+  <data name="FirstRun.DownloadFailed" xml:space="preserve"><value>Download failed: {0}</value></data>
+  <data name="FirstRun.Library" xml:space="preserve"><value>First library</value></data>
+  <data name="FirstRun.LibraryIntro" xml:space="preserve"><value>A root folder where the photos live. Imports copy here, organized by event.</value></data>
+  <data name="FirstRun.LibraryInvalid" xml:space="preserve"><value>Choose a full folder path for the library.</value></data>
+  <data name="FirstRun.CatalogLocation" xml:space="preserve"><value>The catalog is in {0}. You can move it in Settings › Catalog.</value></data>
+  <data name="FirstRun.Finish" xml:space="preserve"><value>Start</value></data>
+  <data name="Models.License.Commercial" xml:space="preserve"><value>{0} · commercial use allowed</value></data>
+  <data name="Models.License.NonCommercial" xml:space="preserve"><value>{0} · non-commercial only</value></data>
+  <data name="Home.Card.Title" xml:space="preserve"><value>Card detected · {0} ({1})</value></data>
+  <data name="Home.Card.New" xml:space="preserve"><value>{0} new</value></data>
+  <data name="Home.Card.Already" xml:space="preserve"><value>{0} already imported</value></data>
+  <data name="Home.Card.Import" xml:space="preserve"><value>Import {0} photos</value></data>
+  <data name="Home.Card.Ignore" xml:space="preserve"><value>Ignore</value></data>
+  <data name="Home.Card.Choose" xml:space="preserve"><value>Choose what to import</value></data>
+  <data name="Home.Command.Primary" xml:space="preserve"><value>Import card</value></data>
+  <data name="Home.Command.Secondary" xml:space="preserve"><value>Ignore</value></data>
+  <data name="Home.ActiveJobs" xml:space="preserve"><value>ACTIVE JOBS · {0}</value></data>
+  <data name="Home.NoActiveJobs" xml:space="preserve"><value>No job running.</value></data>
+  <data name="Home.Job.CopyProgress" xml:space="preserve"><value>{0} · copy {1} / {2}</value></data>
+  <data name="Home.Job.AnalysisProgress" xml:space="preserve"><value>{0} · analysis {1} / {2}</value></data>
+  <data name="Home.ToReview" xml:space="preserve"><value>TO REVIEW</value></data>
+  <data name="Home.ToReview.Count" xml:space="preserve"><value>? {0} to review</value></data>
+  <data name="Home.Photos" xml:space="preserve"><value>{0} photos</value></data>
+  <data name="Home.OpenReview" xml:space="preserve"><value>Open review</value></data>
+  <data name="Home.Libraries" xml:space="preserve"><value>LIBRARIES</value></data>
+  <data name="Home.QuickActions" xml:space="preserve"><value>QUICK ACTIONS</value></data>
+  <data name="Home.QuickAction.ImportFolder" xml:space="preserve"><value>Import folder</value></data>
+  <data name="Home.Recovery.Title" xml:space="preserve"><value>PhotoFlow closed unexpectedly</value></data>
+  <data name="Home.Recovery.Body" xml:space="preserve"><value>These jobs can resume from the last saved point. No file was lost; at most the photos in progress are processed again.</value></data>
+  <data name="Home.Recovery.Resume" xml:space="preserve"><value>Resume {0} jobs</value></data>
+  <data name="Home.Recovery.Later" xml:space="preserve"><value>Later</value></data>
+  <data name="Home.Recovery.OpenLog" xml:space="preserve"><value>Open local report</value></data>
+  <data name="Library.Policy.EmbeddedForNonRaw" xml:space="preserve"><value>XMP embedded + sidecar</value></data>
+  <data name="Library.Policy.SidecarOnly" xml:space="preserve"><value>XMP sidecar only</value></data>
+  <data name="Library.Policy.CatalogOnly" xml:space="preserve"><value>catalog only</value></data>
+  <data name="Job.Unnamed" xml:space="preserve"><value>Untitled</value></data>
+  <data name="JobType.Import" xml:space="preserve"><value>Import</value></data>
+  <data name="JobType.AnalyzeInPlace" xml:space="preserve"><value>In-place analysis</value></data>
+  <data name="JobType.Reanalyze" xml:space="preserve"><value>Reanalysis</value></data>
+  <data name="Import.Title" xml:space="preserve"><value>Import</value></data>
+  <data name="Import.Loading" xml:space="preserve"><value>Reading the source…</value></data>
+  <data name="Import.Error.Source" xml:space="preserve"><value>The source cannot be read: {0}</value></data>
+  <data name="Import.Step.Source" xml:space="preserve"><value>Source and event</value></data>
+  <data name="Import.Step.Analysis" xml:space="preserve"><value>Analysis</value></data>
+  <data name="Import.Step.Destinations" xml:space="preserve"><value>Destinations and XMP</value></data>
+  <data name="Import.StepOf" xml:space="preserve"><value>Step {0} of {1}</value></data>
+  <data name="Import.Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Import.Source.Card" xml:space="preserve"><value>Card {0} ({1})</value></data>
+  <data name="Import.Source.Detail" xml:space="preserve"><value>{0} files · {1}</value></data>
+  <data name="Import.WhatToImport" xml:space="preserve"><value>What to import</value></data>
+  <data name="Import.Selection.OnlyNew" xml:space="preserve"><value>Only new</value></data>
+  <data name="Import.Selection.All" xml:space="preserve"><value>All, including the {0} already imported</value></data>
+  <data name="Import.Note.Pairs" xml:space="preserve"><value>· {0} RAW+JPG pairs counted as one photo</value></data>
+  <data name="Import.Note.Videos" xml:space="preserve"><value>· {0} videos: copied, not analyzed</value></data>
+  <data name="Import.Note.Identity" xml:space="preserve"><value>· Already imported recognized by fingerprint + capture date</value></data>
+  <data name="Import.EventName" xml:space="preserve"><value>Event name</value></data>
+  <data name="Import.Event.Default" xml:space="preserve"><value>Import</value></data>
+  <data name="Import.EventDate" xml:space="preserve"><value>Event date</value></data>
+  <data name="Import.Event.FromShots" xml:space="preserve"><value>From the shots: {0}.</value></data>
+  <data name="Import.PathPreview" xml:space="preserve"><value>Path preview</value></data>
+  <data name="Import.TemplateNote" xml:space="preserve"><value>Template {yyyy}/{yyyy-MM-dd}_{evento}/… · change in Settings</value></data>
+  <data name="Import.Profile" xml:space="preserve"><value>Scene profile</value></data>
+  <data name="Import.Profile.Automatic" xml:space="preserve"><value>Automatic · per group</value></data>
+  <data name="Import.Faces" xml:space="preserve"><value>Faces</value></data>
+  <data name="Import.Faces.Off" xml:space="preserve"><value>Off</value></data>
+  <data name="Import.Faces.DetectOnly" xml:space="preserve"><value>Detection only</value></data>
+  <data name="Import.Faces.Recognize" xml:space="preserve"><value>Recognition</value></data>
+  <data name="Import.Faces.Note" xml:space="preserve"><value>Detection is used for closed eyes; recognition also groups the people (People section).</value></data>
+  <data name="Import.Tags" xml:space="preserve"><value>Automatic tags</value></data>
+  <data name="Import.Tags.A" xml:space="preserve"><value>A · Personal vocabulary (CLIP)</value></data>
+  <data name="Import.Tags.B" xml:space="preserve"><value>B · Generic tags (RAM++)</value></data>
+  <data name="Import.Tags.C" xml:space="preserve"><value>C · Captions (Florence-2)</value></data>
+  <data name="Import.Tags.D" xml:space="preserve"><value>D · Italian captions (Qwen)</value></data>
+  <data name="Import.Destinations" xml:space="preserve"><value>Destinations · verified copy with xxHash3 fingerprint</value></data>
+  <data name="Import.Destination.Primary" xml:space="preserve"><value>Main</value></data>
+  <data name="Import.Destination.Secondary" xml:space="preserve"><value>Backup</value></data>
+  <data name="Import.Destination.Deferred" xml:space="preserve"><value>NAS · asynchronous copy</value></data>
+  <data name="Import.Destination.Free" xml:space="preserve"><value>{0} · {1} free</value></data>
+  <data name="Import.Destination.NoSpace" xml:space="preserve"><value>Not enough space: {0} needed.</value></data>
+  <data name="Import.Destination.Ready" xml:space="preserve"><value>✓ Ready</value></data>
+  <data name="Import.Destination.Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Import.Destination.Queued" xml:space="preserve"><value>Queued</value></data>
+  <data name="Import.Destination.Unreachable" xml:space="preserve"><value>Not reachable: the copy stays queued and retries</value></data>
+  <data name="Import.AddDestination" xml:space="preserve"><value>+ Add destination</value></data>
+  <data name="Import.Xmp" xml:space="preserve"><value>XMP writing</value></data>
+  <data name="Import.Xmp.Embedded" xml:space="preserve"><value>Embedded in JPG, sidecar for RAW · default</value></data>
+  <data name="Import.Xmp.EmbeddedNote" xml:space="preserve"><value>Visible in File Explorer and Photoshop</value></data>
+  <data name="Import.Xmp.Sidecar" xml:space="preserve"><value>Always sidecar .xmp</value></data>
+  <data name="Import.Xmp.Catalog" xml:space="preserve"><value>Catalog only</value></data>
+  <data name="Import.Xmp.AfterConfirm" xml:space="preserve"><value>XMP are written only after the confirmation in Review.</value></data>
+  <data name="Import.Summary" xml:space="preserve"><value>SUMMARY</value></data>
+  <data name="Import.Summary.SourceLabel" xml:space="preserve"><value>Source</value></data>
+  <data name="Import.Summary.EventLabel" xml:space="preserve"><value>Event</value></data>
+  <data name="Import.Summary.ProfileLabel" xml:space="preserve"><value>Profile</value></data>
+  <data name="Import.Summary.FacesLabel" xml:space="preserve"><value>Faces</value></data>
+  <data name="Import.Summary.CopiesLabel" xml:space="preserve"><value>Copies</value></data>
+  <data name="Import.Summary.Source" xml:space="preserve"><value>{0} · {1} files</value></data>
+  <data name="Import.Summary.Copies" xml:space="preserve"><value>{0} + {1} NAS</value></data>
+  <data name="Import.CardUntouched" xml:space="preserve"><value>The card is never modified or emptied.</value></data>
+  <data name="Import.Start" xml:space="preserve"><value>Start import · {0}</value></data>
+  <data name="Import.StartNow" xml:space="preserve"><value>Start now</value></data>
+  <data name="Import.Command.Next" xml:space="preserve"><value>Next</value></data>
+  <data name="Import.Command.StartNow" xml:space="preserve"><value>Start now</value></data>
+  <data name="Import.Command.Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Import.Command.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Jobs.Running" xml:space="preserve"><value>RUNNING</value></data>
+  <data name="Jobs.Queued" xml:space="preserve"><value>PAUSED OR QUEUED</value></data>
+  <data name="Jobs.Completed" xml:space="preserve"><value>COMPLETED</value></data>
+  <data name="Jobs.Detail" xml:space="preserve"><value>{0} · started {1} · {2} files · {3}</value></data>
+  <data name="Jobs.Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Jobs.Resume" xml:space="preserve"><value>Resume</value></data>
+  <data name="Jobs.Paused" xml:space="preserve"><value>Paused: no stage starts on files that are not verified. Resume when ready.</value></data>
+  <data name="Jobs.Remaining" xml:space="preserve"><value>Remaining {0}</value></data>
+  <data name="Jobs.Elapsed" xml:space="preserve"><value>Elapsed {0}</value></data>
+  <data name="Jobs.Errors" xml:space="preserve"><value>ERRORS · {0} FILES — THE JOB GOES ON</value></data>
+  <data name="Jobs.Log" xml:space="preserve"><value>LOG</value></data>
+  <data name="Jobs.Log.Resumed" xml:space="preserve"><value>Job resumed</value></data>
+  <data name="Jobs.Empty.Title" xml:space="preserve"><value>No job running</value></data>
+  <data name="Jobs.Empty.Body" xml:space="preserve"><value>Insert a card or import a folder.</value></data>
+  <data name="Jobs.Command.PauseResume" xml:space="preserve"><value>Pause/resume</value></data>
+  <data name="Jobs.State.Pending" xml:space="preserve"><value>waiting</value></data>
+  <data name="Jobs.State.Running" xml:space="preserve"><value>running</value></data>
+  <data name="Jobs.State.Paused" xml:space="preserve"><value>paused</value></data>
+  <data name="Jobs.State.Completed" xml:space="preserve"><value>completed</value></data>
+  <data name="Jobs.State.Failed" xml:space="preserve"><value>failed</value></data>
+  <data name="Jobs.State.Cancelled" xml:space="preserve"><value>cancelled</value></data>
+  <data name="Jobs.Pause.UserRequest" xml:space="preserve"><value>Paused</value></data>
+  <data name="Jobs.Pause.DestinationUnavailable" xml:space="preserve"><value>Paused: a destination was disconnected during the copy. The files copied so far are verified; the others wait.</value></data>
+  <data name="Jobs.Pause.SourceUnavailable" xml:space="preserve"><value>Paused: the card or source folder is not reachable. Insert it and resume.</value></data>
+  <data name="Jobs.Pause.Interrupted" xml:space="preserve"><value>Interrupted by an unexpected close</value></data>
+  <data name="Stage.Copy" xml:space="preserve"><value>Copy</value></data>
+  <data name="Stage.Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Stage.Analysis" xml:space="preserve"><value>Analysis</value></data>
+  <data name="Stage.Grouping" xml:space="preserve"><value>Grouping</value></data>
+  <data name="Stage.Decision" xml:space="preserve"><value>Decision</value></data>
+  <data name="Stage.Tags" xml:space="preserve"><value>Tags and OCR</value></data>
+  <data name="Stage.Faces" xml:space="preserve"><value>Faces</value></data>
+  <data name="Stage.Review" xml:space="preserve"><value>Review</value></data>
+  <data name="Stage.Xmp" xml:space="preserve"><value>XMP</value></data>
+  <data name="Profile.events" xml:space="preserve"><value>Events</value></data>
+  <data name="Profile.portrait" xml:space="preserve"><value>Portrait</value></data>
+  <data name="Profile.motorsport" xml:space="preserve"><value>Motorsport</value></data>
+  <data name="Profile.animals" xml:space="preserve"><value>Animals</value></data>
+  <data name="Profile.landscape" xml:space="preserve"><value>Landscape</value></data>
+  <data name="Profile.night" xml:space="preserve"><value>Night/Aurora</value></data>
+  <data name="Profile.archive" xml:space="preserve"><value>Archive</value></data>
+  <data name="Profile.events.Zone" xml:space="preserve"><value>AF → faces</value></data>
+  <data name="Profile.portrait.Zone" xml:space="preserve"><value>Eyes, face</value></data>
+  <data name="Profile.motorsport.Zone" xml:space="preserve"><value>Vehicle</value></data>
+  <data name="Profile.animals.Zone" xml:space="preserve"><value>Animal</value></data>
+  <data name="Profile.landscape.Zone" xml:space="preserve"><value>Tiles</value></data>
+  <data name="Profile.night.Zone" xml:space="preserve"><value>Relative only</value></data>
+  <data name="Profile.archive.Zone" xml:space="preserve"><value>Culling off</value></data>
+  <data name="Outcome.Discard" xml:space="preserve"><value>Discard</value></data>
+  <data name="Outcome.ToReview" xml:space="preserve"><value>To review</value></data>
+  <data name="Outcome.Best" xml:space="preserve"><value>Best</value></data>
+  <data name="Outcome.Similar" xml:space="preserve"><value>Similar</value></data>
+  <data name="Outcome.Kept" xml:space="preserve"><value>Kept</value></data>
+  <data name="Outcome.None" xml:space="preserve"><value>Not analyzed</value></data>
+  <data name="Reason.blur.severe" xml:space="preserve"><value>blurred over the whole image</value></data>
+  <data name="Reason.blur.soft" xml:space="preserve"><value>not very sharp</value></data>
+  <data name="Reason.blur.zone" xml:space="preserve"><value>subject not sharp</value></data>
+  <data name="Reason.eyes.closed" xml:space="preserve"><value>eyes closed</value></data>
+  <data name="Reason.eyes.closed.one" xml:space="preserve"><value>one eye closed?</value></data>
+  <data name="Reason.eyes.closed.others" xml:space="preserve"><value>closed eyes in other faces</value></data>
+  <data name="Reason.exposure.highlights" xml:space="preserve"><value>clipped highlights on the subject</value></data>
+  <data name="Reason.exposure.shadows" xml:space="preserve"><value>crushed shadows on the subject</value></data>
+  <data name="Reason.exposure.blank.white" xml:space="preserve"><value>blank frame (white)</value></data>
+  <data name="Reason.exposure.blank.black" xml:space="preserve"><value>blank frame (black)</value></data>
+  <data name="Review.YourDecisions" xml:space="preserve"><value>Your decisions</value></data>
+  <data name="Review.Confirm" xml:space="preserve"><value>Confirm and write XMP</value></data>
+  <data name="Review.Keep" xml:space="preserve"><value>✓ Keep</value></data>
+  <data name="Review.Discard" xml:space="preserve"><value>✕ Discard</value></data>
+  <data name="Review.Signals" xml:space="preserve"><value>SIGNALS</value></data>
+  <data name="Review.ThresholdNote" xml:space="preserve"><value>Tick = profile threshold.</value></data>
+  <data name="Review.Filter.All" xml:space="preserve"><value>All</value></data>
+  <data name="Review.Origin.Manual" xml:space="preserve"><value>yours</value></data>
+  <data name="Review.Origin.Automatic" xml:space="preserve"><value>automatic</value></data>
+  <data name="Review.Empty.NoJob" xml:space="preserve"><value>No import to review yet</value></data>
+  <data name="Review.Empty.Filter" xml:space="preserve"><value>No photo with this outcome</value></data>
+  <data name="Review.Meta" xml:space="preserve"><value>{0} · {1} photos · profile {2} · {3}</value></data>
+  <data name="Review.Mode.Prudent" xml:space="preserve"><value>prudent mode</value></data>
+  <data name="Review.Mode.Normal" xml:space="preserve"><value>normal mode</value></data>
+  <data name="Review.Command.Navigate" xml:space="preserve"><value>Move</value></data>
+  <data name="Review.Command.Stars" xml:space="preserve"><value>Stars</value></data>
+  <data name="Review.Command.Undo" xml:space="preserve"><value>Undo</value></data>
+  <data name="Review.Confirm.Question" xml:space="preserve"><value>Write the XMP metadata for {0} photos?</value></data>
+  <data name="Review.Confirm.Policy" xml:space="preserve"><value>With the library policy. RAW files are not modified and no file is moved.</value></data>
+  <data name="Review.Confirm.ToReview" xml:space="preserve"><value>{0} still to review: they will be written with a red label.</value></data>
+  <data name="Review.Confirm.Prudent" xml:space="preserve"><value>Prudent mode: discards as red label, not rating −1</value></data>
+  <data name="Review.Confirm.GoToReview" xml:space="preserve"><value>Go to the photos to review</value></data>
+  <data name="Review.Confirm.Write" xml:space="preserve"><value>Write XMP</value></data>
+  <data name="Review.Result.Written" xml:space="preserve"><value>Confirmed {0} · {1} XMP written</value></data>
+  <data name="Review.Result.Failed" xml:space="preserve"><value>{0} XMP not written: {1} — {2}. The decisions are saved in the catalog; the writing stays pending.</value></data>
+  <data name="Signal.Sharpness.AfArea" xml:space="preserve"><value>Sharpness (AF)</value></data>
+  <data name="Signal.Sharpness.Eyes" xml:space="preserve"><value>Sharpness (eyes)</value></data>
+  <data name="Signal.Sharpness.Faces" xml:space="preserve"><value>Sharpness (faces)</value></data>
+  <data name="Signal.Sharpness.Subject" xml:space="preserve"><value>Sharpness (subject)</value></data>
+  <data name="Signal.Sharpness.Tiles" xml:space="preserve"><value>Sharpness</value></data>
+  <data name="Signal.SharpnessFrame" xml:space="preserve"><value>Whole frame</value></data>
+  <data name="Signal.Highlights" xml:space="preserve"><value>Highlights</value></data>
+  <data name="Signal.Shadows" xml:space="preserve"><value>Shadows</value></data>
+  <data name="Signal.Eyes" xml:space="preserve"><value>Eyes</value></data>
+  <data name="Eye.Open" xml:space="preserve"><value>open</value></data>
+  <data name="Eye.Closed" xml:space="preserve"><value>closed</value></data>
+  <data name="Eye.Unknown" xml:space="preserve"><value>?</value></data>
+  <data name="Key.Space" xml:space="preserve"><value>Space</value></data>
+  <data name="Review.Command.Keep" xml:space="preserve"><value>Keep</value></data>
+  <data name="Review.Command.Discard" xml:space="preserve"><value>Discard</value></data>
+  <data name="Models.License.NonCommercialOnly" xml:space="preserve"><value>non-commercial use only</value></data>
+  <data name="Libraries.Empty.Title" xml:space="preserve"><value>No library yet</value></data>
+  <data name="Libraries.Empty.Body" xml:space="preserve"><value>A library is a folder where your photos already live. PhotoFlow reads it in place: files are never moved or modified, metadata goes in XMP sidecars.</value></data>
+  <data name="Libraries.AddFolder" xml:space="preserve"><value>Add a folder</value></data>
+  <data name="Libraries.New" xml:space="preserve"><value>New library</value></data>
+  <data name="Libraries.Analysis.Title" xml:space="preserve"><value>First analysis in place</value></data>
+  <data name="Libraries.Analysis.Body" xml:space="preserve"><value>Runs in background at low priority and yields to imports. Files are only read; the work can be paused and resumed.</value></data>
+  <data name="Libraries.Analysis.Order" xml:space="preserve"><value>Order</value></data>
+  <data name="Libraries.Analysis.Start" xml:space="preserve"><value>Start analysis</value></data>
+  <data name="Libraries.Xmp" xml:space="preserve"><value>Metadata writing</value></data>
+  <data name="Libraries.Xmp.SidecarNote" xml:space="preserve"><value>Recommended for an existing archive: originals are never touched.</value></data>
+  <data name="Libraries.Xmp.CatalogNote" xml:space="preserve"><value>Nothing is written next to the photos.</value></data>
+  <data name="Libraries.EmbedConfirm" xml:space="preserve"><value>XMP will be written inside {0} non-RAW files of this library. exiftool keeps an _original copy of each file before writing. Continue?</value></data>
+  <data name="Libraries.EmbedConfirm.Apply" xml:space="preserve"><value>Write inside the files</value></data>
+  <data name="Libraries.ReadOnly" xml:space="preserve"><value>Read-only</value></data>
+  <data name="Libraries.ReadOnlyNote" xml:space="preserve"><value>Nothing is written next to the photos: decisions and tags stay in the catalog.</value></data>
+  <data name="Libraries.RootMissing" xml:space="preserve"><value>The folder {0} is not reachable. Connect the disk and try again.</value></data>
+  <data name="Libraries.NotAnalyzed" xml:space="preserve"><value>Not analyzed yet</value></data>
+  <data name="Libraries.Order.NewestFirst" xml:space="preserve"><value>Newest first</value></data>
+  <data name="Libraries.Order.ByFolder" xml:space="preserve"><value>By folder</value></data>
+  <data name="Libraries.Command.New" xml:space="preserve"><value>new library</value></data>
+  <data name="Libraries.Command.Analyze" xml:space="preserve"><value>analyze</value></data>
+  <data name="Libraries.Command.Refresh" xml:space="preserve"><value>refresh</value></data>
+  <data name="Settings.Command.NextTab" xml:space="preserve"><value>next tab</value></data>
+  <data name="Settings.Command.PreviousTab" xml:space="preserve"><value>previous tab</value></data>
+  <data name="Settings.Tab.Hardware" xml:space="preserve"><value>Hardware</value></data>
+  <data name="Settings.Tab.Models" xml:space="preserve"><value>Models</value></data>
+  <data name="Settings.Tab.Catalog" xml:space="preserve"><value>Catalog</value></data>
+  <data name="Settings.Tab.General" xml:space="preserve"><value>General</value></data>
+  <data name="Settings.Tab.Culling" xml:space="preserve"><value>Culling</value></data>
+  <data name="Settings.Hardware.Execution" xml:space="preserve"><value>Model execution</value></data>
+  <data name="Settings.Hardware.Cuda" xml:space="preserve"><value>CUDA · NVIDIA GPU in use</value></data>
+  <data name="Settings.Hardware.CudaMissing" xml:space="preserve"><value>NVIDIA GPU found · GPU pack not installed: models run on the CPU</value></data>
+  <data name="Settings.Hardware.CpuOnly" xml:space="preserve"><value>CPU only · slower, everything works</value></data>
+  <data name="Settings.Hardware.GpuPack" xml:space="preserve"><value>GPU pack (CUDA + cuDNN)</value></data>
+  <data name="Settings.Hardware.GpuPackInstalled" xml:space="preserve"><value>Installed and verified. It is used from the next start.</value></data>
+  <data name="Settings.Hardware.Limits" xml:space="preserve"><value>Parallel work</value></data>
+  <data name="Settings.Hardware.Workers" xml:space="preserve"><value>Analysis of an import: {0} photos at a time. Archive analysis in background: {1} at a time, and it waits while an import runs.</value></data>
+  <data name="Settings.Hardware.Benchmark" xml:space="preserve"><value>Run benchmark</value></data>
+  <data name="Settings.Hardware.Note" xml:space="preserve"><value>Models are loaded on first use and stay in memory for the session. The network is used only for downloads.</value></data>
+  <data name="Models.Function.ObjectDetection" xml:space="preserve"><value>Subjects</value></data>
+  <data name="Models.Function.Faces" xml:space="preserve"><value>Faces</value></data>
+  <data name="Models.Function.Embedding" xml:space="preserve"><value>Similarity</value></data>
+  <data name="Models.Function.Tagger" xml:space="preserve"><value>Tags</value></data>
+  <data name="Models.Function.Caption" xml:space="preserve"><value>Captions</value></data>
+  <data name="Models.Function.Vlm" xml:space="preserve"><value>Descriptions</value></data>
+  <data name="Models.Function.Ocr" xml:space="preserve"><value>Numbers (OCR)</value></data>
+  <data name="Models.Function.Aesthetic" xml:space="preserve"><value>Aesthetics</value></data>
+  <data name="Models.Status.Installed" xml:space="preserve"><value>installed</value></data>
+  <data name="Models.Status.NotDownloaded" xml:space="preserve"><value>not downloaded</value></data>
+  <data name="Models.Status.Verified" xml:space="preserve"><value>verified ✓</value></data>
+  <data name="Models.Status.VerifyFailed" xml:space="preserve"><value>files changed: download again</value></data>
+  <data name="Settings.Models.Folder" xml:space="preserve"><value>{0} in {1} · downloaded on request, verified with SHA-256</value></data>
+  <data name="Settings.Models.ImportOffline" xml:space="preserve"><value>Import offline pack…</value></data>
+  <data name="Settings.Models.AcceptLicense" xml:space="preserve"><value>I accept the license of this model</value></data>
+  <data name="Settings.Models.Download" xml:space="preserve"><value>Download</value></data>
+  <data name="Settings.Models.Verify" xml:space="preserve"><value>Verify</value></data>
+  <data name="Settings.Models.Note" xml:space="preserve"><value>Only models with an implemented adapter can be chosen. The offline pack is a folder copied from another PC: models in &lt;id&gt;/&lt;file&gt; or loose, GPU pack archives loose; every file is verified and the folder is only read.</value></data>
+  <data name="Settings.Models.Restart" xml:space="preserve"><value>Model installed: it is used from the next analysis.</value></data>
+  <data name="Settings.Models.OfflineNothing" xml:space="preserve"><value>Nothing to install in this folder (missing files, or licenses not accepted).</value></data>
+  <data name="Settings.Models.OfflineDone" xml:space="preserve"><value>{0} models installed from the offline pack; {1}</value></data>
+  <data name="Settings.Models.OfflineGpu" xml:space="preserve"><value>GPU pack installed (used from the next start).</value></data>
+  <data name="Settings.Models.OfflineNoGpu" xml:space="preserve"><value>GPU pack not included or NVIDIA licenses not accepted.</value></data>
+  <data name="Settings.Catalog.Position" xml:space="preserve"><value>Location</value></data>
+  <data name="Settings.Catalog.Location" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="Settings.Catalog.CacheNote" xml:space="preserve"><value>Thumbnails and cache stay local and can be rebuilt.</value></data>
+  <data name="Settings.Catalog.Backup" xml:space="preserve"><value>Backup</value></data>
+  <data name="Settings.Catalog.LastBackup" xml:space="preserve"><value>Last backup: {0}</value></data>
+  <data name="Settings.Catalog.NoBackup" xml:space="preserve"><value>No backup yet</value></data>
+  <data name="Settings.Catalog.When" xml:space="preserve"><value>At close and at least once a day; integrity checked at every opening.</value></data>
+  <data name="Settings.Catalog.Keep" xml:space="preserve"><value>Keeps {0} versions · {1}</value></data>
+  <data name="Settings.Catalog.BackupNow" xml:space="preserve"><value>Back up now</value></data>
+  <data name="Settings.Catalog.BackupDone" xml:space="preserve"><value>Backup written: {0}</value></data>
+  <data name="Settings.Catalog.BackupFailed" xml:space="preserve"><value>Backup not written: {0}</value></data>
+  <data name="Settings.Catalog.Restore" xml:space="preserve"><value>Restore…</value></data>
+  <data name="Settings.Catalog.RestorePending" xml:space="preserve"><value>{0} will be restored at the next start. The current catalog is kept next to the backups.</value></data>
+  <data name="Settings.Catalog.Encryption" xml:space="preserve"><value>Encryption of face fingerprints</value></data>
+  <data name="Settings.Catalog.EncryptionWindows" xml:space="preserve"><value>Tied to my Windows account</value></data>
+  <data name="Settings.Catalog.EncryptionPassword" xml:space="preserve"><value>Password</value></data>
+  <data name="Settings.Catalog.Export" xml:space="preserve"><value>Export / import</value></data>
+  <data name="Settings.Catalog.ExportButton" xml:space="preserve"><value>Export catalog…</value></data>
+  <data name="Settings.Catalog.ImportButton" xml:space="preserve"><value>Import and remap paths…</value></data>
+  <data name="Settings.Catalog.Schema" xml:space="preserve"><value>Schema v{0} · automatic backup before every migration</value></data>
+  <data name="Settings.Language" xml:space="preserve"><value>Interface language</value></data>
+  <data name="Settings.Language.System" xml:space="preserve"><value>As the system</value></data>
+  <data name="Settings.Language.Note" xml:space="preserve"><value>Applied when the window restarts. XMP keywords are always written in Italian and English.</value></data>
+  <data name="Settings.Language.Restart" xml:space="preserve"><value>Language saved: applied at the next start.</value></data>
+  <data name="Settings.Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="Settings.Theme.Dark" xml:space="preserve"><value>Dark</value></data>
+  <data name="Settings.Theme.Light" xml:space="preserve"><value>Light</value></data>
+  <data name="Settings.Theme.System" xml:space="preserve"><value>As the system</value></data>
+  <data name="Settings.ExifTool" xml:space="preserve"><value>Metadata tool · exiftool</value></data>
+  <data name="Settings.ExifTool.Bundled" xml:space="preserve"><value>Bundled · version {0} · {1}</value></data>
+  <data name="Settings.ExifTool.Custom" xml:space="preserve"><value>Chosen by you · version {0} · {1}</value></data>
+  <data name="Settings.ExifTool.Healthy" xml:space="preserve"><value>Running continuously · answered in {0} ms ✓</value></data>
+  <data name="Settings.ExifTool.Unhealthy" xml:space="preserve"><value>Not answering: {0}</value></data>
+  <data name="Settings.ExifTool.Check" xml:space="preserve"><value>Check</value></data>
+  <data name="Settings.ExifTool.Other" xml:space="preserve"><value>Use another…</value></data>
+  <data name="Settings.ExifTool.UseBundled" xml:space="preserve"><value>Use the bundled one</value></data>
+  <data name="Settings.ExifTool.Chosen" xml:space="preserve"><value>exiftool {0} answers: used from the next start.</value></data>
+  <data name="Settings.ExifTool.Invalid" xml:space="preserve"><value>This file is not a working exiftool: {0}</value></data>
+  <data name="Settings.ExifTool.BundledNext" xml:space="preserve"><value>The bundled exiftool is used from the next start.</value></data>
+  <data name="Settings.Template" xml:space="preserve"><value>Import path template</value></data>
+  <data name="Settings.Template.Example" xml:space="preserve"><value>Example: {0}</value></data>
+  <data name="Settings.Template.Invalid" xml:space="preserve"><value>Template not valid: {0}</value></data>
+  <data name="Settings.Template.Note" xml:space="preserve"><value>Invalid characters in the event name become "-". "/" separates folders; {ext} is required.</value></data>
+  <data name="Settings.Template.Reset" xml:space="preserve"><value>Restore the default</value></data>
+  <data name="Settings.Culling.Mode" xml:space="preserve"><value>Culling mode</value></data>
+  <data name="Settings.Culling.Prudent" xml:space="preserve"><value>Prudent</value></data>
+  <data name="Settings.Culling.PrudentNote" xml:space="preserve"><value>Discards are written as a red label ("to review"), never as rating −1.</value></data>
+  <data name="Settings.Culling.Normal" xml:space="preserve"><value>Normal</value></data>
+  <data name="Settings.Culling.NormalNote" xml:space="preserve"><value>Unlocked only when all three metrics of the labelled set are within target (labelling mode).</value></data>
+  <data name="Status.Restored" xml:space="preserve"><value>Catalog restored from {0}</value></data>
+  <data name="Status.RestoreFailed" xml:space="preserve"><value>Backup not restored (damaged): {0}</value></data>
+  <data name="CatalogProblem.Title" xml:space="preserve"><value>The catalog is damaged</value></data>
+  <data name="CatalogProblem.Body" xml:space="preserve"><value>The integrity check at opening failed. Your photos are not affected: the catalog only holds decisions, tags and analyses. Restore the last backup: the damaged catalog is kept next to the backups.</value></data>
+  <data name="CatalogProblem.Backup" xml:space="preserve"><value>Last backup: {0} · {1}</value></data>
+  <data name="CatalogProblem.NoBackup" xml:space="preserve"><value>No backup found.</value></data>
+  <data name="CatalogProblem.Restore" xml:space="preserve"><value>Restore the last backup</value></data>
+  <data name="CatalogProblem.Restored" xml:space="preserve"><value>Restored. The damaged catalog is in {0}.</value></data>
+  <data name="CatalogProblem.Failed" xml:space="preserve"><value>Restore not possible: {0}</value></data>
+  <data name="Settings.ComesWithPhase" xml:space="preserve"><value>comes with phase {0}</value></data>
+  <data name="Stage.Read" xml:space="preserve"><value>Read</value></data>
+  <data name="Jobs.Background.Running" xml:space="preserve"><value>Background · low priority</value></data>
+  <data name="Jobs.Background.Waiting" xml:space="preserve"><value>Background · waiting for the import</value></data>
+  <data name="Label.Good" xml:space="preserve"><value>Good</value></data>
+  <data name="Label.Blurred" xml:space="preserve"><value>Blurred</value></data>
+  <data name="Label.EyesClosed" xml:space="preserve"><value>Eyes closed</value></data>
+  <data name="Label.Exposure" xml:space="preserve"><value>Exposure</value></data>
+  <data name="Label.Other" xml:space="preserve"><value>Other</value></data>
+  <data name="Label.BurstBest" xml:space="preserve"><value>best of the burst</value></data>
+  <data name="Labeling.Title" xml:space="preserve"><value>Labelling</value></data>
+  <data name="Labeling.Blind" xml:space="preserve"><value>Blind · verdict hidden</value></data>
+  <data name="Labeling.BurstHint" xml:space="preserve"><value>Burst: ← → choose the best, Enter confirms it.</value></data>
+  <data name="Labeling.BurstOf" xml:space="preserve"><value>burst of {0}</value></data>
+  <data name="Labeling.Command.Label" xml:space="preserve"><value>label</value></data>
+  <data name="Labeling.Command.Skip" xml:space="preserve"><value>skip</value></data>
+  <data name="Labeling.Command.BurstBest" xml:space="preserve"><value>best of the burst</value></data>
+  <data name="Labeling.Command.Burst" xml:space="preserve"><value>burst</value></data>
+  <data name="Labeling.Command.Exit" xml:space="preserve"><value>stop, resume later</value></data>
+  <data name="Labeling.Done" xml:space="preserve"><value>Session complete</value></data>
+  <data name="Labeling.DoneBody" xml:space="preserve"><value>Every label is saved. Start another session when you like.</value></data>
+  <data name="Labeling.Exit" xml:space="preserve"><value>Stop</value></data>
+  <data name="Labeling.Labeled" xml:space="preserve"><value>{0} photos labelled · target 300–500</value></data>
+  <data name="Labeling.Metrics" xml:space="preserve"><value>Culling metrics</value></data>
+  <data name="Labeling.MetricsNote" xml:space="preserve"><value>Bar = 95% confidence interval; mark = target.</value></data>
+  <data name="Labeling.NormalAllowed" xml:space="preserve"><value>All three metrics are within target: the normal mode can be turned on in Settings.</value></data>
+  <data name="Labeling.PrudentStays" xml:space="preserve"><value>Prudent mode stays on until all three metrics are within target.</value></data>
+  <data name="Labeling.Offline" xml:space="preserve"><value>The original is not reachable: thumbnail shown.</value></data>
+  <data name="Labeling.PerProfile" xml:space="preserve"><value>Per profile</value></data>
+  <data name="Labeling.Previous" xml:space="preserve"><value>Previous: {0} → {1} · Ctrl Z to correct</value></data>
+  <data name="Labeling.Progress" xml:space="preserve"><value>{0} / {1} · ~{2}</value></data>
+  <data name="Labeling.Skip" xml:space="preserve"><value>Skip</value></data>
+  <data name="Labeling.Verdict" xml:space="preserve"><value>System: {0}</value></data>
+  <data name="Metric.WrongDiscards" xml:space="preserve"><value>Wrong discards</value></data>
+  <data name="Metric.Intercepted" xml:space="preserve"><value>Discards intercepted</value></data>
+  <data name="Metric.ToReview" xml:space="preserve"><value>Share to review</value></data>
+  <data name="Metric.TargetBelow" xml:space="preserve"><value>target &lt; {0}</value></data>
+  <data name="Metric.TargetAbove" xml:space="preserve"><value>target &gt; {0}</value></data>
+  <data name="Metric.Verdict.WithinTarget" xml:space="preserve"><value>✓ Within target</value></data>
+  <data name="Metric.Verdict.Uncertain" xml:space="preserve"><value>Uncertain: the interval crosses the target</value></data>
+  <data name="Metric.Verdict.OffTarget" xml:space="preserve"><value>Off target</value></data>
+  <data name="Metric.Verdict.NoData" xml:space="preserve"><value>No data yet</value></data>
+  <data name="People.Unnamed" xml:space="preserve"><value>Person {0}</value></data>
+  <data name="Reason.burst.best" xml:space="preserve"><value>best of the burst</value></data>
+  <data name="Reason.burst.similar" xml:space="preserve"><value>valid, not the first</value></data>
+  <data name="Reason.burst.tie" xml:space="preserve"><value>first two tied</value></data>
+  <data name="Review.Analyzing" xml:space="preserve"><value>Analysis {0}/{1} · ~{2}</value></data>
+  <data name="Review.Analyzing.Body" xml:space="preserve"><value>Outcomes and bursts appear when the analysis has finished for every photo: grouping needs the whole set. Meanwhile P, X and stars already count and win over the proposal.</value></data>
+  <data name="Review.Analyzing.Filters" xml:space="preserve"><value>Outcome filters not available yet</value></data>
+  <data name="Review.CatalogOnly" xml:space="preserve"><value>Catalog only for these</value></data>
+  <data name="Review.Command.Compare" xml:space="preserve"><value>compare</value></data>
+  <data name="Review.Command.Details" xml:space="preserve"><value>panel</value></data>
+  <data name="Review.Command.Filter" xml:space="preserve"><value>filters</value></data>
+  <data name="Review.Command.Fit" xml:space="preserve"><value>fit</value></data>
+  <data name="Review.Command.Grid" xml:space="preserve"><value>grid</value></data>
+  <data name="Review.Command.Labeling" xml:space="preserve"><value>labelling</value></data>
+  <data name="Review.Command.MoveDiscards" xml:space="preserve"><value>move the discards</value></data>
+  <data name="Review.Command.NextGroup" xml:space="preserve"><value>next burst</value></data>
+  <data name="Review.Command.Numbers" xml:space="preserve"><value>numbers</value></data>
+  <data name="Review.Command.PreviousGroup" xml:space="preserve"><value>previous burst</value></data>
+  <data name="Review.Command.Reanalyze" xml:space="preserve"><value>re-analyze group</value></data>
+  <data name="Review.Command.Retry" xml:space="preserve"><value>retry XMP</value></data>
+  <data name="Review.Command.Size" xml:space="preserve"><value>size</value></data>
+  <data name="Review.Command.Sync" xml:space="preserve"><value>synchronize</value></data>
+  <data name="Review.Command.Zoom" xml:space="preserve"><value>100%</value></data>
+  <data name="Review.Compare.Exposure" xml:space="preserve"><value>Exp</value></data>
+  <data name="Review.Compare.Hint" xml:space="preserve"><value>P = best: the other valid photos become similar · X discard · 1–5 stars · Z 100% · F fit · S synchronize · ↑ ↓ pan · Shift+click in the grid adds or removes · Esc grid</value></data>
+  <data name="Review.Compare.Sharpness" xml:space="preserve"><value>Sharp</value></data>
+  <data name="Review.Confirm.OpenPeople" xml:space="preserve"><value>Then open People ({0} new groups)</value></data>
+  <data name="Review.Empty.Title" xml:space="preserve"><value>Nothing to review</value></data>
+  <data name="Review.Empty.Body" xml:space="preserve"><value>Import a card or a folder (Ctrl I), or analyze a library: its photos appear here.</value></data>
+  <data name="Review.Empty.Reopen" xml:space="preserve"><value>Reopening a confirmed job is safe: changes rewrite only the XMP concerned.</value></data>
+  <data name="Review.Empty.FilterHint" xml:space="preserve"><value>Click the filter again to see them all.</value></data>
+  <data name="Review.Group.Burst" xml:space="preserve"><value>Burst {0}</value></data>
+  <data name="Review.Group.Bracketing" xml:space="preserve"><value>Bracketing {0}</value></data>
+  <data name="Review.Group.Timelapse" xml:space="preserve"><value>Sequence {0}</value></data>
+  <data name="Review.Group.Panorama" xml:space="preserve"><value>Panorama {0}</value></data>
+  <data name="Review.Group.Duplicates" xml:space="preserve"><value>Duplicates {0}</value></data>
+  <data name="Review.Group.Shots" xml:space="preserve"><value>{0} shots</value></data>
+  <data name="Review.Group.Suggestion" xml:space="preserve"><value>looks like {0} {1} · Shift R re-analyze</value></data>
+  <data name="Review.Group.Tie" xml:space="preserve"><value>First two tied: choose the best</value></data>
+  <data name="Review.Group.BracketingNote" xml:space="preserve"><value>Exposure bracketing: never ranked, no "similar"</value></data>
+  <data name="Review.Group.TimelapseNote" xml:space="preserve"><value>Regular interval: kept as a sequence, no ranking</value></data>
+  <data name="Review.Mode.Grid" xml:space="preserve"><value>Grid</value></data>
+  <data name="Review.Mode.Compare" xml:space="preserve"><value>Compare</value></data>
+  <data name="Review.Mode.Numbers" xml:space="preserve"><value>Numbers</value></data>
+  <data name="Review.Mode.Labeling" xml:space="preserve"><value>Labelling</value></data>
+  <data name="Review.MoveDiscards" xml:space="preserve"><value>Move the discards…</value></data>
+  <data name="Review.MoveDiscards.Apply" xml:space="preserve"><value>Move into _scarti</value></data>
+  <data name="Review.MoveDiscards.Body" xml:space="preserve"><value>They move into a _scarti folder of their own library with their sidecar, keeping their path. Nothing is deleted; read-only libraries are left alone.</value></data>
+  <data name="Review.MoveDiscards.Done" xml:space="preserve"><value>{0} files moved into _scarti, {1} left in place.</value></data>
+  <data name="Review.MoveDiscards.None" xml:space="preserve"><value>No discards in this job.</value></data>
+  <data name="Review.MoveDiscards.Question" xml:space="preserve"><value>Move {0} discarded photos into _scarti?</value></data>
+  <data name="Review.People" xml:space="preserve"><value>People</value></data>
+  <data name="Review.People.Note" xml:space="preserve"><value>Tags and names are written only after the confirmation.</value></data>
+  <data name="Review.Reanalyzed" xml:space="preserve"><value>{0} analyzed again as {1}.</value></data>
+  <data name="Review.Reanalyzing" xml:space="preserve"><value>Analyzing {0} again as {1}…</value></data>
+  <data name="Review.Retry" xml:space="preserve"><value>Retry</value></data>
+  <data name="Review.Single" xml:space="preserve"><value>Single shot</value></data>
+  <data name="Review.XmpPending" xml:space="preserve"><value>XMP pending</value></data>
+  <data name="Key.Delete" xml:space="preserve"><value>Del</value></data>
+  <data name="People.Filter.New" xml:space="preserve"><value>New · {0} {1}</value></data>
+  <data name="People.Filter.Unnamed" xml:space="preserve"><value>Unnamed {0}</value></data>
+  <data name="People.Filter.Named" xml:space="preserve"><value>Named {0}</value></data>
+  <data name="People.Filter.Ignored" xml:space="preserve"><value>Ignored {0}</value></data>
+  <data name="People.Summary" xml:space="preserve"><value>{0} named · {1} unnamed · {2} ignored · encrypted fingerprints</value></data>
+  <data name="People.BySize" xml:space="preserve"><value>By size</value></data>
+  <data name="People.Selected" xml:space="preserve"><value>{0} groups selected</value></data>
+  <data name="People.Renamed" xml:space="preserve"><value>Named {0}: its faces become samples.</value></data>
+  <data name="People.MergeNeedsTwo" xml:space="preserve"><value>Select at least two groups to merge (Space or Ctrl+click).</value></data>
+  <data name="People.Merged" xml:space="preserve"><value>{0} groups merged into {1}.</value></data>
+  <data name="People.Rename" xml:space="preserve"><value>Name</value></data>
+  <data name="People.RenameHint" xml:space="preserve"><value>Enter confirms, Esc cancels. An existing name merges into that person.</value></data>
+  <data name="People.IgnoreLong" xml:space="preserve"><value>Ignore strangers, do not propose again</value></data>
+  <data name="People.OpenPage" xml:space="preserve"><value>Open person page</value></data>
+  <data name="People.ThresholdNote" xml:space="preserve"><value>The thresholds prefer splitting: merging is one key, separating is work. That is why you see several groups of the same person.</value></data>
+  <data name="People.XmpNote" xml:space="preserve"><value>Names are written in the XMP only for confirmed photos.</value></data>
+  <data name="People.Command.Navigate" xml:space="preserve"><value>Navigate</value></data>
+  <data name="People.Command.Select" xml:space="preserve"><value>Select</value></data>
+  <data name="People.Command.Range" xml:space="preserve"><value>Range</value></data>
+  <data name="People.Command.Rename" xml:space="preserve"><value>Rename</value></data>
+  <data name="People.Command.Merge" xml:space="preserve"><value>Merge</value></data>
+  <data name="People.Command.Ignore" xml:space="preserve"><value>Ignore</value></data>
+  <data name="People.Command.Open" xml:space="preserve"><value>Open</value></data>
+  <data name="People.Command.Filter" xml:space="preserve"><value>Filters</value></data>
+  <data name="People.Command.Separate" xml:space="preserve"><value>Separate into a new person</value></data>
+  <data name="People.Command.MoveTo" xml:space="preserve"><value>Move to…</value></data>
+  <data name="People.Command.NotThis" xml:space="preserve"><value>Not this person</value></data>
+  <data name="People.Command.Cover" xml:space="preserve"><value>Set as cover</value></data>
+  <data name="People.Command.Apply" xml:space="preserve"><value>Confirm</value></data>
+  <data name="People.Command.Order" xml:space="preserve"><value>Order</value></data>
+  <data name="People.Command.Back" xml:space="preserve"><value>Back</value></data>
+  <data name="People.Empty.Title" xml:space="preserve"><value>No faces yet</value></data>
+  <data name="People.Empty.Body" xml:space="preserve"><value>Groups appear after an import or an analysis with face recognition on.</value></data>
+  <data name="People.Empty.Analyze" xml:space="preserve"><value>Analyze a library…</value></data>
+  <data name="People.Empty.Settings" xml:space="preserve"><value>Face settings</value></data>
+  <data name="People.Grouping" xml:space="preserve"><value>Grouping faces: {0} / {1}</value></data>
+  <data name="People.GroupingHint" xml:space="preserve"><value>The groups already formed are available now, ordered by size. Start from the largest: a name given now helps recognition in the other years.</value></data>
+  <data name="People.Key.Title" xml:space="preserve"><value>Face fingerprints not readable on this account</value></data>
+  <data name="People.Key.Body" xml:space="preserve"><value>The catalog was opened by another user or PC. Names and assignments stay; the key is needed only to recognize new faces.</value></data>
+  <data name="People.Key.Password" xml:space="preserve"><value>Password</value></data>
+  <data name="People.Key.Unlock" xml:space="preserve"><value>Enter password</value></data>
+  <data name="People.Key.Recompute" xml:space="preserve"><value>Recompute fingerprints</value></data>
+  <data name="People.Key.Meanwhile" xml:space="preserve"><value>Until then: the gallery is browsable, recognition is suspended.</value></data>
+  <data name="People.Key.Unlocked" xml:space="preserve"><value>Key unlocked: recognition resumes.</value></data>
+  <data name="People.Key.WrongPassword" xml:space="preserve"><value>Wrong password.</value></data>
+  <data name="People.Key.Recomputed" xml:space="preserve"><value>{0} fingerprints recomputed with a new key; {1} faces without a readable photo.</value></data>
+  <data name="People.Key.RecomputeFailed" xml:space="preserve"><value>Recompute failed: {0}</value></data>
+  <data name="People.BackToList" xml:space="preserve"><value>← People</value></data>
+  <data name="People.Delete" xml:space="preserve"><value>Delete person…</value></data>
+  <data name="People.DeleteQuestion" xml:space="preserve"><value>Delete the person? The name and every fingerprint of its faces are removed. The photos stay.</value></data>
+  <data name="People.DeleteConfirm" xml:space="preserve"><value>Delete</value></data>
+  <data name="People.DeleteNote" xml:space="preserve"><value>"Delete person" removes the name and all its fingerprints. The photos stay.</value></data>
+  <data name="People.LeastSimilarFirst" xml:space="preserve"><value>Least similar first</value></data>
+  <data name="People.DashedNote" xml:space="preserve"><value>Dashed border = low similarity, to check</value></data>
+  <data name="People.FacesSelected" xml:space="preserve"><value>{0} faces selected</value></data>
+  <data name="People.NothingWritten" xml:space="preserve"><value>No photo is modified until you confirm the review.</value></data>
+  <data name="People.Samples" xml:space="preserve"><value>Reference samples</value></data>
+  <data name="People.SamplesNote" xml:space="preserve"><value>Updated per year: a face changes over time. They renew themselves when you confirm new faces.</value></data>
+  <data name="People.InMetadata" xml:space="preserve"><value>In the metadata</value></data>
+  <data name="People.Metadata" xml:space="preserve"><value>Persone|{0} · MWG face regions</value></data>
+  <data name="People.PageSummary" xml:space="preserve"><value>{0} photos · {1} faces · {2}–{3}</value></data>
+  <data name="People.Year" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="People.Separated" xml:space="preserve"><value>{0} faces separated into a new person.</value></data>
+  <data name="People.NotThis" xml:space="preserve"><value>{0} faces removed: they will not be proposed for this person again.</value></data>
+  <data name="People.CoverSet" xml:space="preserve"><value>Cover set.</value></data>
+  <data name="People.MoveTo" xml:space="preserve"><value>Move to</value></data>
+  <data name="People.Moved" xml:space="preserve"><value>{0} faces moved to {1}.</value></data>
+  <data name="Import.Profile.AutomaticNote" xml:space="preserve"><value>CLIP picks the profile of each group; below 50 % confidence the profile selected above is used.</value></data>
+  <data name="Import.Profile.NoClip" xml:space="preserve"><value>The automatic profile needs the CLIP model (Settings › Models).</value></data>
+  <data name="Import.Faces.NoRecognizer" xml:space="preserve"><value>Recognition needs a face recognition model (Settings › Models).</value></data>
+  <data name="Import.Summary.AutomaticProfile" xml:space="preserve"><value>Automatic · fallback {0}</value></data>
+  <data name="Settings.Culling.Locked" xml:space="preserve"><value>The normal mode unlocks when all three metrics are within target.</value></data>
+  <data name="Settings.Culling.Metrics" xml:space="preserve"><value>Metrics of the labelled set (95 % interval)</value></data>
+  <data name="Settings.Culling.Metric" xml:space="preserve"><value>{0}: {1} · {2} · {3}</value></data>
+  <data name="Settings.Culling.Allowed" xml:space="preserve"><value>{0} labelled photos: the normal mode is available.</value></data>
+  <data name="Settings.Culling.NotYet" xml:space="preserve"><value>{0} labelled photos: label more in Review › Labelling (L) until all three intervals are within target.</value></data>
+  <data name="Settings.Encryption.Locked" xml:space="preserve"><value>Key locked: open it with its password in People, or recompute the fingerprints.</value></data>
+  <data name="Settings.Encryption.None" xml:space="preserve"><value>No key yet: it is created with the first fingerprint, tied to this Windows account.</value></data>
+  <data name="Settings.Encryption.AccountOnly" xml:space="preserve"><value>Tied to this Windows account only (no password).</value></data>
+  <data name="Settings.Encryption.WithPassword" xml:space="preserve"><value>Tied to this Windows account, and openable with the password on other accounts or PCs.</value></data>
+  <data name="Settings.Encryption.Note" xml:space="preserve"><value>A password lets you open the catalog on another account or PC without recomputing the fingerprints. It is never stored: losing it only means recomputing.</value></data>
+  <data name="Settings.Encryption.Confirm" xml:space="preserve"><value>Repeat password</value></data>
+  <data name="Settings.Encryption.SetPassword" xml:space="preserve"><value>Set password</value></data>
+  <data name="Settings.Encryption.TooShort" xml:space="preserve"><value>The password needs at least 8 characters.</value></data>
+  <data name="Settings.Encryption.Mismatch" xml:space="preserve"><value>The two passwords differ.</value></data>
+  <data name="Settings.Encryption.LockedHint" xml:space="preserve"><value>The key is locked: open it first in People.</value></data>
+  <data name="Settings.Encryption.PasswordSet" xml:space="preserve"><value>Password set.</value></data>
+  <data name="Profiles.BuiltIn" xml:space="preserve"><value>Built-in</value></data>
+  <data name="Profiles.Custom" xml:space="preserve"><value>Custom</value></data>
+  <data name="Profiles.Locked" xml:space="preserve"><value>LOCKED</value></data>
+  <data name="Profiles.Detail" xml:space="preserve"><value>from {0} · v{1}</value></data>
+  <data name="Profiles.From" xml:space="preserve"><value>custom · from {0}</value></data>
+  <data name="Profiles.Command.Duplicate" xml:space="preserve"><value>Duplicate selected</value></data>
+  <data name="Profiles.Command.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Profiles.Command.Revert" xml:space="preserve"><value>Undo changes</value></data>
+  <data name="Profiles.Revert" xml:space="preserve"><value>Undo changes</value></data>
+  <data name="Profiles.Usage" xml:space="preserve"><value>Used in {0} jobs · changes apply to the next jobs or with "re-analyze" in the review</value></data>
+  <data name="Profiles.UsageBuiltIn" xml:space="preserve"><value>Used in {0} jobs</value></data>
+  <data name="Profiles.LockedHint" xml:space="preserve"><value>Built-in profiles are read-only: duplicate one (Ctrl D) to change it.</value></data>
+  <data name="Profiles.Weights" xml:space="preserve"><value>Weights of the composite score</value></data>
+  <data name="Profiles.WeightsOk" xml:space="preserve"><value>sum {0} ✓</value></data>
+  <data name="Profiles.WeightsWrong" xml:space="preserve"><value>sum {0}: must be 100</value></data>
+  <data name="Profiles.Weight.Sharpness" xml:space="preserve"><value>Sharpness</value></data>
+  <data name="Profiles.Weight.Eyes" xml:space="preserve"><value>Eyes</value></data>
+  <data name="Profiles.Weight.Exposure" xml:space="preserve"><value>Exposure</value></data>
+  <data name="Profiles.Weight.Subject" xml:space="preserve"><value>Subject</value></data>
+  <data name="Profiles.Weight.Aesthetic" xml:space="preserve"><value>Aesthetics</value></data>
+  <data name="Profiles.Thresholds" xml:space="preserve"><value>Thresholds and analysis</value></data>
+  <data name="Profiles.BlurDiscard" xml:space="preserve"><value>Discard for blur below</value></data>
+  <data name="Profiles.BlurReview" xml:space="preserve"><value>To review below</value></data>
+  <data name="Profiles.AbsoluteSharpness" xml:space="preserve"><value>Absolute sharpness threshold</value></data>
+  <data name="Profiles.Exposure" xml:space="preserve"><value>Exposure</value></data>
+  <data name="Profiles.Exposure.Normal" xml:space="preserve"><value>Normal</value></data>
+  <data name="Profiles.Exposure.Tolerant" xml:space="preserve"><value>Tolerant</value></data>
+  <data name="Profiles.Exposure.Off" xml:space="preserve"><value>Not checked</value></data>
+  <data name="Profiles.Zone" xml:space="preserve"><value>Sharpness zone</value></data>
+  <data name="Profiles.BurstGap" xml:space="preserve"><value>Burst: max gap (s)</value></data>
+  <data name="Profiles.MinSimilarity" xml:space="preserve"><value>Burst: min similarity</value></data>
+  <data name="Profiles.TieMargin" xml:space="preserve"><value>Tie within</value></data>
+  <data name="Profiles.OriginWeights" xml:space="preserve"><value>Original profile: {0}</value></data>
+  <data name="Profiles.OriginBlur" xml:space="preserve"><value>Original profile: discard {0} · review {1}</value></data>
+  <data name="Profiles.OriginExposure" xml:space="preserve"><value>Original profile: exposure {0} · zone {1}</value></data>
+  <data name="Profiles.OriginGrouping" xml:space="preserve"><value>Original profile: burst {0} s · similarity {1} · tie {2}</value></data>
+  <data name="Profiles.File" xml:space="preserve"><value>Versioned JSON file · profiles\{0}</value></data>
+  <data name="Profiles.BuiltInFile" xml:space="preserve"><value>Built into the application (profiles folder of the repository)</value></data>
+  <data name="Profiles.ApplyNote" xml:space="preserve"><value>Saving writes a new version of the file; the previous versions stay.</value></data>
+  <data name="Profiles.Suggestion" xml:space="preserve"><value>From your {0} corrections on this profile: with the blur discard threshold at {1}, {2} wrong discards fewer and {3} discards caught more ({4} kept photos would be discarded, {5} discards missed).</value></data>
+  <data name="Profiles.ApplySuggestion" xml:space="preserve"><value>Apply suggestion</value></data>
+  <data name="Profiles.IgnoreSuggestion" xml:space="preserve"><value>Ignore</value></data>
+  <data name="Profiles.SuggestionApplied" xml:space="preserve"><value>Suggestion applied: save (Ctrl S) to keep it.</value></data>
+  <data name="Profiles.CopyName" xml:space="preserve"><value>{0} — copy</value></data>
+  <data name="Profiles.Duplicated" xml:space="preserve"><value>{0} duplicated: change and save it.</value></data>
+  <data name="Profiles.Saved" xml:space="preserve"><value>Saved as version {0}.</value></data>
+  <data name="Profiles.SaveFailed" xml:space="preserve"><value>Not saved: {0}</value></data>
+  <data name="Profiles.NameRequired" xml:space="preserve"><value>The profile needs a name.</value></data>
+  <data name="Profiles.Reverted" xml:space="preserve"><value>Changes undone.</value></data>
+  <data name="Profiles.LoadErrors" xml:space="preserve"><value>Profile files not read: {0}</value></data>
+  <data name="Settings.Benchmark.Never" xml:space="preserve"><value>Benchmark · not run yet</value></data>
+  <data name="Settings.Benchmark.Title" xml:space="preserve"><value>Benchmark · {0} photos · {1} · {2}</value></data>
+  <data name="Settings.Benchmark.Running" xml:space="preserve"><value>Measuring… {0} / {1}</value></data>
+  <data name="Settings.Benchmark.Failed" xml:space="preserve"><value>Benchmark not completed: {0}</value></data>
+  <data name="Settings.Benchmark.Stage" xml:space="preserve"><value>Stage</value></data>
+  <data name="Settings.Benchmark.Ms" xml:space="preserve"><value>ms/photo</value></data>
+  <data name="Settings.Benchmark.Ram" xml:space="preserve"><value>RAM peak</value></data>
+  <data name="Settings.Benchmark.Vram" xml:space="preserve"><value>VRAM peak</value></data>
+  <data name="Settings.Benchmark.NoModel" xml:space="preserve"><value>model missing</value></data>
+  <data name="Settings.Benchmark.Stage.Preview" xml:space="preserve"><value>Preview (decode)</value></data>
+  <data name="Settings.Benchmark.Stage.Culling" xml:space="preserve"><value>Culling (signals + subjects)</value></data>
+  <data name="Settings.Benchmark.Stage.Faces" xml:space="preserve"><value>Faces (detection + fingerprints)</value></data>
+  <data name="Settings.Benchmark.Stage.Embedding" xml:space="preserve"><value>CLIP (bursts and profile)</value></data>
+  <data name="Settings.Benchmark.Stage.Tags" xml:space="preserve"><value>Tags B (RAM++)</value></data>
+  <data name="Settings.Benchmark.Stage.Captions" xml:space="preserve"><value>Captions C</value></data>
+  <data name="Settings.Benchmark.Estimates" xml:space="preserve"><value>Import of 1,000 shots: {0} of analysis · archive of {1} photos: {2} at low priority ({3} ms/photo with {4} photos in parallel; copy excluded).</value></data>
+  <data name="Settings.Benchmark.Note" xml:space="preserve"><value>About 50 photos of your libraries, read only: nothing is written. VRAM is read from the NVIDIA driver (all processes); without it only the RAM of PhotoFlow is shown.</value></data>
+  <data name="Import.Tags.NoModel" xml:space="preserve"><value>Generic tags need the RAM++ model (Settings › Models); on CPU only it takes about a second per photo.</value></data>
+  <data name="Browse.Kind.Person" xml:space="preserve"><value>Person</value></data>
+  <data name="Browse.Kind.Tag" xml:space="preserve"><value>Tag</value></data>
+  <data name="Browse.Kind.Event" xml:space="preserve"><value>Event</value></data>
+  <data name="Browse.PhotosCount" xml:space="preserve"><value>{0} photos</value></data>
+  <data name="Browse.Results.Meaning" xml:space="preserve"><value>{0} photos · by relevance · {1} s</value></data>
+  <data name="Browse.Results.Date" xml:space="preserve"><value>{0} photos · newest first · {1} s</value></data>
+  <data name="Browse.Results.Similar" xml:space="preserve"><value>{0} similar photos</value></data>
+  <data name="Browse.Coverage" xml:space="preserve"><value>Search by meaning available on {0} of {1} photos. Tags, people, dates and EXIF already work on all of them; the analysis of the archive is in progress.</value></data>
+  <data name="Browse.NoClip" xml:space="preserve"><value>Search by meaning needs the CLIP model (Settings › Models): now only words in names and tags are searched.</value></data>
+  <data name="Browse.Empty.Title" xml:space="preserve"><value>No photos for {0}</value></data>
+  <data name="Browse.Empty.Without" xml:space="preserve"><value>Remove "{0}" → {1} photos</value></data>
+  <data name="Browse.Filter.RatingValue" xml:space="preserve"><value>Rating ≥ {0}</value></data>
+  <data name="Browse.Filter.Date" xml:space="preserve"><value>Date</value></data>
+  <data name="Browse.Filter.Any" xml:space="preserve"><value>Any</value></data>
+  <data name="Browse.Filter.Camera" xml:space="preserve"><value>EXIF</value></data>
+  <data name="Browse.Filter.Rating" xml:space="preserve"><value>Rating</value></data>
+  <data name="Browse.Filter.Outcome" xml:space="preserve"><value>Outcome</value></data>
+  <data name="Browse.Reset" xml:space="preserve"><value>Reset</value></data>
+  <data name="Browse.Meaning" xml:space="preserve"><value>MEANING</value></data>
+  <data name="Browse.Placeholder" xml:space="preserve"><value>People, tags, events, or describe the photo…</value></data>
+  <data name="Browse.MeaningOnly" xml:space="preserve"><value>Search by meaning only, on the whole archive</value></data>
+  <data name="Browse.ShowMore" xml:space="preserve"><value>Show more</value></data>
+  <data name="Browse.Detail.NotFound" xml:space="preserve"><value>File not reachable now (disk or NAS disconnected?)</value></data>
+  <data name="Browse.Detail.Taken" xml:space="preserve"><value>Taken</value></data>
+  <data name="Browse.Detail.Event" xml:space="preserve"><value>Event</value></data>
+  <data name="Browse.Detail.Exposure" xml:space="preserve"><value>Exposure</value></data>
+  <data name="Browse.Detail.Rating" xml:space="preserve"><value>Rating</value></data>
+  <data name="Browse.Detail.People" xml:space="preserve"><value>People</value></data>
+  <data name="Browse.Detail.Tags" xml:space="preserve"><value>Tags</value></data>
+  <data name="Browse.AddTag" xml:space="preserve"><value>Add tag</value></data>
+  <data name="Browse.Command.Navigate" xml:space="preserve"><value>Navigate</value></data>
+  <data name="Browse.Command.Photoshop" xml:space="preserve"><value>Open in Photoshop</value></data>
+  <data name="Browse.Command.Default" xml:space="preserve"><value>Open with default app</value></data>
+  <data name="Browse.Command.Explorer" xml:space="preserve"><value>Show in Explorer</value></data>
+  <data name="Browse.Command.Tag" xml:space="preserve"><value>Tag</value></data>
+  <data name="Browse.Command.Similar" xml:space="preserve"><value>Find similar</value></data>
+  <data name="Browse.Command.Stars" xml:space="preserve"><value>Stars</value></data>
+  <data name="Browse.Command.Preview" xml:space="preserve"><value>Large preview</value></data>
+  <data name="Browse.XmpFailed" xml:space="preserve"><value>Saved in the catalog; the XMP could not be written (retried at the next start).</value></data>
+  <data name="Browse.NoPhotoshop" xml:space="preserve"><value>Choose the editor in Settings › General (Photoshop).</value></data>
+  <data name="Browse.LaunchFailed" xml:space="preserve"><value>Could not open: {0}</value></data>
+  <data name="Settings.Editor" xml:space="preserve"><value>Editor for "Open in Photoshop" (Ctrl E)</value></data>
+  <data name="Settings.Editor.None" xml:space="preserve"><value>Not chosen</value></data>
+  <data name="Settings.Editor.Choose" xml:space="preserve"><value>Choose the program…</value></data>
+  <data name="Settings.Editor.Clear" xml:space="preserve"><value>Remove</value></data>
+  <data name="Duplicates.Keep" xml:space="preserve"><value>To keep</value></data>
+  <data name="Duplicates.Move" xml:space="preserve"><value>To move</value></data>
+  <data name="Duplicates.Scanning" xml:space="preserve"><value>Comparing photos… {0} / {1}</value></data>
+  <data name="Duplicates.GroupTitle" xml:space="preserve"><value>{0} · {1} copies</value></data>
+  <data name="Duplicates.GroupTitleNear" xml:space="preserve"><value>{0} · {1} versions</value></data>
+  <data name="Duplicates.SameContent" xml:space="preserve"><value>same content · different folders</value></data>
+  <data name="Duplicates.Similarity" xml:space="preserve"><value>similarity {0}</value></data>
+  <data name="Duplicates.Exact" xml:space="preserve"><value>Exact · {0} groups</value></data>
+  <data name="Duplicates.Near" xml:space="preserve"><value>Near duplicates · {0} groups</value></data>
+  <data name="Duplicates.LastScan" xml:space="preserve"><value>Last check at {0} · {1} photos compared · {2} groups marked "not duplicates" stay out</value></data>
+  <data name="Duplicates.NoClip" xml:space="preserve"><value>Near duplicates need the CLIP model (Settings › Models): now only exact copies are looked for.</value></data>
+  <data name="Duplicates.ExactDetail" xml:space="preserve"><value>Group {0} of {1} · exact copies</value></data>
+  <data name="Duplicates.NearDetail" xml:space="preserve"><value>Group {0} of {1} · near duplicates · similarity {2}</value></data>
+  <data name="Duplicates.ManualTags" xml:space="preserve"><value>{0} manual tags</value></data>
+  <data name="Duplicates.NoTags" xml:space="preserve"><value>no manual tags</value></data>
+  <data name="Duplicates.Sidecar" xml:space="preserve"><value>XMP sidecar</value></data>
+  <data name="Duplicates.Recommended" xml:space="preserve"><value>Proposed: keep {0} ({1}) — the original, the largest, with your tags.</value></data>
+  <data name="Duplicates.RecommendedBadge" xml:space="preserve"><value>Recommended</value></data>
+  <data name="Duplicates.MoveNote" xml:space="preserve"><value>The others are not deleted: they move into _duplicati in the same library, with their sidecar.</value></data>
+  <data name="Duplicates.Moved" xml:space="preserve"><value>{0} files moved into _duplicati, {1} left in place (read-only or not found).</value></data>
+  <data name="Duplicates.Ignored" xml:space="preserve"><value>Marked as not duplicates: it will not be proposed again.</value></data>
+  <data name="Duplicates.None" xml:space="preserve"><value>No duplicates</value></data>
+  <data name="Duplicates.Command.Group" xml:space="preserve"><value>Group</value></data>
+  <data name="Duplicates.Command.Choose" xml:space="preserve"><value>Choose which to keep</value></data>
+  <data name="Duplicates.Command.Confirm" xml:space="preserve"><value>Keep it, move the others</value></data>
+  <data name="Duplicates.Command.Ignore" xml:space="preserve"><value>Not duplicates</value></data>
+  <data name="Duplicates.Command.Rescan" xml:space="preserve"><value>Check again</value></data>
+  <data name="Vocabulary.State.Blacklisted" xml:space="preserve"><value>blacklist</value></data>
+  <data name="Vocabulary.State.Reviewed" xml:space="preserve"><value>reviewed</value></data>
+  <data name="Vocabulary.State.ToReview" xml:space="preserve"><value>to review</value></data>
+  <data name="Vocabulary.Command.Row" xml:space="preserve"><value>Row</value></data>
+  <data name="Vocabulary.Command.Approve" xml:space="preserve"><value>Approve and next</value></data>
+  <data name="Vocabulary.Command.Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Vocabulary.Command.Blacklist" xml:space="preserve"><value>Blacklist</value></data>
+  <data name="Vocabulary.Command.Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Vocabulary.Command.Undo" xml:space="preserve"><value>Undo</value></data>
+  <data name="Vocabulary.Command.New" xml:space="preserve"><value>New personal tag</value></data>
+  <data name="Vocabulary.Command.Trial" xml:space="preserve"><value>Try on the archive</value></data>
+  <data name="Vocabulary.Command.Save" xml:space="preserve"><value>Save and re-analyze</value></data>
+  <data name="Vocabulary.CoreNotReady" xml:space="preserve"><value>{0} photos with tags: the core needs at least {1} to choose the 500 most frequent. Personal tags and the blacklist already work.</value></data>
+  <data name="Vocabulary.CoreNotReady.Title" xml:space="preserve"><value>The core forms after the first analysis</value></data>
+  <data name="Vocabulary.Tab.Core" xml:space="preserve"><value>Core to review {0}</value></data>
+  <data name="Vocabulary.Tab.All" xml:space="preserve"><value>All {0}</value></data>
+  <data name="Vocabulary.Tab.Custom" xml:space="preserve"><value>Personal {0}</value></data>
+  <data name="Vocabulary.Tab.Blacklist" xml:space="preserve"><value>Blacklist {0}</value></data>
+  <data name="Vocabulary.Tab.Categories" xml:space="preserve"><value>Categories {0}</value></data>
+  <data name="Vocabulary.Summary" xml:space="preserve"><value>Core: the 500 most frequent tags of your archive · Italian labels prepared with an LLM, to review · {0} / {1} reviewed</value></data>
+  <data name="Vocabulary.NeverWritten" xml:space="preserve"><value>In the blacklist: never written.</value></data>
+  <data name="Vocabulary.WrittenAs" xml:space="preserve"><value>Written as dc:subject {0}</value></data>
+  <data name="Vocabulary.Hierarchy" xml:space="preserve"><value>lr:hierarchicalSubject {0}</value></data>
+  <data name="Vocabulary.Threshold" xml:space="preserve"><value>Source RAM++ · official threshold {0} · global adjustment {1}</value></data>
+  <data name="Vocabulary.Undone" xml:space="preserve"><value>Change to "{0}" undone.</value></data>
+  <data name="Vocabulary.AdjustmentNext" xml:space="preserve"><value>The global adjustment applies to the next analyses (after a restart).</value></data>
+  <data name="Vocabulary.Custom.Incomplete" xml:space="preserve"><value>A personal tag needs an Italian label and an English description for the model.</value></data>
+  <data name="Vocabulary.Custom.NoClip" xml:space="preserve"><value>Personal tags need the CLIP model (Settings › Models).</value></data>
+  <data name="Vocabulary.Custom.Trial" xml:space="preserve"><value>Trial on the archive · {0} photos above the threshold</value></data>
+  <data name="Vocabulary.Custom.Saved" xml:space="preserve"><value>Saved; {0} photos have personal tags now.</value></data>
+  <data name="Vocabulary.Custom.SavedNoClip" xml:space="preserve"><value>Saved; it will be assigned when the CLIP model is installed.</value></data>
+  <data name="Vocabulary.Column.Id" xml:space="preserve"><value>ID (English)</value></data>
+  <data name="Vocabulary.Column.Italian" xml:space="preserve"><value>Italian</value></data>
+  <data name="Vocabulary.Column.Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Vocabulary.Column.Photos" xml:space="preserve"><value>Photos</value></data>
+  <data name="Vocabulary.Column.State" xml:space="preserve"><value>State</value></data>
+  <data name="Vocabulary.Custom.New" xml:space="preserve"><value>New personal tag</value></data>
+  <data name="Vocabulary.Examples" xml:space="preserve"><value>Examples with the lowest confidence above the threshold</value></data>
+  <data name="Vocabulary.EnglishUntilReviewed" xml:space="preserve"><value>Until it is reviewed, only the English key is written.</value></data>
+  <data name="Vocabulary.Adjustment" xml:space="preserve"><value>Global adjustment</value></data>
+  <data name="Vocabulary.Custom.Title" xml:space="preserve"><value>Personal tag (CLIP)</value></data>
+  <data name="Vocabulary.Custom.Label" xml:space="preserve"><value>Label (Italian)</value></data>
+  <data name="Vocabulary.Custom.Description" xml:space="preserve"><value>Description for the model (English)</value></data>
+  <data name="Vocabulary.Custom.Threshold" xml:space="preserve"><value>Threshold</value></data>
+  <data name="Vocabulary.Custom.Margin" xml:space="preserve"><value>Margin over the 2nd candidate</value></data>
+  <data name="Vocabulary.Custom.TrialButton" xml:space="preserve"><value>Try</value></data>
+  <data name="Vocabulary.Custom.Save" xml:space="preserve"><value>Save and re-analyze</value></data>
+  <data name="Key.PageUp" xml:space="preserve"><value>PgUp</value></data>
+  <data name="Key.PageDown" xml:space="preserve"><value>PgDn</value></data>
+  <data name="Numbers.Title" xml:space="preserve"><value>Numbers</value></data>
+  <data name="Numbers.Command.Type" xml:space="preserve"><value>type the number</value></data>
+  <data name="Numbers.Command.Erase" xml:space="preserve"><value>erase a digit</value></data>
+  <data name="Numbers.Command.Confirm" xml:space="preserve"><value>confirm and next</value></data>
+  <data name="Numbers.Command.None" xml:space="preserve"><value>no number</value></data>
+  <data name="Numbers.Command.Cycle" xml:space="preserve"><value>number in the list</value></data>
+  <data name="Numbers.Command.Move" xml:space="preserve"><value>photo</value></data>
+  <data name="Numbers.Command.Group" xml:space="preserve"><value>list</value></data>
+  <data name="Numbers.Command.Propagate" xml:space="preserve"><value>propagate to the burst</value></data>
+  <data name="Numbers.Command.Exit" xml:space="preserve"><value>back to the review</value></data>
+  <data name="Numbers.Doubt.Confusion" xml:space="preserve"><value>digits often confused</value></data>
+  <data name="Numbers.Doubt.Partial" xml:space="preserve"><value>partial or uncertain reading</value></data>
+  <data name="Numbers.Doubt.Unknown" xml:space="preserve"><value>no candidate</value></data>
+  <data name="Numbers.Or" xml:space="preserve"><value> or </value></data>
+  <data name="Numbers.NotInList" xml:space="preserve"><value>not in the entry list</value></data>
+  <data name="Numbers.InList" xml:space="preserve"><value>In the list · {0} of {1}</value></data>
+  <data name="Numbers.NoNumber" xml:space="preserve"><value>No readable number</value></data>
+  <data name="Numbers.OutOfList" xml:space="preserve"><value>Out of the list, ignored</value></data>
+  <data name="Numbers.Summary" xml:space="preserve"><value>{0} photos · {1} vehicles · {2} to resolve · {3} entries in the list</value></data>
+  <data name="Numbers.Crew" xml:space="preserve"><value>Crew of {0} · {1} · number only in the XMP</value></data>
+  <data name="Numbers.State.Certain" xml:space="preserve"><value>Number {0}</value></data>
+  <data name="Numbers.State.ToReview" xml:space="preserve"><value>To review</value></data>
+  <data name="Numbers.State.NoNumber" xml:space="preserve"><value>No number</value></data>
+  <data name="Numbers.State.OutOfList" xml:space="preserve"><value>Out of the list</value></data>
+  <data name="Numbers.Origin.Manual" xml:space="preserve"><value>yours</value></data>
+  <data name="Numbers.Origin.Propagated" xml:space="preserve"><value>from the burst</value></data>
+  <data name="Numbers.OtherVehicle" xml:space="preserve"><value>+ {0} certain</value></data>
+  <data name="Numbers.TypeFirst" xml:space="preserve"><value>Type the number first, or Del if there is none.</value></data>
+  <data name="Numbers.Set" xml:space="preserve"><value>{0}: number {1}.</value></data>
+  <data name="Numbers.SetBurst" xml:space="preserve"><value>{0}: number {1}, also on {2} more photos of the burst.</value></data>
+  <data name="Numbers.SetNone" xml:space="preserve"><value>{0}: no number.</value></data>
+  <data name="Numbers.Undone" xml:space="preserve"><value>Last correction undone.</value></data>
+  <data name="Numbers.List.Title" xml:space="preserve"><value>Entry list</value></data>
+  <data name="Numbers.List.Choose" xml:space="preserve"><value>Choose a list</value></data>
+  <data name="Numbers.List.Info" xml:space="preserve"><value>{0} · {1} entries</value></data>
+  <data name="Numbers.List.Manual" xml:space="preserve"><value>typed in</value></data>
+  <data name="Numbers.List.None" xml:space="preserve"><value>No list for this job: only clear readings count as numbers.</value></data>
+  <data name="Numbers.List.Import" xml:space="preserve"><value>Import CSV/Excel</value></data>
+  <data name="Numbers.List.Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Numbers.List.EditHint" xml:space="preserve"><value>One entry per line: number; drivers (separated by /); team; category; car.</value></data>
+  <data name="Numbers.List.Save" xml:space="preserve"><value>Save and match again</value></data>
+  <data name="Numbers.List.FileType" xml:space="preserve"><value>Entry lists (CSV, Excel)</value></data>
+  <data name="Numbers.List.ImportFailed" xml:space="preserve"><value>{0} could not be read: {1}</value></data>
+  <data name="Numbers.List.ImportEmpty" xml:space="preserve"><value>{0} has no entries with a number.</value></data>
+  <data name="Numbers.List.Imported" xml:space="preserve"><value>List {0} imported: {1} entries; numbers matched again.</value></data>
+  <data name="Numbers.List.Saved" xml:space="preserve"><value>List saved: {0} entries; numbers matched again.</value></data>
+  <data name="Numbers.Propagate" xml:space="preserve"><value>Propagate the correction to the burst</value></data>
+  <data name="Numbers.Back" xml:space="preserve"><value>Review</value></data>
+  <data name="Numbers.ToResolve" xml:space="preserve"><value>To resolve</value></data>
+  <data name="Numbers.NothingToResolve" xml:space="preserve"><value>Nothing to resolve.</value></data>
+  <data name="Numbers.Other" xml:space="preserve"><value>Other</value></data>
+  <data name="Numbers.Empty" xml:space="preserve"><value>No numbers read in this job: the OCR runs on the photos whose profile asks for it (Motorsport).</value></data>
+  <data name="Numbers.Number" xml:space="preserve"><value>Number</value></data>
+  <data name="Numbers.Confirm" xml:space="preserve"><value>Confirm</value></data>
+  <data name="Numbers.None" xml:space="preserve"><value>No number</value></data>
+  <data name="Numbers.Hint" xml:space="preserve"><value>0-9 type · Enter confirms (the typed number or the first candidate) · ↑ ↓ numbers of the list · ← → photo · PgUp PgDn list · Ctrl Z undo. Your numbers are never replaced by a new analysis.</value></data>
+  <data name="Numbers.Candidates" xml:space="preserve"><value>Candidates for the photo</value></data>
+  <data name="Numbers.CandidatesNote" xml:space="preserve"><value>Colour and model help to tell them apart: they come from the entry list.</value></data>
+  <data name="Import.EntryList" xml:space="preserve"><value>Entry list</value></data>
+  <data name="Import.EntryList.None" xml:space="preserve"><value>No list (clear readings only)</value></data>
+  <data name="Import.EntryList.Item" xml:space="preserve"><value>{0} · {1} entries</value></data>
+  <data name="Import.EntryList.Note" xml:space="preserve"><value>Only the numbers of the list are recognized; sponsors and plates are ignored. It can be changed later in the Numbers view.</value></data>
+  <data name="Import.Tags.CNoModel" xml:space="preserve"><value>Captions need the Florence-2 model (Settings › Models); about a second per photo on the GPU, a few seconds on the CPU.</value></data>
+  <data name="Settings.Xmp" xml:space="preserve"><value>XMP</value></data>
+  <data name="Settings.Xmp.WriteCaptions" xml:space="preserve"><value>Write captions in dc:description</value></data>
+  <data name="Settings.Xmp.WriteCaptionsNote" xml:space="preserve"><value>Florence-2 captions are in English. Captions you write yourself are written too.</value></data>
+  <data name="Browse.Command.Caption" xml:space="preserve"><value>caption</value></data>
+  <data name="Browse.Detail.Caption" xml:space="preserve"><value>Caption</value></data>
+  <data name="Browse.Caption.Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Browse.Caption.Yours" xml:space="preserve"><value>Written by you</value></data>
+  <data name="Browse.Caption.Automatic" xml:space="preserve"><value>Automatic · {0}</value></data>
+  <data name="Browse.Caption.Placeholder" xml:space="preserve"><value>Describe the photo; Enter saves, Esc cancels</value></data>
+  <data name="Settings.Xmp.SyncNote" xml:space="preserve"><value>When another program (Bridge, Lightroom) changes rating, label, keywords or description of a photo PhotoFlow wrote, the changes are imported as yours at start and before every write. On rating and label the most recent change wins.</value></data>
+  <data name="Settings.Xmp.SyncNow" xml:space="preserve"><value>Synchronize now</value></data>
+  <data name="Settings.Xmp.ImportPeople" xml:space="preserve"><value>Import people named by other programs</value></data>
+  <data name="Settings.Xmp.Syncing" xml:space="preserve"><value>Reading the XMP changed by other programs…</value></data>
+  <data name="Settings.Xmp.SyncFailed" xml:space="preserve"><value>The synchronization could not complete: see the log.</value></data>
+  <data name="Settings.Xmp.SyncResult" xml:space="preserve"><value>{0} files changed by other programs, {1} photos updated; {2} values kept from PhotoFlow (more recent or manual tags); {3} face regions named elsewhere.</value></data>
+  <data name="Settings.Xmp.PeopleImported" xml:space="preserve"><value>{0} people created, {1} faces assigned from the regions named by other programs.</value></data>
+  <data name="Settings.Catalog.ExportNote" xml:space="preserve"><value>One .pfcatalog file with the database, the people gallery, the libraries and your profiles; on another PC it is imported with the folders of the libraries remapped.</value></data>
+  <data name="Settings.Catalog.ExportThumbnails" xml:space="preserve"><value>Include the thumbnails (otherwise made again from the photos)</value></data>
+  <data name="Settings.Catalog.ExportFingerprints" xml:space="preserve"><value>Include the face fingerprints (encrypted with an export password)</value></data>
+  <data name="Settings.Catalog.ExportFingerprintsNote" xml:space="preserve"><value>Without them, names and assignments travel and the fingerprints are computed again on the other PC.</value></data>
+  <data name="Settings.Catalog.ExportPassword" xml:space="preserve"><value>Export password</value></data>
+  <data name="Settings.Catalog.ExportPasswordMissing" xml:space="preserve"><value>Choose a password for the fingerprints, or leave them out.</value></data>
+  <data name="Settings.Catalog.Exporting" xml:space="preserve"><value>Exporting the catalog…</value></data>
+  <data name="Settings.Catalog.Exported" xml:space="preserve"><value>{0}: {1} photos, {2} fingerprints, {3}.</value></data>
+  <data name="Settings.Catalog.ExportFailed" xml:space="preserve"><value>The export did not succeed: {0}</value></data>
+  <data name="Settings.Catalog.FileType" xml:space="preserve"><value>PhotoFlow catalog</value></data>
+  <data name="Settings.Catalog.ImportReady" xml:space="preserve"><value>{0}, exported on {1}: check where the photos of each library are now.</value></data>
+  <data name="Settings.Catalog.ImportRemap" xml:space="preserve"><value>Folders of the libraries on this PC (✓ found, ? not found)</value></data>
+  <data name="Settings.Catalog.ChooseFolder" xml:space="preserve"><value>Choose…</value></data>
+  <data name="Settings.Catalog.ImportPassword" xml:space="preserve"><value>Password of the export</value></data>
+  <data name="Settings.Catalog.ImportNote" xml:space="preserve"><value>The imported catalog replaces this one at the next start; this one is kept next to the backups. Profiles and thumbnails are added now.</value></data>
+  <data name="Settings.Catalog.ImportConfirm" xml:space="preserve"><value>Import</value></data>
+  <data name="Settings.Catalog.Imported" xml:space="preserve"><value>Catalog ready: it replaces the current one at the next start.</value></data>
+  <data name="Settings.Catalog.ImportedNoFingerprints" xml:space="preserve"><value>Catalog ready (without fingerprints: they are computed again): it replaces the current one at the next start.</value></data>
+  <data name="Libraries.ImportCatalog" xml:space="preserve"><value>Import a .pfcatalog catalog</value></data>
+  <data name="People.Fingerprints.Missing" xml:space="preserve"><value>This catalog came without face fingerprints (exported without a password): names and assignments are here; recompute the fingerprints to recognize the people in new photos.</value></data>
+  <data name="Browse.Regenerate" xml:space="preserve"><value>Regenerate the results…</value></data>
+  <data name="Libraries.Regenerate" xml:space="preserve"><value>Regenerate…</value></data>
+  <data name="Settings.Models.InUse" xml:space="preserve"><value>In use</value></data>
+  <data name="Settings.Models.Use" xml:space="preserve"><value>Use this model</value></data>
+  <data name="Regeneration.Title" xml:space="preserve"><value>Regeneration</value></data>
+  <data name="Regeneration.Intro" xml:space="preserve"><value>Computes again what older models made, with the current ones. Nothing changes until you look at the differences and apply them.</value></data>
+  <data name="Regeneration.NewModel" xml:space="preserve"><value>New model in use: {0}. Try it on a sample and look at the differences before regenerating everything.</value></data>
+  <data name="Regeneration.NewModelAtRestart" xml:space="preserve"><value>{0} will be used from the next start (a job is running).</value></data>
+  <data name="Regeneration.Scope" xml:space="preserve"><value>Perimeter</value></data>
+  <data name="Regeneration.Folder" xml:space="preserve"><value>Folder (optional, e.g. 2026/Monza)</value></data>
+  <data name="Regeneration.Scope.Photos" xml:space="preserve"><value>{0} chosen photos</value></data>
+  <data name="Regeneration.Scope.Job" xml:space="preserve"><value>The photos of job #{0}</value></data>
+  <data name="Regeneration.What" xml:space="preserve"><value>What</value></data>
+  <data name="Regeneration.Part.Culling" xml:space="preserve"><value>Culling scores</value></data>
+  <data name="Regeneration.Part.Embedding" xml:space="preserve"><value>Embeddings (search, similar)</value></data>
+  <data name="Regeneration.Part.Faces" xml:space="preserve"><value>Faces</value></data>
+  <data name="Regeneration.Part.Tags" xml:space="preserve"><value>Tags</value></data>
+  <data name="Regeneration.Part.Captions" xml:space="preserve"><value>Captions</value></data>
+  <data name="Regeneration.Part.Ocr" xml:space="preserve"><value>Race numbers (OCR)</value></data>
+  <data name="Regeneration.OlderOnly" xml:space="preserve"><value>Only results of older models</value></data>
+  <data name="Regeneration.OlderOnlyNote" xml:space="preserve"><value>Recommended: what the current models already made is not computed again.</value></data>
+  <data name="Regeneration.ForceAll" xml:space="preserve"><value>Force everything</value></data>
+  <data name="Regeneration.ExcludeReviewed" xml:space="preserve"><value>Leave out the photos already reviewed</value></data>
+  <data name="Regeneration.Protections" xml:space="preserve"><value>Your decisions, manual and removed tags, your captions and the people you assigned are never changed. With a new face model the assignments move to the new faces.</value></data>
+  <data name="Regeneration.Sample" xml:space="preserve"><value>Try on a sample (50)</value></data>
+  <data name="Regeneration.Run" xml:space="preserve"><value>Regenerate</value></data>
+  <data name="Regeneration.Command.Sample" xml:space="preserve"><value>sample</value></data>
+  <data name="Regeneration.Command.Run" xml:space="preserve"><value>regenerate</value></data>
+  <data name="Regeneration.Command.Apply" xml:space="preserve"><value>apply</value></data>
+  <data name="Regeneration.Starting" xml:space="preserve"><value>Starting…</value></data>
+  <data name="Regeneration.Progress" xml:space="preserve"><value>{0} of {1} photos</value></data>
+  <data name="Regeneration.Stopped" xml:space="preserve"><value>The regeneration stopped: resume it from Jobs.</value></data>
+  <data name="Regeneration.NothingChosen" xml:space="preserve"><value>Choose what to regenerate and where.</value></data>
+  <data name="Regeneration.NothingToDo" xml:space="preserve"><value>Nothing to regenerate: everything comes from the current models.</value></data>
+  <data name="Regeneration.Preview" xml:space="preserve"><value>Differences</value></data>
+  <data name="Regeneration.Preview.Photos" xml:space="preserve"><value>{0} photos with new results.</value></data>
+  <data name="Regeneration.Preview.PhotosSample" xml:space="preserve"><value>Sample: {0} photos with new results.</value></data>
+  <data name="Regeneration.Preview.Outcomes" xml:space="preserve"><value>{0} automatic proposals change ({1} with your decision, which stays).</value></data>
+  <data name="Regeneration.Preview.Tags" xml:space="preserve"><value>Tags: {0} added, {1} removed; {2} you removed or added stay as they are.</value></data>
+  <data name="Regeneration.Preview.Faces" xml:space="preserve"><value>Faces: {0} assignments move to the new faces, {1} new faces, {2} automatic faces not found again, {3} of yours kept.</value></data>
+  <data name="Regeneration.Preview.Captions" xml:space="preserve"><value>Captions: {0} change, {1} of yours stay.</value></data>
+  <data name="Regeneration.Preview.Embeddings" xml:space="preserve"><value>Embeddings: {0} computed again.</value></data>
+  <data name="Regeneration.Preview.Ocr" xml:space="preserve"><value>Race numbers: {0} photos read differently.</value></data>
+  <data name="Regeneration.Examples" xml:space="preserve"><value>Examples</value></data>
+  <data name="Regeneration.PreviewNote" xml:space="preserve"><value>Until you apply, the catalog keeps the previous results.</value></data>
+  <data name="Regeneration.Apply" xml:space="preserve"><value>Apply</value></data>
+  <data name="Regeneration.Discard" xml:space="preserve"><value>Discard</value></data>
+  <data name="Regeneration.Applied" xml:space="preserve"><value>Applied to {0} photos; {1} people assignments moved; {2} XMP written again.</value></data>
+  <data name="Regeneration.Discarded" xml:space="preserve"><value>Discarded: the catalog is as before.</value></data>
+  <data name="Import.Tags.DNoModel" xml:space="preserve"><value>Italian captions need a Qwen model converted on this PC (Settings › Models) and an NVIDIA GPU with 12 GB; about 2 seconds per photo, in a pass after the analysis.</value></data>
+  <data name="Models.Status.ToConvert" xml:space="preserve"><value>to convert</value></data>
+  <data name="Settings.Models.ManualNote" xml:space="preserve"><value>Download these original files from Hugging Face ({0}, about {1}) into the folder below, then Verify and convert: PhotoFlow checks them and converts them with Python 3.10-3.13 already installed (10-30 minutes; about 45 GB free during the conversion, about 6 GB stay). The original files are only read.</value></data>
+  <data name="Settings.Models.OpenFolder" xml:space="preserve"><value>Open folder</value></data>
+  <data name="Settings.Models.Convert" xml:space="preserve"><value>Verify and convert</value></data>
+  <data name="Settings.Models.CancelConversion" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Vlm.GpuRequired" xml:space="preserve"><value>Level D needs an NVIDIA GPU with at least 12 GB and the GPU pack installed (Settings › Hardware).</value></data>
+  <data name="Vlm.Stage.Verify" xml:space="preserve"><value>Verifying the original files… {0}%</value></data>
+  <data name="Vlm.Stage.Python" xml:space="preserve"><value>Looking for Python…</value></data>
+  <data name="Vlm.Stage.Space" xml:space="preserve"><value>Checking the free space…</value></data>
+  <data name="Vlm.Stage.Environment" xml:space="preserve"><value>Creating the Python environment…</value></data>
+  <data name="Vlm.Stage.Packages" xml:space="preserve"><value>Installing the Python packages (about 5 GB, only the first time)…</value></data>
+  <data name="Vlm.Stage.Convert" xml:space="preserve"><value>Converting… {0}% ({1})</value></data>
+  <data name="Vlm.Stage.Done" xml:space="preserve"><value>Converted ✓</value></data>
+  <data name="Vlm.Ready" xml:space="preserve"><value>Converted ✓ Italian captions can be chosen in the import (level D).</value></data>
+  <data name="Vlm.Cancelled" xml:space="preserve"><value>Conversion cancelled: nothing was changed.</value></data>
+  <data name="Vlm.Error.Python" xml:space="preserve"><value>Python 3.10-3.13 was not found. Install Python 3.12 from python.org (keep the "py" launcher option), then try again.</value></data>
+  <data name="Vlm.Error.Stopped" xml:space="preserve"><value>Conversion stopped: {0} Log: {1}</value></data>
+  <data name="Settings.Benchmark.Stage.VlmCaptions" xml:space="preserve"><value>Captions D (Qwen)</value></data>
+  <data name="Settings.Models.RemoveEnvironment" xml:space="preserve"><value>Remove the Python environment</value></data>
+  <data name="Vlm.EnvironmentRemoved" xml:space="preserve"><value>Python environment removed: a new conversion makes it again.</value></data>
+  <data name="Settings.Models.RemoveEnvironmentConfirm" xml:space="preserve"><value>Remove the Python environment of the conversion (about 5 GB)? The model stays; a new conversion downloads the packages again.</value></data>
+  <data name="Settings.Models.RemoveEnvironmentYes" xml:space="preserve"><value>Remove</value></data>
+  <data name="CatalogLocation.Title" xml:space="preserve"><value>Where should the catalog be saved?</value></data>
+  <data name="CatalogLocation.Body" xml:space="preserve"><value>The catalog holds decisions, tags, people and captions of your photos (not the photos themselves). Choose its folder before it is created: a local disk is the fastest; a network folder lets you use it from more PCs, one at a time.</value></data>
+  <data name="CatalogLocation.Folder" xml:space="preserve"><value>Folder of the catalog</value></data>
+  <data name="CatalogLocation.Choose" xml:space="preserve"><value>Choose folder…</value></data>
+  <data name="CatalogLocation.UseDefault" xml:space="preserve"><value>Use the proposed one</value></data>
+  <data name="CatalogLocation.Note" xml:space="preserve"><value>If the folder already holds a PhotoFlow catalog, that one is used. Backups, thumbnails and caches stay on this PC. You can move the catalog later in Settings › Catalog.</value></data>
+  <data name="CatalogLocation.Confirm" xml:space="preserve"><value>Continue</value></data>
+  <data name="CatalogLocation.Creating" xml:space="preserve"><value>Creating the catalog…</value></data>
+  <data name="CatalogLocation.Existing" xml:space="preserve"><value>Existing catalog found: opening it…</value></data>
+  <data name="CatalogLocation.Failed" xml:space="preserve"><value>This folder cannot be used: {0}</value></data>
+  <data name="Settings.Catalog.Move" xml:space="preserve"><value>Move…</value></data>
+  <data name="Settings.Catalog.OpenExisting" xml:space="preserve"><value>Open an existing catalog…</value></data>
+  <data name="Settings.Catalog.MoveNote" xml:space="preserve"><value>Changes apply at the next start, with the catalog closed. A move copies the catalog and leaves the original where it is.</value></data>
+  <data name="Settings.Catalog.CatalogFileType" xml:space="preserve"><value>PhotoFlow catalog</value></data>
+  <data name="Settings.Catalog.MovePending" xml:space="preserve"><value>At the next start the catalog will be copied to {0}.</value></data>
+  <data name="Settings.Catalog.OpenPending" xml:space="preserve"><value>At the next start PhotoFlow will use the catalog {0}.</value></data>
+  <data name="Settings.Catalog.CancelChange" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Settings.Catalog.ChangeRefused" xml:space="preserve"><value>Not possible: {0}</value></data>
+  <data name="Settings.Catalog.Result.moved" xml:space="preserve"><value>Catalog moved to {0}. The previous file is still in {1}.</value></data>
+  <data name="Settings.Catalog.Result.opened" xml:space="preserve"><value>Now using the catalog {0}. The previous one is still in {1}.</value></data>
+  <data name="Settings.Catalog.Result.failed" xml:space="preserve"><value>The change of catalog did not succeed ({0}); still using {1}.</value></data>
+  <data name="Browse.Facets.Title" xml:space="preserve"><value>Filters</value></data>
+  <data name="Browse.Facets.Tags" xml:space="preserve"><value>Tags</value></data>
+  <data name="Browse.Facets.Events" xml:space="preserve"><value>Events</value></data>
+  <data name="Browse.Facets.People" xml:space="preserve"><value>People</value></data>
+  <data name="Browse.Facets.Filter" xml:space="preserve"><value>Filter tags…</value></data>
+  <data name="Browse.Facets.ModeTip" xml:space="preserve"><value>What a click on a tag does. AND: a new group (the photos must have it too; the numbers are the photos left). OR: added to the last group (one of them is enough; the numbers are the photos added). Ctrl+click does the other.</value></data>
+  <data name="Browse.Facets.Hint" xml:space="preserve"><value>Click: in the mode chosen above. Ctrl+click: in the other one. Events are alternatives (OR), people must all be there (AND).</value></data>
+  <data name="Browse.Facets.More" xml:space="preserve"><value>{0} more tags: use the filter.</value></data>
+  <data name="Browse.Facets.Unknown" xml:space="preserve"><value>(tag)</value></data>
+  <data name="Browse.Command.Facets" xml:space="preserve"><value>Filters</value></data>
+  <data name="Browse.Preview.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Browse.Preview.Hint" xml:space="preserve"><value>Esc, Space or double click: back to the list · ← →: other photos</value></data>
+  <data name="Duplicates.ClickToKeep" xml:space="preserve"><value>Click (or press its number) to keep this copy</value></data>
+  <data name="People.NewPerson" xml:space="preserve"><value>+ New person…</value></data>
+  <data name="People.NewPersonName" xml:space="preserve"><value>Name of the new person</value></data>
+  <data name="People.ChoosePerson" xml:space="preserve"><value>Choose the person…</value></data>
+  <data name="People.ChoiceLabel" xml:space="preserve"><value>{0} ({1})</value></data>
+  <data name="People.MoveConfirm" xml:space="preserve"><value>Move</value></data>
+  <data name="People.NoFaceChosen" xml:space="preserve"><value>No face chosen: click one (Ctrl+click for more)</value></data>
+  <data name="People.OneFaceChosen" xml:space="preserve"><value>1 face chosen · Ctrl+click to add more</value></data>
+  <data name="People.Command.OpenPhoto" xml:space="preserve"><value>Open photo</value></data>
+  <data name="People.PhotoUnavailable" xml:space="preserve"><value>The photo of this face cannot be read now (file not reachable, no thumbnail).</value></data>
+  <data name="People.PhotoThumbnailOnly" xml:space="preserve"><value>Thumbnail ({0}) · the original is not reachable now</value></data>
+  <data name="People.PhotoHint" xml:space="preserve"><value>Esc, Enter or double click: back to the faces</value></data>
+  <data name="People.Command.FaceBox" xml:space="preserve"><value>Face box</value></data>
+  <data name="People.ShowFaceBox" xml:space="preserve"><value>Show the face</value></data>
+  <data name="People.PhotoNoTags" xml:space="preserve"><value>No tags on this photo</value></data>
+  <data name="Faces.UnknownOne" xml:space="preserve"><value>1 not recognized</value></data>
+  <data name="Faces.UnknownMany" xml:space="preserve"><value>{0} not recognized</value></data>
+  <data name="Faces.None" xml:space="preserve"><value>No faces found</value></data>
+  <data name="Browse.ShowFaces" xml:space="preserve"><value>Show faces</value></data>
+  <data name="Browse.Command.Faces" xml:space="preserve"><value>Show faces</value></data>
+  <data name="Browse.Command.AddFace" xml:space="preserve"><value>Add a face</value></data>
+  <data name="Browse.DrawFace" xml:space="preserve"><value>Drag a box around the face on the photo.</value></data>
+  <data name="Browse.SaveFace" xml:space="preserve"><value>Save</value></data>
+  <data name="Browse.FaceAdded" xml:space="preserve"><value>Face added: it is yours, no analysis will remove it.</value></data>
+  <data name="Browse.IdentifyFace" xml:space="preserve"><value>Who is this face (now: {0})?</value></data>
+  <data name="Browse.FaceIdentified" xml:space="preserve"><value>Face assigned: it is yours, and it helps recognizing the person in the other photos.</value></data>
+  <data name="Browse.ClickFaceHint" xml:space="preserve"><value>Click a face to say who it is · N to add a face not found</value></data>
+  <data name="Status.UpdateAvailable" xml:space="preserve"><value>Update {0} available (Settings › General)</value></data>
+  <data name="Settings.Updates.Title" xml:space="preserve"><value>Updates</value></data>
+  <data name="Settings.Updates.Version" xml:space="preserve"><value>PhotoFlow {0}</value></data>
+  <data name="Settings.Updates.CheckAtStart" xml:space="preserve"><value>Look for a new version at startup</value></data>
+  <data name="Settings.Updates.CheckNow" xml:space="preserve"><value>Check now</value></data>
+  <data name="Settings.Updates.Install" xml:space="preserve"><value>Download, install and restart</value></data>
+  <data name="Settings.Updates.UpToDate" xml:space="preserve"><value>You have the latest version.</value></data>
+  <data name="Settings.Updates.Available" xml:space="preserve"><value>Version {0} is available. Catalog, models and settings stay as they are.</value></data>
+  <data name="Settings.Updates.Downloading" xml:space="preserve"><value>Downloading… {0}%</value></data>
+  <data name="Settings.Updates.JobRunning" xml:space="preserve"><value>A job is running: install the update when it ends.</value></data>
+  <data name="Settings.Updates.Failed" xml:space="preserve"><value>Could not check or install the update: {0}</value></data>
+  <data name="Settings.Updates.NotInstalled" xml:space="preserve"><value>PhotoFlow runs from a build folder: updates come with the installed version.</value></data>
+  <data name="Models.Function.FaceRecognition" xml:space="preserve"><value>People recognition</value></data>
+  <data name="Settings.Models.ManualNoteSmall" xml:space="preserve"><value>Original files from Hugging Face ({0}, about {1}): "Download the original files" puts them in the folder below once the license is accepted (or copy them yourself). Then "Verify and convert": PhotoFlow checks them and converts them with Python 3.10-3.13 already installed, without a GPU too, in a few minutes; the first time it prepares the Python environment of the conversion (about 5 GB, the same as the description model). The original files are only read.</value></data>
+  <data name="Settings.Models.DownloadSource" xml:space="preserve"><value>Download the original files</value></data>
+  <data name="Settings.Models.SourceReady" xml:space="preserve"><value>Original files of {0} downloaded and verified: now "Verify and convert".</value></data>
+  <data name="Settings.Models.Converted" xml:space="preserve"><value>Model converted and ready: choose it above, in "People recognition".</value></data>
+  <data name="Settings.Models.Recognizer" xml:space="preserve"><value>People recognition</value></data>
+  <data name="Settings.Models.RecognizerNote" xml:space="preserve"><value>The model that makes the face fingerprints PhotoFlow recognizes people with. When you change it, PhotoFlow proposes to regenerate the faces of the whole catalog: the assignments move to the new faces, or you can start again from zero with the people.</value></data>
+  <data name="Settings.Models.RecognizerUse" xml:space="preserve"><value>Use and regenerate the faces</value></data>
+  <data name="Settings.Models.Recognizer.insightface-buffalo-l" xml:space="preserve"><value>ArcFace (buffalo_l)</value></data>
+  <data name="Settings.Models.Recognizer.opencv-sface-2021dec" xml:space="preserve"><value>SFace (OpenCV)</value></data>
+  <data name="Settings.Models.Recognizer.adaface-ir101-webface12m" xml:space="preserve"><value>AdaFace IR-101</value></data>
+  <data name="Regeneration.Scope.AllCatalog" xml:space="preserve"><value>The whole catalog</value></data>
+  <data name="Regeneration.Reset" xml:space="preserve"><value>Start again from zero with the people</value></data>
+  <data name="Regeneration.Reset.Note" xml:space="preserve"><value>Deletes every person, name and assignment, manual ones included, and the drawn faces, in the whole catalog; then the faces are grouped again.</value></data>
+  <data name="Regeneration.Reset.Counts" xml:space="preserve"><value>{0} people ({1} with a name), {2} manual assignments and {3} drawn faces will be deleted.</value></data>
+  <data name="Regeneration.Reset.Warning" xml:space="preserve"><value>It happens only when you apply the complete regeneration, never with the trial on a sample, and PhotoFlow backs up the catalog first (Settings › Catalog). Names and face areas also leave the XMP already written by PhotoFlow; those of other programs stay.</value></data>
+  <data name="Regeneration.Reset.Confirm" xml:space="preserve"><value>Yes, delete every person</value></data>
+  <data name="Regeneration.Reset.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Regeneration.Reset.Confirmed" xml:space="preserve"><value>Confirmed: the people will be deleted when you apply the regeneration.</value></data>
+  <data name="Regeneration.Reset.ConfirmFirst" xml:space="preserve"><value>Confirm the reset of the people first, or clear the choice.</value></data>
+  <data name="Regeneration.Reset.Preview" xml:space="preserve"><value>Reset of the people:</value></data>
+  <data name="Regeneration.Reset.Done" xml:space="preserve"><value>People reset: {0} people, {1} manual assignments and {2} drawn faces deleted.</value></data>
+</root>

@@ -1,0 +1,32 @@
+{
+  "notes": "Public test samples downloaded by the tests (never committed). All CC0 from raw.pixls.us, SHA-256 as published by the site (verified 2026-10-12).",
+  "samples": [
+    {
+      "id": "nikon-d40-lossy",
+      "file": "nikon-d40-lossy.NEF",
+      "url": "https://raw.pixls.us/getfile.php/3618/nice/Nikon%20-%20D40%20-%2012bit%2012bit%20compressed%20(Lossy%20(type%201))%20(3%3A2).NEF",
+      "sha256": "44e88bc77b7a531b22647bcd07b9393c4568062e8f0906d3bbdecb42fbe29e03",
+      "size": "5.57 MB",
+      "license": "CC0-1.0",
+      "licenseSource": "https://raw.pixls.us/ (Creative Commons 0 - Public Domain)"
+    },
+    {
+      "id": "nikon-d5100-lossless",
+      "file": "nikon-d5100-lossless.nef",
+      "url": "https://raw.pixls.us/getfile.php/1597/nice/Nikon%20-%20D5100%20-%2014bit%2014bit%20compressed%20(Lossless)%20(3%3A2).nef",
+      "sha256": "3ce328830942381648be26b372a54b317fdb27b63c1aa9c2ee1fce076a2e1b4f",
+      "size": "19.21 MB",
+      "license": "CC0-1.0",
+      "licenseSource": "https://raw.pixls.us/ (Creative Commons 0 - Public Domain)"
+    },
+    {
+      "id": "nikon-z8-high-efficiency",
+      "file": "nikon-z8-he-low.NEF",
+      "url": "https://raw.pixls.us/getfile.php/6616/nice/Nikon%20-%20Z%208%20-%208bit%208bit%20compressed%20(3%3A2).NEF",
+      "sha256": "82df041542b8d328738443bb5ff3373b396e406ecc8cbe7dc3b35252790c53e7",
+      "size": "23.25 MB",
+      "license": "CC0-1.0",
+      "licenseSource": "https://raw.pixls.us/ (Creative Commons 0 - Public Domain)"
+    }
+  ]
+}

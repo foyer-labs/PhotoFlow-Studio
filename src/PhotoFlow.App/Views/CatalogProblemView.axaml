@@ -1,0 +1,20 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Startup with a damaged catalog: restore proposed from the last backup (spec §9). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.CatalogProblemView"
+             x:DataType="vm:CatalogProblemViewModel">
+  <Border Classes="card cardError" Padding="24" Width="560" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <StackPanel Spacing="12">
+      <TextBlock Classes="subtitle" Text="{Binding Title}" />
+      <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{l:Tr CatalogProblem.Body}" />
+      <TextBlock Classes="data tertiary" TextWrapping="Wrap" Text="{Binding Error}" />
+      <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding BackupText}" />
+      <Button Classes="primary" HorizontalAlignment="Left" IsVisible="{Binding HasBackup}" IsEnabled="{Binding !IsBusy}"
+              Command="{Binding RestoreCommand}" Content="{l:Tr CatalogProblem.Restore}" />
+      <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    </StackPanel>
+  </Border>
+</UserControl>

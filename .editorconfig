@@ -1,0 +1,32 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{json,yml,yaml,axaml,xml,csproj,props,targets,slnx,resx}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.cs]
+# Every source file starts with the SPDX header (CLAUDE.md §4), enforced at build time.
+file_header_template = SPDX-License-Identifier: Apache-2.0
+dotnet_diagnostic.IDE0073.severity = error
+
+# Style
+csharp_style_namespace_declarations = file_scoped:error
+dotnet_diagnostic.IDE0161.severity = error
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_prefer_braces = true:warning
+dotnet_sort_system_directives_first = true
+dotnet_style_readonly_field = true:warning
+
+# Unused usings are reported but not enforced at build (would need XML docs on every project).
+dotnet_diagnostic.IDE0005.severity = suggestion

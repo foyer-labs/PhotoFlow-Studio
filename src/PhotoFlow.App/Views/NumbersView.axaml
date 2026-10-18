@@ -1,0 +1,205 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Numbers view, board 2c: doubts to resolve, numbers of the entry list, other photos; enlarged crops with their
+     readings; fast correction from the keyboard; the entry list of the job (import, edit). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:cat="using:PhotoFlow.Core.Catalog"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.NumbersView"
+             x:DataType="vm:NumbersViewModel">
+  <UserControl.Styles>
+    <Style Selector="Border.group">
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="CornerRadius" Value="{StaticResource PF.Radius.Control}" />
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="Border.group.selected">
+      <Setter Property="Background" Value="{DynamicResource PF.Brush.Control}" />
+    </Style>
+    <Style Selector="Border.vehicle">
+      <Setter Property="BorderThickness" Value="2" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.Border}" />
+      <Setter Property="CornerRadius" Value="{StaticResource PF.Radius.Control}" />
+      <Setter Property="Padding" Value="8" />
+      <Setter Property="Margin" Value="0,0,10,10" />
+      <Setter Property="Width" Value="260" />
+    </Style>
+    <Style Selector="Border.vehicle.selected">
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.Outcome.ToReview}" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto,*">
+    <!-- Header: job, summary, propagation -->
+    <Grid ColumnDefinitions="*,Auto" Margin="20,12,20,10">
+      <StackPanel Spacing="2">
+        <TextBlock Classes="pageTitle" Text="{Binding Header}" />
+        <TextBlock Classes="label tertiary" Text="{Binding Summary}" />
+      </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+        <CheckBox IsChecked="{Binding Propagate}">
+          <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Numbers.Propagate}" /><Border Classes="key"><TextBlock Text="P" /></Border></StackPanel>
+        </CheckBox>
+        <Button Classes="secondary" Command="{Binding ExitCommand}">
+          <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Numbers.Back}" /><Border Classes="key"><TextBlock Text="Esc" /></Border></StackPanel>
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <Grid Grid.Row="1" ColumnDefinitions="280,*,320">
+      <!-- Lists -->
+      <Border Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,1,1,0">
+        <ScrollViewer>
+          <StackPanel Margin="8,12" Spacing="2">
+            <TextBlock Classes="overline" Margin="6,0,0,6" Text="{l:Tr Numbers.ToResolve}" />
+            <TextBlock Classes="micro tertiary" Margin="6,0,0,6" Text="{l:Tr Numbers.NothingToResolve}" IsVisible="{Binding !ToResolve.Count}" />
+            <ItemsControl ItemsSource="{Binding ToResolve}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:NumberGroupViewModel">
+                  <Border Classes="group" Classes.selected="{Binding IsSelected}" Tag="{Binding}" PointerPressed="OnGroupPressed">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                      <TextBlock Classes="data" Foreground="{DynamicResource PF.Brush.Outcome.ToReview}" Text="?" VerticalAlignment="Center" />
+                      <StackPanel Grid.Column="1">
+                        <TextBlock Classes="label" Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Classes="micro tertiary" Text="{Binding Subtitle}" />
+                      </StackPanel>
+                      <TextBlock Grid.Column="2" Classes="data tertiary" VerticalAlignment="Center" Text="{Binding Count}" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Classes="overline" Margin="6,12,0,6" Text="{Binding InListTitle}" />
+            <ItemsControl ItemsSource="{Binding InList}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:NumberGroupViewModel">
+                  <Border Classes="group" Classes.selected="{Binding IsSelected}" Tag="{Binding}" PointerPressed="OnGroupPressed">
+                    <Grid ColumnDefinitions="44,*,Auto" ColumnSpacing="8">
+                      <TextBlock Classes="data" Text="{Binding Title}" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="1" Classes="label secondary" Text="{Binding Subtitle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="2" Classes="data tertiary" VerticalAlignment="Center" Text="{Binding Count}" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Classes="overline" Margin="6,12,0,6" Text="{l:Tr Numbers.Other}" />
+            <ItemsControl ItemsSource="{Binding Other}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:NumberGroupViewModel">
+                  <Border Classes="group" Classes.selected="{Binding IsSelected}" Tag="{Binding}" PointerPressed="OnGroupPressed">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                      <TextBlock Classes="label" Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Grid.Column="1" Classes="data tertiary" Text="{Binding Count}" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+
+      <!-- Crops of the selected list -->
+      <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto" Background="{DynamicResource PF.Brush.GridArea}">
+        <StackPanel Margin="20,12,20,8" Spacing="2" IsVisible="{Binding Group, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <TextBlock Classes="subtitle" Text="{Binding Group.Title, FallbackValue=''}" />
+          <TextBlock Classes="label tertiary" Text="{Binding Group.Subtitle, FallbackValue=''}" />
+        </StackPanel>
+        <TextBlock Grid.Row="1" Classes="body tertiary" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="440"
+                   Text="{l:Tr Numbers.Empty}" IsVisible="{Binding IsEmpty}" />
+        <ScrollViewer Grid.Row="1" Padding="20,0">
+          <ItemsControl ItemsSource="{Binding Photos}">
+            <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:NumberPhotoViewModel">
+                <Border Classes="vehicle" Classes.selected="{Binding IsSelected}" Tag="{Binding}" PointerPressed="OnPhotoPressed">
+                  <StackPanel Spacing="6">
+                    <Border Height="170" Background="{DynamicResource PF.Brush.Viewer}">
+                      <Image Source="{Binding Crop}" Stretch="Uniform" />
+                    </Border>
+                    <TextBlock Classes="data" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Classes="label" Text="{Binding State}" TextTrimming="CharacterEllipsis" />
+                    <ItemsControl ItemsSource="{Binding Readings}">
+                      <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="x:String"><Border Classes="key" Margin="0,0,4,4"><TextBlock Text="{Binding}" /></Border></DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Classes="micro tertiary" Text="{Binding Others}" IsVisible="{Binding Others, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Number being typed -->
+        <Border Grid.Row="2" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,1,0,0" Padding="20,10" Background="{DynamicResource PF.Brush.Window}">
+          <StackPanel Spacing="6">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <TextBlock Classes="label tertiary" VerticalAlignment="Center" Text="{l:Tr Numbers.Number}" />
+              <Border Classes="key" MinWidth="64"><TextBlock Classes="data" Text="{Binding Typed}" /></Border>
+              <TextBlock Classes="label secondary" VerticalAlignment="Center" Text="{Binding TypedEntry}" />
+              <Button Classes="primary" Command="{Binding ConfirmCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Numbers.Confirm}" /><Border Classes="key"><TextBlock Text="↵" /></Border></StackPanel>
+              </Button>
+              <Button Classes="secondary" Command="{Binding NoNumberCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Numbers.None}" /><Border Classes="key"><TextBlock Text="{l:Tr Key.Delete}" /></Border></StackPanel>
+              </Button>
+            </StackPanel>
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Numbers.Hint}" />
+            <TextBlock Classes="micro" Text="{Binding StatusMessage}" IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <!-- Entry list -->
+      <Border Grid.Column="2" Background="{DynamicResource PF.Brush.Window}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1,1,0,0">
+        <ScrollViewer>
+          <StackPanel Margin="16" Spacing="10">
+            <TextBlock Classes="sectionTitle" Text="{l:Tr Numbers.List.Title}" />
+            <ComboBox ItemsSource="{Binding Lists}" SelectedItem="{Binding List}" HorizontalAlignment="Stretch" PlaceholderText="{l:Tr Numbers.List.Choose}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="cat:EntryList"><TextBlock Text="{Binding Name}" /></DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{Binding ListInfo}" />
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding !IsEditing}">
+              <Button Classes="secondary" Command="{Binding ImportCommand}" Content="{l:Tr Numbers.List.Import}" />
+              <Button Classes="ghost" Command="{Binding EditCommand}" Content="{l:Tr Numbers.List.Edit}" />
+            </StackPanel>
+
+            <StackPanel Spacing="8" IsVisible="{Binding IsEditing}">
+              <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Numbers.List.EditHint}" />
+              <TextBox x:Name="EditBox" Text="{Binding EditText}" AcceptsReturn="True" TextWrapping="NoWrap" Height="260" FontFamily="{StaticResource PF.Font.Mono}" />
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Classes="primary" Command="{Binding SaveEditCommand}" Content="{l:Tr Numbers.List.Save}" />
+                <Button Classes="ghost" Command="{Binding CancelEditCommand}" Content="{l:Tr Common.Cancel}" />
+              </StackPanel>
+            </StackPanel>
+
+            <TextBlock Classes="overline" Margin="0,8,0,0" Text="{l:Tr Numbers.Candidates}" />
+            <ItemsControl ItemsSource="{Binding Candidates}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:NumberEntryViewModel">
+                  <Grid ColumnDefinitions="44,*" Margin="0,0,0,8">
+                    <TextBlock Classes="data" Text="{Binding Number}" />
+                    <StackPanel Grid.Column="1">
+                      <TextBlock Classes="label" Text="{Binding Drivers}" TextWrapping="Wrap" />
+                      <TextBlock Classes="micro tertiary" Text="{Binding Details}" TextWrapping="Wrap" />
+                    </StackPanel>
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Numbers.CandidatesNote}" />
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+    </Grid>
+  </Grid>
+</UserControl>

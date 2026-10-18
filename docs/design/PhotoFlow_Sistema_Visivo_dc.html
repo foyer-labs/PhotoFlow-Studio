@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#151515;color:#EDEDED;font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#5E9EEA;text-decoration:none}a:hover{color:#8DBAF0;text-decoration:underline}*{box-sizing:border-box}</style>
+</helmet>
+<div style="filter: {{ rootFilter }}; min-height:100vh; background:#151515;">
+<div style="max-width:1440px; margin:0 auto; padding:48px 48px 96px; display:flex; flex-direction:column; gap:72px;">
+
+<header style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:48px; align-items:end; border-bottom:1px solid #303030; padding-bottom:32px;">
+  <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; letter-spacing:.06em; text-transform:uppercase;">PhotoFlow · Passo 1 di 3 · v0.1 — 12 ott 2026</div>
+    <h1 style="margin:0; font-weight:600; font-size:40px; line-height:1.1; letter-spacing:-.01em;">Sistema visivo</h1>
+    <p style="margin:0; color:#A6A6A6; font-size:15px; line-height:1.55; max-width:640px; text-wrap:pretty;">Grigi neutri a crominanza zero attorno alle foto. Il colore compare solo per gli esiti del culling, il focus e gli avvisi. Ogni esito ha anche una forma e un glifo, quindi resta leggibile senza colore.</p>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 24px; font-size:13px; line-height:1.5; color:#A6A6A6;">
+    <div><div style="color:#EDEDED; font-weight:500;">Foto protagoniste</div>Nessuna tinta nei grigi, nessuna ombra decorativa.</div>
+    <div><div style="color:#EDEDED; font-weight:500;">Colore = significato</div>Cinque esiti più accento di selezione. Nient'altro.</div>
+    <div><div style="color:#EDEDED; font-weight:500;">Tastiera prima</div>Ogni azione frequente mostra il suo tasto.</div>
+    <div><div style="color:#EDEDED; font-weight:500;">Testi elastici</div>Nessuna larghezza fissa sulle etichette: +30% senza rotture.</div>
+  </div>
+</header>
+
+<!-- 1 COLORE -->
+<section style="display:flex; flex-direction:column; gap:28px;">
+  <div style="display:flex; align-items:baseline; gap:16px;"><span style="font:500 12px 'IBM Plex Mono',monospace; color:#808080;">01</span><h2 style="margin:0; font-size:24px; font-weight:600;">Colore</h2></div>
+
+  <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:32px;">
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="font-size:13px; font-weight:500;">Neutri · tema scuro (default)</div>
+      <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px;">
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#0E0E0E; border:1px solid #303030; border-radius:4px;"></div><div style="font-size:12px;">Visore</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#0E0E0E</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#151515; border:1px solid #303030; border-radius:4px;"></div><div style="font-size:12px;">Area griglia</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#151515</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#1B1B1B; border:1px solid #303030; border-radius:4px;"></div><div style="font-size:12px;">Finestra, barra lat.</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#1B1B1B</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#222222; border:1px solid #303030; border-radius:4px;"></div><div style="font-size:12px;">Pannelli</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#222222</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#2B2B2B; border:1px solid #303030; border-radius:4px;"></div><div style="font-size:12px;">Controlli</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#2B2B2B</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#363636; border-radius:4px;"></div><div style="font-size:12px;">Hover, premuto</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#363636</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#303030; border-radius:4px;"></div><div style="font-size:12px;">Bordo</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#303030</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#4A4A4A; border-radius:4px;"></div><div style="font-size:12px;">Bordo forte</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#4A4A4A</div></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:4px;">
+        <div style="background:#1B1B1B; border:1px solid #303030; border-radius:4px; padding:10px 12px;"><div style="color:#EDEDED; font-size:15px; font-weight:500;">Testo primario</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#EDEDED · 15,6:1</div></div>
+        <div style="background:#1B1B1B; border:1px solid #303030; border-radius:4px; padding:10px 12px;"><div style="color:#A6A6A6; font-size:15px; font-weight:500;">Secondario</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#A6A6A6 · 7,6:1</div></div>
+        <div style="background:#1B1B1B; border:1px solid #303030; border-radius:4px; padding:10px 12px;"><div style="color:#808080; font-size:15px; font-weight:500;">Terziario</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#808080 · 4,6:1</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="font-size:13px; font-weight:500;">Neutri · tema chiaro</div>
+      <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px;">
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#2A2A2A; border-radius:4px;"></div><div style="font-size:12px;">Visore</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#2A2A2A</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#DCDCDC; border-radius:4px;"></div><div style="font-size:12px;">Area griglia</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#DCDCDC</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#F2F2F2; border-radius:4px;"></div><div style="font-size:12px;">Finestra, barra lat.</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#F2F2F2</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#FAFAFA; border-radius:4px;"></div><div style="font-size:12px;">Pannelli</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#FAFAFA</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#E8E8E8; border-radius:4px;"></div><div style="font-size:12px;">Controlli</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#E8E8E8</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#DEDEDE; border-radius:4px;"></div><div style="font-size:12px;">Hover, premuto</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#DEDEDE</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#D4D4D4; border-radius:4px;"></div><div style="font-size:12px;">Bordo</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#D4D4D4</div></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:56px; background:#ABABAB; border-radius:4px;"></div><div style="font-size:12px;">Bordo forte</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#ABABAB</div></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:4px;">
+        <div style="background:#FAFAFA; border-radius:4px; padding:10px 12px;"><div style="color:#1A1A1A; font-size:15px; font-weight:500;">Testo primario</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#6B6B6B;">#1A1A1A · 16,8:1</div></div>
+        <div style="background:#FAFAFA; border-radius:4px; padding:10px 12px;"><div style="color:#4F4F4F; font-size:15px; font-weight:500;">Secondario</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#6B6B6B;">#4F4F4F · 8,0:1</div></div>
+        <div style="background:#FAFAFA; border-radius:4px; padding:10px 12px;"><div style="color:#6B6B6B; font-size:15px; font-weight:500;">Terziario</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#6B6B6B;">#6B6B6B · 5,1:1</div></div>
+      </div>
+      <p style="margin:4px 0 0; font-size:12px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">Nel tema chiaro il visore a schermo intero resta scuro: il giudizio sull'esposizione si fa sempre su fondo scuro neutro.</p>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="font-size:13px; font-weight:500;">Esiti del culling — colore + glifo + trattamento della miniatura</div>
+    <div style="border:1px solid #303030; border-radius:6px; overflow:hidden;">
+      <div style="display:grid; grid-template-columns:minmax(120px,1.1fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.4fr) minmax(0,1fr) 56px; gap:16px; padding:10px 16px; background:#1B1B1B; font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">
+        <div>Esito</div><div>Scuro</div><div>Chiaro</div><div>Sulla miniatura</div><div>XMP</div><div>Tasto</div>
+      </div>
+      <div style="display:grid; grid-template-columns:minmax(120px,1.1fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.4fr) minmax(0,1fr) 56px; gap:16px; padding:12px 16px; border-top:1px solid #303030; align-items:center; font-size:13px;">
+        <div style="display:flex; align-items:center; gap:10px;"><span style="width:18px; height:18px; border-radius:3px; background:#EB5A50; color:#111; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;">✕</span>Scarto</div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:16px; height:16px; border-radius:3px; background:#EB5A50;"></span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">#EB5A50</span></div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:16px; height:16px; border-radius:3px; background:#C8372D;"></span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">#C8372D</span></div>
+        <div style="color:#A6A6A6;">Foto attenuata al 35%, badge ✕</div>
+        <div style="font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6;">Rating −1 · prudente: Red</div>
+        <div style="display:flex; gap:4px;"><span style="font:500 11px 'IBM Plex Mono',monospace; padding:1px 6px; border:1px solid #4A4A4A; border-bottom-width:2px; border-radius:3px; color:#D0D0D0;">X</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:minmax(120px,1.1fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.4fr) minmax(0,1fr) 56px; gap:16px; padding:12px 16px; border-top:1px solid #303030; align-items:center; font-size:13px;">
+        <div style="display:flex; align-items:center; gap:10px;"><span style="width:18px; height:18px; border-radius:3px; background:#E9B13C; color:#111; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600;">?</span>Da rivedere</div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:16px; height:16px; border-radius:3px; background:#E9B13C;"></span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">#E9B13C</span></div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:16px; height:16px; border-radius:3px; background:#A86F00;"></span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">#A86F00</span></div>
+        <div style="color:#A6A6A6;">Cornice tratteggiata 2 px, badge ?</div>
+        <div style="font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6;">Label "Red"</div>
+        <div style="color:#808080; font-size:12px;">—</div>
+      </div>
+      <div style="display:grid; grid-template-columns:minmax(120px,1.1fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.4fr) minmax(0,1fr) 56px; gap:16px; padding:12px 16px; border-top:1px solid #303030; align-items:center; font-size:13px;">
+        <div style="display:flex; align-items:center; gap:10px;"><span style="width:18px; height:18px; border-radius:3px; background:#4CC38A; color:#111; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;">★</span>Migliore</div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:16px; height:16px; border-radius:3px; background:#4CC38A;"></span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">#4CC38A</span></div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:16px; height:16px; border-radius:3px; background:#1E8A55;"></span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">#1E8A55</span></div>
+        <div style="color:#A6A6A6;">Cornice piena 2 px, badge ★, prima del gruppo</div>
+        <div style="font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6;">Nessuno (opz. 1 stella)</div>
+        <div style="color:#808080; font-size:12px;">—</div>
+      </div>
+      <div style="display:grid; grid-template-columns:minmax(120px,1.1fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.4fr) minmax(0,1fr) 56px; gap:16px; padding:12px 16px; border-top:1px solid #303030; align-items:center; font-size:13px;">
+        <div style="display:flex; align-items:center; gap:10px;"><span style="width:18px; height:18px; border-radius:3px; background:#9C9AE0; color:#111; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600;">≈</span>Simile</div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:16px; height:16px; border-radius:3px; background:#9C9AE0;"></span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">#9C9AE0</span></div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:16px; height:16px; border-radius:3px; background:#5F5BB8;"></span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">#5F5BB8</span></div>
+        <div style="color:#A6A6A6;">Solo badge ≈, nessuna cornice</div>
+        <div style="font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6;">Solo catalogo</div>
+        <div style="color:#808080; font-size:12px;">—</div>
+      </div>
+      <div style="display:grid; grid-template-columns:minmax(120px,1.1fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.4fr) minmax(0,1fr) 56px; gap:16px; padding:12px 16px; border-top:1px solid #303030; align-items:center; font-size:13px;">
+        <div style="display:flex; align-items:center; gap:10px;"><span style="width:18px; height:18px; border-radius:3px; background:#3A3A3A; color:#EDEDED; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;">✓</span>Tenuta</div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:16px; height:16px; border-radius:3px; background:#3A3A3A; border:1px solid #4A4A4A;"></span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">neutro #3A3A3A</span></div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:16px; height:16px; border-radius:3px; background:#D4D4D4;"></span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">neutro #D4D4D4</span></div>
+        <div style="color:#A6A6A6;">Badge ✓ neutro, visibile al passaggio o con filtro attivo</div>
+        <div style="font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6;">Nessuna scrittura</div>
+        <div style="display:flex; gap:4px;"><span style="font:500 11px 'IBM Plex Mono',monospace; padding:1px 6px; border:1px solid #4A4A4A; border-bottom-width:2px; border-radius:3px; color:#D0D0D0;">P</span></div>
+      </div>
+    </div>
+    <p style="margin:0; font-size:12px; line-height:1.5; color:#A6A6A6; max-width:880px; text-wrap:pretty;">Le tinte differiscono anche in luminosità (amber chiaro, rosso medio, viola tenue) così restano separabili per protanopi e deuteranopi; i glifi e i trattamenti (attenuata / tratteggio / cornice piena / solo badge) bastano da soli. Tenuta è volutamente senza colore: è lo stato "normale". Usa il Tweak <span style="font-family:'IBM Plex Mono',monospace; color:#EDEDED;">Simula scala di grigi</span> per verificarlo.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:32px;">
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="font-size:13px; font-weight:500;">Accento di interazione</div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; background:#1B1B1B; border:1px solid #303030; border-radius:4px;"><span style="width:24px; height:24px; border-radius:4px; background:#5E9EEA;"></span><div><div style="font-size:12px;">Selezione, focus, link</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#5E9EEA · chiaro #1F6FD1</div></div></div>
+        <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; background:#1B1B1B; border:1px solid #303030; border-radius:4px;"><span style="width:24px; height:24px; border-radius:4px; background:#E6E6E6;"></span><div><div style="font-size:12px;">Azione primaria</div><div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">#E6E6E6 · chiaro #1A1A1A</div></div></div>
+      </div>
+      <p style="margin:0; font-size:12px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">Il pulsante primario è neutro (bianco su scuro, nero su chiaro): così il blu resta univoco per "selezionato" e non compete con gli esiti.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="font-size:13px; font-weight:500;">Stati di sistema (mai sulle miniature come esito)</div>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 12px; background:#222222; border:1px solid #303030; border-radius:4px; font-size:13px;"><span style="width:16px; height:16px; border-radius:50%; border:1.5px solid #5E9EEA; color:#5E9EEA; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">i</span><span>Informazione</span><span style="color:#808080;">— Scheda rilevata: NIKON Z5_2 (E:)</span></div>
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 12px; background:#222222; border:1px solid #303030; border-radius:4px; font-size:13px;"><span style="width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:14px solid #E9B13C;"></span><span>Avviso</span><span style="color:#808080;">— NAS non raggiungibile, nuovo tentativo tra 30 s</span></div>
+        <div style="display:flex; align-items:center; gap:10px; padding:8px 12px; background:#222222; border:1px solid #303030; border-radius:4px; font-size:13px;"><span style="width:14px; height:14px; background:#EB5A50; transform:rotate(45deg); margin:0 1px;"></span><span>Errore</span><span style="color:#808080;">— 3 file illeggibili, elencati nel report</span></div>
+      </div>
+      <p style="margin:0; font-size:12px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">Forme distinte (cerchio, triangolo, rombo) e sempre accompagnate da testo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 TIPOGRAFIA -->
+<section style="display:flex; flex-direction:column; gap:28px;">
+  <div style="display:flex; align-items:baseline; gap:16px;"><span style="font:500 12px 'IBM Plex Mono',monospace; color:#808080;">02</span><h2 style="margin:0; font-size:24px; font-weight:600;">Tipografia</h2></div>
+  <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:48px;">
+    <div style="border:1px solid #303030; border-radius:6px; overflow:hidden;">
+      <div style="display:grid; grid-template-columns:140px minmax(0,1fr) 140px; gap:16px; padding:14px 16px; align-items:baseline;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">Titolo pagina</span><span style="font-size:24px; font-weight:600; line-height:32px;">Revisione — Matrimonio Sara e Luca</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">24/32 · 600</span></div>
+      <div style="display:grid; grid-template-columns:140px minmax(0,1fr) 140px; gap:16px; padding:14px 16px; align-items:baseline; border-top:1px solid #303030;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">Titolo sezione</span><span style="font-size:18px; font-weight:600; line-height:24px;">Raffiche da confermare</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">18/24 · 600</span></div>
+      <div style="display:grid; grid-template-columns:140px minmax(0,1fr) 140px; gap:16px; padding:14px 16px; align-items:baseline; border-top:1px solid #303030;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">Sottotitolo</span><span style="font-size:15px; font-weight:500; line-height:22px;">Raffica 14 · 8 scatti · 14:32:05</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">15/22 · 500</span></div>
+      <div style="display:grid; grid-template-columns:140px minmax(0,1fr) 140px; gap:16px; padding:14px 16px; align-items:baseline; border-top:1px solid #303030;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">Corpo (base)</span><span style="font-size:13px; line-height:20px;">La foto è stata segnata da rivedere perché le prime due della raffica sono quasi a pari merito.</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">13/20 · 400</span></div>
+      <div style="display:grid; grid-template-columns:140px minmax(0,1fr) 140px; gap:16px; padding:14px 16px; align-items:baseline; border-top:1px solid #303030;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">Etichetta</span><span style="font-size:12px; line-height:16px; font-weight:500; color:#A6A6A6;">Profilo di scena · Destinazioni · Politica XMP</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">12/16 · 500</span></div>
+      <div style="display:grid; grid-template-columns:140px minmax(0,1fr) 140px; gap:16px; padding:14px 16px; align-items:baseline; border-top:1px solid #303030;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">Dati (mono)</span><span style="font:400 12px/16px 'IBM Plex Mono',monospace; color:#A6A6A6;">1/1000 s · f/2,8 · ISO 1600 · 85 mm · DSC_4821.NEF</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">12/16 · 400</span></div>
+      <div style="display:grid; grid-template-columns:140px minmax(0,1fr) 140px; gap:16px; padding:14px 16px; align-items:baseline; border-top:1px solid #303030;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">Micro (mono)</span><span style="font:500 11px/14px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Fase 3/9 · Analisi · 412/1.248</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">11/14 · 500</span></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px; font-size:13px; line-height:1.55; color:#A6A6A6;">
+      <div><div style="color:#EDEDED; font-weight:500; margin-bottom:4px;">IBM Plex Sans + Plex Mono</div>Licenza OFL, incorporabile nell'app Avalonia: stesso aspetto su Windows, Mac e Linux. Mono per EXIF, percorsi, hash, contatori e tasti.</div>
+      <div><div style="color:#EDEDED; font-weight:500; margin-bottom:4px;">Cifre tabulari</div>Ovunque ci siano numeri che cambiano (avanzamento, contatori nei filtri, tempi): niente salti di larghezza.</div>
+      <div><div style="color:#EDEDED; font-weight:500; margin-bottom:4px;">Formati italiani</div>1.248 foto · 2,8 GB · 12 ott 2026 · 14:32. In inglese: 1,248 · 2.8 GB · Oct 12, 2026.</div>
+      <div><div style="color:#EDEDED; font-weight:500; margin-bottom:4px;">Densità desktop</div>Base 13 px: è un'app da sessioni lunghe a 1280-2560 px, non un sito.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 SPAZIATURE -->
+<section style="display:flex; flex-direction:column; gap:28px;">
+  <div style="display:flex; align-items:baseline; gap:16px;"><span style="font:500 12px 'IBM Plex Mono',monospace; color:#808080;">03</span><h2 style="margin:0; font-size:24px; font-weight:600;">Spaziature, raggi, elevazione</h2></div>
+  <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr); gap:40px;">
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div style="font-size:13px; font-weight:500;">Scala a base 4</div>
+      <div style="display:flex; align-items:center; gap:12px;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; width:32px;">4</span><span style="height:12px; width:4px; background:#5E9EEA;"></span><span style="font-size:12px; color:#A6A6A6;">Gap griglia miniature, icona-testo</span></div>
+      <div style="display:flex; align-items:center; gap:12px;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; width:32px;">8</span><span style="height:12px; width:8px; background:#5E9EEA;"></span><span style="font-size:12px; color:#A6A6A6;">Tra chip, padding controlli</span></div>
+      <div style="display:flex; align-items:center; gap:12px;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; width:32px;">12</span><span style="height:12px; width:12px; background:#5E9EEA;"></span><span style="font-size:12px; color:#A6A6A6;">Padding pannello, righe lista</span></div>
+      <div style="display:flex; align-items:center; gap:12px;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; width:32px;">16</span><span style="height:12px; width:16px; background:#5E9EEA;"></span><span style="font-size:12px; color:#A6A6A6;">Margini contenuto, tra gruppi</span></div>
+      <div style="display:flex; align-items:center; gap:12px;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; width:32px;">24</span><span style="height:12px; width:24px; background:#5E9EEA;"></span><span style="font-size:12px; color:#A6A6A6;">Tra sezioni di un pannello</span></div>
+      <div style="display:flex; align-items:center; gap:12px;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; width:32px;">32</span><span style="height:12px; width:32px; background:#5E9EEA;"></span><span style="font-size:12px; color:#A6A6A6;">Padding dialoghi e pagine</span></div>
+      <div style="display:flex; align-items:center; gap:12px;"><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; width:32px;">48</span><span style="height:12px; width:48px; background:#5E9EEA;"></span><span style="font-size:12px; color:#A6A6A6;">Stati vuoti</span></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div style="font-size:13px; font-weight:500;">Raggi</div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:center;"><div style="width:56px; height:56px; background:#2B2B2B; border:1px solid #4A4A4A; border-radius:2px;"></div><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">2 · foto</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:center;"><div style="width:56px; height:56px; background:#2B2B2B; border:1px solid #4A4A4A; border-radius:4px;"></div><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">4 · controlli</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:center;"><div style="width:56px; height:56px; background:#2B2B2B; border:1px solid #4A4A4A; border-radius:8px;"></div><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">8 · dialoghi</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px; align-items:center;"><div style="width:56px; height:56px; background:#2B2B2B; border:1px solid #4A4A4A; border-radius:28px;"></div><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">∞ · persone</span></div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div style="font-size:13px; font-weight:500;">Elevazione</div>
+      <div style="font-size:12px; line-height:1.55; color:#A6A6A6; text-wrap:pretty;">Due soli livelli. Le superfici si separano con il tono e un bordo da 1 px, non con ombre. Un'unica ombra per dialoghi, menu e tooltip.</div>
+      <div style="display:flex; gap:16px; padding:16px; background:#151515; border-radius:4px;">
+        <div style="flex:1; height:56px; background:#222222; border:1px solid #303030; border-radius:4px; display:flex; align-items:center; justify-content:center; font:400 11px 'IBM Plex Mono',monospace; color:#808080;">piano</div>
+        <div style="flex:1; height:56px; background:#2B2B2B; border:1px solid #4A4A4A; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; font:400 11px 'IBM Plex Mono',monospace; color:#808080;">sovrapposto</div>
+      </div>
+      <div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">BoxShadow 0 8 24 #80000000</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 STRUTTURA -->
+<section style="display:flex; flex-direction:column; gap:28px;">
+  <div style="display:flex; align-items:baseline; gap:16px;"><span style="font:500 12px 'IBM Plex Mono',monospace; color:#808080;">04</span><h2 style="margin:0; font-size:24px; font-weight:600;">Struttura della finestra e griglia</h2></div>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,560px),1fr)); gap:40px; align-items:start;">
+    <div style="border:1px solid #4A4A4A; border-radius:6px; overflow:hidden; background:#1B1B1B; aspect-ratio:16/10; min-width:0; display:grid; grid-template-rows:32px minmax(0,1fr) 24px;">
+      <div style="display:flex; align-items:center; gap:12px; padding:0 12px; border-bottom:1px solid #303030; font-size:12px;">
+        <span style="font-weight:600;">PhotoFlow</span><span style="color:#808080; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;">Libreria Principale</span>
+        <span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:2px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; flex:1; max-width:260px; min-width:0; white-space:nowrap; overflow:hidden;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span>
+        <span style="display:flex; gap:14px; color:#808080; flex:none;"><span>—</span><span>☐</span><span>✕</span></span>
+      </div>
+      <div style="display:grid; grid-template-columns:20% minmax(0,1fr) 28%; min-height:0;">
+        <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px; font-size:12px;">
+          <div style="display:flex; justify-content:space-between; padding:5px 8px; border-radius:4px; color:#A6A6A6;">Home<span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">Ctrl 1</span></div>
+          <div style="display:flex; justify-content:space-between; padding:5px 8px; border-radius:4px; color:#A6A6A6;">Job<span style="display:flex; gap:6px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:#363636; padding:0 5px; border-radius:8px;">2</span></span></div>
+          <div style="display:flex; justify-content:space-between; padding:5px 8px; border-radius:4px; background:#2B2B2B; color:#EDEDED; box-shadow:inset 2px 0 0 #5E9EEA;">Revisione<span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">Ctrl 3</span></div>
+          <div style="display:flex; justify-content:space-between; padding:5px 8px; border-radius:4px; color:#A6A6A6;">Persone<span style="font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:#363636; padding:0 5px; border-radius:8px;">14 nuovi</span></div>
+          <div style="display:flex; justify-content:space-between; padding:5px 8px; border-radius:4px; color:#A6A6A6;">Consultazione<span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">Ctrl 5</span></div>
+          <div style="display:flex; justify-content:space-between; padding:5px 8px; border-radius:4px; color:#A6A6A6;">Duplicati</div>
+          <div style="margin-top:auto; border-top:1px solid #303030; padding-top:8px; display:flex; flex-direction:column; gap:2px; color:#808080;">
+            <div style="padding:4px 8px;">Librerie</div><div style="padding:4px 8px;">Vocabolario</div><div style="padding:4px 8px;">Profili</div><div style="padding:4px 8px;">Impostazioni</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-rows:40px minmax(0,1fr); min-width:0; background:#151515;">
+          <div style="display:flex; align-items:center; gap:8px; padding:0 12px; border-bottom:1px solid #303030; background:#1B1B1B; font:400 10px 'IBM Plex Mono',monospace; color:#808080;"><span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">BARRA STRUMENTI · 40</span></div>
+          <div style="padding:8px; display:grid; grid-template-columns:repeat(auto-fill,minmax(72px,1fr)); gap:4px; align-content:start; overflow:hidden;">
+            <div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#2A2A2A 0 5px,#262626 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#2E2E2E 0 5px,#2A2A2A 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#262626 0 5px,#232323 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#2A2A2A 0 5px,#262626 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#303030 0 5px,#2B2B2B 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#2A2A2A 0 5px,#262626 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#262626 0 5px,#232323 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#2E2E2E 0 5px,#2A2A2A 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#2A2A2A 0 5px,#262626 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#303030 0 5px,#2B2B2B 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#262626 0 5px,#232323 5px 10px);"></div><div style="aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#2A2A2A 0 5px,#262626 5px 10px);"></div>
+          </div>
+        </div>
+        <div style="border-left:1px solid #303030; background:#222222; padding:12px; font:400 10px 'IBM Plex Mono',monospace; color:#808080; overflow:hidden; min-width:0;">PANNELLO DETTAGLI · 300</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:16px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080; overflow:hidden; white-space:nowrap;">
+        <span style="display:flex; gap:6px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">P</span>Tieni</span>
+        <span style="display:flex; gap:6px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">X</span>Scarta</span>
+        <span style="display:flex; gap:6px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">C</span>Confronta</span>
+        <span style="display:flex; gap:6px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">?</span>Tutte le scorciatoie</span>
+        <span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; overflow:hidden; text-overflow:ellipsis;">2 job attivi · GPU DirectML</span>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:18px; font-size:13px; line-height:1.55; color:#A6A6A6;">
+      <div><div style="color:#EDEDED; font-weight:500; margin-bottom:4px;">Guscio fisso, contenuto elastico</div>Barra titolo 32 · navigazione 184 (comprimibile a 48) · barra strumenti 40 · pannello dettagli 300 · barra di stato 24 con i tasti del contesto corrente.</div>
+      <div><div style="color:#EDEDED; font-weight:500; margin-bottom:4px;">A 1280 px</div>Navigazione compressa a 48 automaticamente: restano ~930 px di griglia con il pannello aperto. Le etichette della barra laterale non hanno larghezza fissa (184 accoglie "Consultazione" +30%).</div>
+      <div><div style="color:#EDEDED; font-weight:500; margin-bottom:4px;">Griglia miniature</div>Celle quadrate con foto adattata (3:2 e 2:3 convivono), gap 4. Tre taglie: S 120 · M 168 · L 240, con <span style="font-family:'IBM Plex Mono',monospace; color:#EDEDED;">Ctrl +/−</span>. Righe virtualizzate per 60.000 elementi.</div>
+      <div><div style="color:#EDEDED; font-weight:500; margin-bottom:4px;">Pagine di impostazioni</div>Colonna di contenuto max 760 px allineata a sinistra, etichetta sopra il controllo (non a fianco): regge l'allungamento dei testi.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 COMPONENTI -->
+<section style="display:flex; flex-direction:column; gap:40px;">
+  <div style="display:flex; align-items:baseline; gap:16px;"><span style="font:500 12px 'IBM Plex Mono',monospace; color:#808080;">05</span><h2 style="margin:0; font-size:24px; font-weight:600;">Componenti</h2></div>
+
+  <!-- 5.1 Miniatura -->
+  <div style="display:flex; flex-direction:column; gap:16px;">
+    <div style="display:flex; align-items:baseline; gap:12px;"><span style="font-size:15px; font-weight:500;">Miniatura con stato ed esito</span><span style="font-size:12px; color:#808080;">Taglia M · 168 px</span></div>
+    <div style="background:#151515; border:1px solid #303030; border-radius:6px; padding:24px; display:flex; flex-wrap:wrap; gap:20px;">
+
+      <div style="display:flex; flex-direction:column; gap:8px; width:168px;">
+        <div style="position:relative; width:168px; height:168px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center;">
+          <div style="width:168px; height:112px; background:repeating-linear-gradient(135deg,#2E2E2E 0 6px,#292929 6px 12px); display:flex; align-items:flex-end; padding:6px; font:400 9px 'IBM Plex Mono',monospace; color:#6E6E6E;">foto orizzontale</div>
+          <span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#3A3A3A; color:#EDEDED; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">✓</span>
+          <span style="position:absolute; bottom:6px; left:6px; font:500 10px 'IBM Plex Mono',monospace; color:#A6A6A6;">DSC_4821</span>
+        </div>
+        <div style="font-size:12px;">Tenuta</div><div style="font-size:11px; color:#808080; line-height:1.4;">Scatto singolo, nessun problema.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; width:168px;">
+        <div style="position:relative; width:168px; height:168px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 0 2px #4CC38A;">
+          <div style="width:112px; height:164px; background:repeating-linear-gradient(135deg,#2E2E2E 0 6px,#292929 6px 12px); display:flex; align-items:flex-start; justify-content:flex-end; padding:28px 6px; font:400 9px 'IBM Plex Mono',monospace; color:#6E6E6E;"></div>
+          <span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#4CC38A; color:#111; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">★</span>
+          <span style="position:absolute; top:6px; right:6px; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.6); padding:1px 5px; border-radius:3px;">1/8</span>
+          <span style="position:absolute; bottom:6px; left:6px; font-size:10px; color:#EDEDED; letter-spacing:1px;">★★★★<span style="color:#555;">★</span></span>
+        </div>
+        <div style="font-size:12px;">Migliore</div><div style="font-size:11px; color:#808080; line-height:1.4;">Prima della raffica (1/8), 4 stelle dell'utente.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; width:168px;">
+        <div style="position:relative; width:168px; height:168px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center;">
+          <div style="width:168px; height:112px; background:repeating-linear-gradient(135deg,#2A2A2A 0 6px,#252525 6px 12px); display:flex; align-items:flex-end; padding:6px; font:400 9px 'IBM Plex Mono',monospace; color:#6E6E6E;">foto</div>
+          <span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#9C9AE0; color:#111; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;">≈</span>
+          <span style="position:absolute; top:6px; right:6px; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.6); padding:1px 5px; border-radius:3px;">3/8</span>
+        </div>
+        <div style="font-size:12px;">Simile</div><div style="font-size:11px; color:#808080; line-height:1.4;">Valida, terza nella raffica.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; width:168px;">
+        <div style="position:relative; width:168px; height:168px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center; outline:2px dashed #E9B13C; outline-offset:-2px;">
+          <div style="width:168px; height:112px; background:repeating-linear-gradient(135deg,#2E2E2E 0 6px,#292929 6px 12px); display:flex; align-items:flex-end; padding:6px; font:400 9px 'IBM Plex Mono',monospace; color:#6E6E6E;">foto</div>
+          <span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#E9B13C; color:#111; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;">?</span>
+          <span style="position:absolute; bottom:6px; right:6px; font:500 10px 'IBM Plex Mono',monospace; color:#111; background:#E9B13C; padding:0 5px; border-radius:3px;">occhi?</span>
+        </div>
+        <div style="font-size:12px;">Da rivedere</div><div style="font-size:11px; color:#808080; line-height:1.4;">Motivo breve in basso: occhi vicino alla soglia.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; width:168px;">
+        <div style="position:relative; width:168px; height:168px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center;">
+          <div style="width:168px; height:112px; opacity:.35; background:repeating-linear-gradient(135deg,#3A3A3A 0 6px,#333 6px 12px); display:flex; align-items:flex-end; padding:6px; font:400 9px 'IBM Plex Mono',monospace; color:#999;">foto</div>
+          <span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#EB5A50; color:#111; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">✕</span>
+          <span style="position:absolute; bottom:6px; right:6px; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.6); padding:0 5px; border-radius:3px;">mossa</span>
+        </div>
+        <div style="font-size:12px;">Scarto</div><div style="font-size:11px; color:#808080; line-height:1.4;">Attenuata, motivo in basso. Mai cancellata.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; width:168px;">
+        <div style="position:relative; width:168px; height:168px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center; outline:2px solid #5E9EEA; outline-offset:2px; box-shadow:inset 0 0 0 2px #4CC38A;">
+          <div style="width:168px; height:112px; background:repeating-linear-gradient(135deg,#2E2E2E 0 6px,#292929 6px 12px); display:flex; align-items:flex-end; padding:6px; font:400 9px 'IBM Plex Mono',monospace; color:#6E6E6E;">foto</div>
+          <span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#4CC38A; color:#111; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">★</span>
+          <span style="position:absolute; top:6px; left:26px; width:16px; height:16px; border-radius:50%; background:#EDEDED; color:#111; display:flex; align-items:center; justify-content:center; font:600 9px 'IBM Plex Mono',monospace;">M</span>
+        </div>
+        <div style="font-size:12px;">Focus + decisione manuale</div><div style="font-size:11px; color:#808080; line-height:1.4;">Anello blu esterno = cursore. "M" = esito scelto dall'utente.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; width:168px;">
+        <div style="position:relative; width:168px; height:168px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 0 1px #5E9EEA; background-color:#1F2733;">
+          <div style="width:168px; height:112px; background:repeating-linear-gradient(135deg,#2E2E2E 0 6px,#292929 6px 12px); opacity:.85;"></div>
+          <span style="position:absolute; top:6px; right:6px; width:16px; height:16px; border-radius:3px; background:#5E9EEA; color:#111; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;">✓</span>
+        </div>
+        <div style="font-size:12px;">Selezione multipla</div><div style="font-size:11px; color:#808080; line-height:1.4;">Casella in alto a destra; Ctrl/Maiusc + clic, Ctrl+A.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; width:168px;">
+        <div style="position:relative; width:168px; height:168px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center;">
+          <div style="width:168px; height:112px; background:repeating-linear-gradient(135deg,#2E2E2E 0 6px,#292929 6px 12px);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:0; height:3px; background:#303030;"><div style="width:45%; height:3px; background:#A6A6A6;"></div></div>
+          <span style="position:absolute; bottom:8px; left:6px; font:500 10px 'IBM Plex Mono',monospace; color:#A6A6A6; background:rgba(0,0,0,.6); padding:0 5px; border-radius:3px;">analisi 3/9</span>
+        </div>
+        <div style="font-size:12px;">In elaborazione</div><div style="font-size:11px; color:#808080; line-height:1.4;">Anteprima già visibile, esito non ancora disponibile.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; width:168px;">
+        <div style="position:relative; width:168px; height:168px; background:#1B1B1B; border-radius:2px; border:1px dashed #4A4A4A; display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center;">
+          <span style="width:14px; height:14px; background:#EB5A50; transform:rotate(45deg);"></span>
+          <span style="font-size:11px; color:#A6A6A6; text-align:center; padding:0 12px;">File illeggibile</span>
+          <span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">DSC_4903.NEF</span>
+        </div>
+        <div style="font-size:12px;">Errore file</div><div style="font-size:11px; color:#808080; line-height:1.4;">Nel report, intatto. Riprova dal menu.</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:8px; width:168px;">
+        <div style="position:relative; width:168px; height:168px;">
+          <div style="position:absolute; top:0; left:8px; width:160px; height:160px; background:#262626; border-radius:2px;"></div>
+          <div style="position:absolute; top:4px; left:4px; width:160px; height:160px; background:#222222; border-radius:2px; border:1px solid #303030;"></div>
+          <div style="position:absolute; top:8px; left:0; width:160px; height:160px; background:#1B1B1B; border-radius:2px; border:1px solid #303030; display:flex; align-items:center; justify-content:center;">
+            <div style="width:158px; height:105px; background:repeating-linear-gradient(135deg,#2E2E2E 0 6px,#292929 6px 12px);"></div>
+            <span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#4CC38A; color:#111; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">★</span>
+            <span style="position:absolute; bottom:6px; right:6px; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.6); padding:1px 5px; border-radius:3px;">▸ 8</span>
+          </div>
+        </div>
+        <div style="font-size:12px;">Raffica chiusa</div><div style="font-size:11px; color:#808080; line-height:1.4;">Mostra la migliore. Invio o → per aprire.</div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; font-size:12px; line-height:1.5; color:#A6A6A6;">
+      <div><span style="color:#EDEDED;">In alto a sinistra</span> — esito (badge), poi "M" se manuale.</div>
+      <div><span style="color:#EDEDED;">In alto a destra</span> — posizione nella raffica o casella di selezione.</div>
+      <div><span style="color:#EDEDED;">In basso a sinistra</span> — stelle, oppure nome file al passaggio.</div>
+      <div><span style="color:#EDEDED;">In basso a destra</span> — motivo breve (da rivedere/scarto), RAW+JPG, XMP in sospeso.</div>
+    </div>
+  </div>
+
+  <!-- 5.2 Pulsanti e tasti -->
+  <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:40px;">
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <span style="font-size:15px; font-weight:500;">Pulsanti con scorciatoia</span>
+      <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; padding:20px; background:#1B1B1B; border:1px solid #303030; border-radius:6px;">
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;" style-hover="background:#FFFFFF">Conferma e scrivi XMP<span style="font:500 10px 'IBM Plex Mono',monospace; color:#444; border:1px solid #9A9A9A; border-radius:3px; padding:0 4px;">Ctrl ↵</span></button>
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;" style-hover="background:#363636">Confronta<span style="font:500 10px 'IBM Plex Mono',monospace; color:#A6A6A6; border:1px solid #4A4A4A; border-radius:3px; padding:0 4px;">C</span></button>
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:transparent; color:#A6A6A6; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;" style-hover="background:#2B2B2B;color:#EDEDED">Annulla<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080; border:1px solid #4A4A4A; border-radius:3px; padding:0 4px;">Ctrl Z</span></button>
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:transparent; color:#EB5A50; border:1px solid #6B3330; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;" style-hover="background:#2E1F1E">Sposta 112 scarti…</button>
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#222222; color:#5A5A5A; border:1px solid #303030; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Disattivato</button>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:4px; padding:4px; background:#1B1B1B; border:1px solid #303030; border-radius:6px; width:max-content; max-width:100%;">
+        <span style="display:flex; align-items:center; gap:8px; height:28px; padding:0 10px; border-radius:4px; background:#363636; font-size:12px;">Griglia<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">G</span></span>
+        <span style="display:flex; align-items:center; gap:8px; height:28px; padding:0 10px; border-radius:4px; font-size:12px; color:#A6A6A6;">Confronto<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">C</span></span>
+        <span style="display:flex; align-items:center; gap:8px; height:28px; padding:0 10px; border-radius:4px; font-size:12px; color:#A6A6A6;">Numeri<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">N</span></span>
+        <span style="display:flex; align-items:center; gap:8px; height:28px; padding:0 10px; border-radius:4px; font-size:12px; color:#A6A6A6;">Etichettatura<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">L</span></span>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <span style="font-size:15px; font-weight:500;">Tasto (keycap)</span>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:20px; background:#1B1B1B; border:1px solid #303030; border-radius:6px;">
+        <span style="font:500 11px 'IBM Plex Mono',monospace; padding:1px 6px; border:1px solid #4A4A4A; border-bottom-width:2px; border-radius:3px; color:#D0D0D0;">P</span>
+        <span style="font:500 11px 'IBM Plex Mono',monospace; padding:1px 6px; border:1px solid #4A4A4A; border-bottom-width:2px; border-radius:3px; color:#D0D0D0;">X</span>
+        <span style="font:500 11px 'IBM Plex Mono',monospace; padding:1px 6px; border:1px solid #4A4A4A; border-bottom-width:2px; border-radius:3px; color:#D0D0D0;">1–5</span>
+        <span style="font:500 11px 'IBM Plex Mono',monospace; padding:1px 6px; border:1px solid #4A4A4A; border-bottom-width:2px; border-radius:3px; color:#D0D0D0;">← → ↑ ↓</span>
+        <span style="font:500 11px 'IBM Plex Mono',monospace; padding:1px 6px; border:1px solid #4A4A4A; border-bottom-width:2px; border-radius:3px; color:#D0D0D0;">Spazio</span>
+        <span style="font:500 11px 'IBM Plex Mono',monospace; padding:1px 6px; border:1px solid #4A4A4A; border-bottom-width:2px; border-radius:3px; color:#D0D0D0;">Ctrl Z</span>
+      </div>
+      <p style="margin:0; font-size:12px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">Nomi dei tasti localizzati (Spazio/Space, Maiusc/Shift, Invio/Enter). Il tasto non sostituisce l'etichetta: la accompagna.</p>
+    </div>
+  </div>
+
+  <!-- 5.3 / 5.4 Chip -->
+  <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:40px;">
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <span style="font-size:15px; font-weight:500;">Chip tag</span>
+      <div style="display:flex; flex-direction:column; gap:14px; padding:20px; background:#222222; border:1px solid #303030; border-radius:6px;">
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; background:#363636; font-size:12px;"><span style="width:6px; height:6px; border-radius:50%; background:#EDEDED;"></span>sposi</span>
+          <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px;">chiesa<span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">0,91</span></span>
+          <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px;"><span style="color:#808080;">Luoghi ›</span>Toscana</span>
+          <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; border:1px dashed #4A4A4A; font-size:12px; color:#A6A6A6;">bouquet<span style="font:500 9px 'IBM Plex Mono',monospace; color:#808080; border:1px solid #4A4A4A; border-radius:2px; padding:0 3px;">EN</span></span>
+          <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; border:1px solid #303030; font-size:12px; color:#6E6E6E; text-decoration:line-through;">image</span>
+          <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px; background:#2B2B2B;">#27 · Rossi<span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">OCR</span><span style="color:#808080; margin-left:2px;">✕</span></span>
+          <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; border:1px dashed #4A4A4A; font-size:12px; color:#808080;">+ Aggiungi tag<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">T</span></span>
+        </div>
+        <div style="display:grid; grid-template-columns:auto minmax(0,1fr); gap:6px 12px; font-size:12px; color:#A6A6A6; line-height:1.4;">
+          <span style="color:#EDEDED;">Pieno + punto</span><span>Manuale: mai rimosso da una rianalisi</span>
+          <span style="color:#EDEDED;">Contorno + n</span><span>Automatico, con confidenza (visibile al passaggio o se attivata)</span>
+          <span style="color:#EDEDED;">Categoria ›</span><span>Gerarchico (solo italiano)</span>
+          <span style="color:#EDEDED;">Tratteggio + EN</span><span>Non rivisto: scritto solo in inglese</span>
+          <span style="color:#EDEDED;">Barrato</span><span>Soppresso dall'utente o in lista nera; ripristinabile</span>
+          <span style="color:#EDEDED;">✕ al passaggio</span><span>Rimuovi (Canc sul chip con focus)</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <span style="font-size:15px; font-weight:500;">Chip persona</span>
+      <div style="display:flex; flex-direction:column; gap:14px; padding:20px; background:#222222; border:1px solid #303030; border-radius:6px;">
+        <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+          <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 10px 0 2px; border-radius:14px; background:#363636; font-size:12px;"><span style="width:24px; height:24px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Sara Bianchi<span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">412</span></span>
+          <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 10px 0 2px; border-radius:14px; border:1px solid #4A4A4A; font-size:12px; color:#A6A6A6;"><span style="width:24px; height:24px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Persona 14<span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">37</span></span>
+          <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 10px 0 2px; border-radius:14px; border:1px solid #4A4A4A; font-size:12px; color:#A6A6A6;"><span style="width:24px; height:24px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Persona 22<span style="font:600 9px 'IBM Plex Mono',monospace; color:#111; background:#EDEDED; padding:0 4px; border-radius:2px;">NUOVA</span></span>
+          <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 10px 0 2px; border-radius:14px; border:1px dashed #E9B13C; font-size:12px;"><span style="width:24px; height:24px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Luca Rossi?<span style="font:400 10px 'IBM Plex Mono',monospace; color:#E9B13C;">0,48</span></span>
+          <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 10px 0 2px; border-radius:14px; border:1px solid #303030; font-size:12px; color:#6E6E6E;"><span style="width:24px; height:24px; border-radius:50%; background:#2B2B2B; opacity:.5;"></span>Ignorata</span>
+        </div>
+        <div style="display:flex; gap:16px; align-items:flex-end;">
+          <div style="display:flex; flex-direction:column; gap:6px; align-items:center; width:96px;">
+            <div style="position:relative; width:96px; height:96px; border-radius:50%; background:repeating-linear-gradient(135deg,#4A4A4A 0 5px,#424242 5px 10px); display:flex; align-items:center; justify-content:center; font:400 9px 'IBM Plex Mono',monospace; color:#808080;">volto<span style="position:absolute; right:2px; bottom:2px; font:500 10px 'IBM Plex Mono',monospace; background:#1B1B1B; border:1px solid #4A4A4A; border-radius:8px; padding:0 5px; color:#EDEDED;">37</span></div>
+            <span style="font-size:12px; color:#A6A6A6;">Persona 14</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px; align-items:center; width:96px;">
+            <div style="position:relative; width:96px; height:96px; border-radius:50%; background:repeating-linear-gradient(135deg,#4A4A4A 0 5px,#424242 5px 10px); outline:2px solid #5E9EEA; outline-offset:2px;"><span style="position:absolute; right:-2px; top:-2px; width:18px; height:18px; border-radius:3px; background:#5E9EEA; color:#111; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">✓</span></div>
+            <span style="font-size:12px;">Selezionata</span>
+          </div>
+          <div style="font-size:12px; color:#A6A6A6; line-height:1.5; flex:1;">Copertina 96 px nella galleria Persone, 24 px nei chip. Nomi certi pieni; proposte sotto soglia tratteggiate in amber con la somiglianza.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.5 Barra fasi -->
+  <div style="display:flex; flex-direction:column; gap:16px;">
+    <span style="font-size:15px; font-weight:500;">Barra di avanzamento per fase</span>
+    <div style="display:flex; flex-direction:column; gap:16px; padding:20px; background:#222222; border:1px solid #303030; border-radius:6px;">
+      <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
+        <span style="font-size:15px; font-weight:500;">Matrimonio Sara e Luca</span>
+        <span style="font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6;">Import · 1.248 foto · Eventi</span>
+        <span style="margin-left:auto; font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6;">~7 min rimanenti</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(9,minmax(0,1fr)); gap:3px;">
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:6px; background:#A6A6A6; border-radius:1px;"></div><span style="font-size:11px; color:#A6A6A6;">Copia ✓</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:6px; background:#A6A6A6; border-radius:1px;"></div><span style="font-size:11px; color:#A6A6A6;">Anteprima ✓</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:6px; background:#363636; border-radius:1px;"><div style="width:62%; height:6px; background:#5E9EEA; border-radius:1px;"></div></div><span style="font-size:11px; color:#EDEDED; font-weight:500;">Analisi 62%</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:6px; background:#363636; border-radius:1px;"></div><span style="font-size:11px; color:#808080;">Raggruppa</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:6px; background:#363636; border-radius:1px;"></div><span style="font-size:11px; color:#808080;">Decisione</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:6px; background:#363636; border-radius:1px;"><div style="width:20%; height:6px; background:#5E9EEA; opacity:.5;"></div></div><span style="font-size:11px; color:#808080;">Tag e OCR</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:6px; background:#363636; border-radius:1px;"></div><span style="font-size:11px; color:#808080;">Volti</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:6px; background:transparent; border:1px dashed #4A4A4A; border-radius:1px;"></div><span style="font-size:11px; color:#808080;">Revisione</span></div>
+        <div style="display:flex; flex-direction:column; gap:6px;"><div style="height:6px; background:transparent; border:1px dashed #4A4A4A; border-radius:1px;"></div><span style="font-size:11px; color:#808080;">XMP</span></div>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:center; font-size:12px; color:#A6A6A6;">
+        <span style="display:flex; gap:6px; align-items:center;"><span style="width:16px; height:6px; background:#A6A6A6;"></span>Completata</span>
+        <span style="display:flex; gap:6px; align-items:center;"><span style="width:16px; height:6px; background:#5E9EEA;"></span>In corso</span>
+        <span style="display:flex; gap:6px; align-items:center;"><span style="width:16px; height:6px; background:#5E9EEA; opacity:.5;"></span>Partita in anticipo (pipeline)</span>
+        <span style="display:flex; gap:6px; align-items:center;"><span style="width:16px; height:6px; border:1px dashed #4A4A4A;"></span>Richiede l'utente</span>
+        <span style="display:flex; gap:6px; align-items:center; margin-left:auto;"><span style="width:12px; height:12px; background:#EB5A50; transform:rotate(45deg);"></span>3 errori</span>
+      </div>
+      <div style="border-top:1px solid #303030; padding-top:14px; display:flex; align-items:center; gap:12px;">
+        <span style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; width:120px;">COMPATTA (HOME)</span>
+        <span style="font-size:12px;">Archivio 2015–2024</span>
+        <div style="flex:1; height:4px; background:#363636; border-radius:2px;"><div style="width:34%; height:4px; background:#5E9EEA; border-radius:2px;"></div></div>
+        <span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">19.420/57.130 · Volti · ~2 h 10 min</span>
+        <span style="font:500 10px 'IBM Plex Mono',monospace; color:#A6A6A6; border:1px solid #4A4A4A; padding:1px 6px; border-radius:3px;">BASSA PRIORITÀ</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.6 Filtri + 5.7 Pannello dettagli -->
+  <div style="display:grid; grid-template-columns:260px minmax(0,1fr) 320px; gap:32px; align-items:start;">
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <span style="font-size:15px; font-weight:500;">Filtri a faccette</span>
+      <div style="background:#1B1B1B; border:1px solid #303030; border-radius:6px; padding:12px; display:flex; flex-direction:column; gap:16px; font-size:12px;">
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <div style="display:flex; justify-content:space-between; font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em; padding:0 4px 6px;">Esito<span style="text-transform:none; color:#5E9EEA;">Azzera</span></div>
+          <div style="display:flex; align-items:center; gap:8px; padding:4px; border-radius:4px;"><span style="width:14px; height:14px; border:1px solid #4A4A4A; border-radius:3px;"></span><span style="width:14px; height:14px; border-radius:3px; background:#4CC38A; color:#111; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center;">★</span>Migliore<span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#808080;">142</span></div>
+          <div style="display:flex; align-items:center; gap:8px; padding:4px; border-radius:4px; background:#2B2B2B;"><span style="width:14px; height:14px; border-radius:3px; background:#5E9EEA; color:#111; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span><span style="width:14px; height:14px; border-radius:3px; background:#E9B13C; color:#111; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:center;">?</span>Da rivedere<span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#EDEDED;">186</span></div>
+          <div style="display:flex; align-items:center; gap:8px; padding:4px; border-radius:4px;"><span style="width:14px; height:14px; border:1px solid #4A4A4A; border-radius:3px;"></span><span style="width:14px; height:14px; border-radius:3px; background:#9C9AE0; color:#111; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:center;">≈</span>Simile<span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#808080;">604</span></div>
+          <div style="display:flex; align-items:center; gap:8px; padding:4px; border-radius:4px;"><span style="width:14px; height:14px; border:1px solid #4A4A4A; border-radius:3px;"></span><span style="width:14px; height:14px; border-radius:3px; background:#3A3A3A; color:#EDEDED; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center;">✓</span>Tenuta<span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#808080;">204</span></div>
+          <div style="display:flex; align-items:center; gap:8px; padding:4px; border-radius:4px;"><span style="width:14px; height:14px; border:1px solid #4A4A4A; border-radius:3px;"></span><span style="width:14px; height:14px; border-radius:3px; background:#EB5A50; color:#111; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center;">✕</span>Scarto<span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#808080;">112</span></div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em; padding:0 4px 6px;">Persone</div>
+          <div style="display:flex; align-items:center; gap:8px; padding:4px;"><span style="width:14px; height:14px; border:1px solid #4A4A4A; border-radius:3px;"></span>Sara Bianchi<span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#808080;">412</span></div>
+          <div style="display:flex; align-items:center; gap:8px; padding:4px;"><span style="width:14px; height:14px; border:1px solid #4A4A4A; border-radius:3px;"></span>Luca Rossi<span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#808080;">388</span></div>
+          <div style="padding:4px; color:#5E9EEA;">Altre 18…</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em; padding:0 4px;">ISO</div>
+          <div style="position:relative; height:16px; margin:0 6px;"><div style="position:absolute; top:7px; left:0; right:0; height:2px; background:#363636;"></div><div style="position:absolute; top:7px; left:20%; right:35%; height:2px; background:#A6A6A6;"></div><span style="position:absolute; top:2px; left:20%; width:12px; height:12px; margin-left:-6px; border-radius:50%; background:#EDEDED;"></span><span style="position:absolute; top:2px; left:65%; width:12px; height:12px; margin-left:-6px; border-radius:50%; background:#EDEDED;"></span></div>
+          <div style="display:flex; justify-content:space-between; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6; padding:0 4px;"><span>400</span><span>6400</span></div>
+        </div>
+      </div>
+      <p style="margin:0; font-size:12px; line-height:1.5; color:#A6A6A6;">Conteggi aggiornati sugli altri filtri attivi. Ogni gruppo si comprime.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <span style="font-size:15px; font-weight:500;">Filtri attivi in barra strumenti</span>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:8px 12px; background:#1B1B1B; border:1px solid #303030; border-radius:6px;">
+        <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; border-radius:4px; background:#2B2B2B; font-size:12px;"><span style="color:#808080;">Esito</span>Da rivedere<span style="color:#808080;">✕</span></span>
+        <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; border-radius:4px; background:#2B2B2B; font-size:12px;"><span style="color:#808080;">ISO</span>400–6400<span style="color:#808080;">✕</span></span>
+        <span style="font-size:12px; color:#5E9EEA; padding:0 6px;">Azzera tutto</span>
+        <span style="margin-left:auto; font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6;">186 di 1.248</span>
+      </div>
+      <span style="font-size:15px; font-weight:500; margin-top:12px;">Campo di ricerca unico</span>
+      <div style="display:flex; flex-direction:column; gap:0; background:#2B2B2B; border:1px solid #5E9EEA; border-radius:6px; overflow:hidden;">
+        <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; font-size:13px; flex-wrap:wrap;">
+          <span style="display:flex; align-items:center; gap:4px; height:22px; padding:0 2px 0 2px; border-radius:11px; background:#363636; font-size:12px; padding-right:8px;"><span style="width:18px; height:18px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Sara Bianchi</span>
+          <span style="display:flex; align-items:center; height:22px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px;">tag: tramonto</span>
+          <span>che ride vicino al mare</span><span style="width:1px; height:16px; background:#EDEDED;"></span>
+          <span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; color:#808080; border:1px solid #4A4A4A; border-radius:3px; padding:0 4px;">Ctrl K</span>
+        </div>
+        <div style="border-top:1px solid #363636; background:#222222; display:flex; flex-direction:column; font-size:12px;">
+          <div style="display:flex; gap:10px; padding:7px 12px; background:#2B2B2B;"><span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080; width:72px;">LINGUAGGIO</span>Cerca "che ride vicino al mare" per significato<span style="margin-left:auto; color:#808080;">↵</span></div>
+          <div style="display:flex; gap:10px; padding:7px 12px;"><span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080; width:72px;">TAG</span>mare · spiaggia · mare in tempesta</div>
+          <div style="display:flex; gap:10px; padding:7px 12px;"><span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080; width:72px;">EVENTO</span>Mare 2023 · Ferragosto Maremma</div>
+        </div>
+      </div>
+      <p style="margin:0; font-size:12px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">Tag, persone ed eventi diventano gettoni; il testo residuo è ricerca in linguaggio naturale. Il tipo è sempre dichiarato, mai indovinato in silenzio.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <span style="font-size:15px; font-weight:500;">Pannello dettagli</span>
+      <div style="background:#222222; border:1px solid #303030; border-radius:6px; display:flex; flex-direction:column;">
+        <div style="padding:12px; display:flex; flex-direction:column; gap:10px; border-bottom:1px solid #303030;">
+          <div style="font:500 13px 'IBM Plex Mono',monospace;">DSC_4821.NEF <span style="color:#808080; font-weight:400;">+ JPG</span></div>
+          <div style="display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 12px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">
+            <span style="color:#808080;">Scatto</span><span>12 ott 2026 · 14:32:05,40</span>
+            <span style="color:#808080;">Esposiz.</span><span>1/1000 · f/2,8 · ISO 1600</span>
+            <span style="color:#808080;">Ottica</span><span>85 mm · Z 85/1.8 S</span>
+            <span style="color:#808080;">Gruppo</span><span>Raffica 14 · 1/8 · Eventi</span>
+          </div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:10px; border-bottom:1px solid #303030;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Esito</div>
+          <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px;">
+            <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border-radius:4px; background:#363636; box-shadow:inset 0 0 0 1px #4CC38A; font-size:12px;"><span style="color:#4CC38A;">★</span>Migliore<span style="margin-left:auto; font:400 10px 'IBM Plex Mono',monospace; color:#808080;">auto</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border-radius:4px; border:1px solid #303030; font-size:12px; color:#A6A6A6;"><span>✓</span>Tieni<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; color:#808080;">P</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border-radius:4px; border:1px solid #303030; font-size:12px; color:#A6A6A6;"><span>✕</span>Scarta<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; color:#808080;">X</span></span>
+            <span style="display:flex; align-items:center; gap:2px; height:28px; padding:0 8px; border-radius:4px; border:1px solid #303030; font-size:12px; letter-spacing:1px;">★★★★<span style="color:#555;">★</span><span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; color:#808080; letter-spacing:0;">1–5</span></span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px; font-size:12px;">
+            <div style="display:grid; grid-template-columns:76px minmax(0,1fr) 34px; gap:8px; align-items:center;"><span style="color:#A6A6A6;">Nitidezza</span><div style="height:4px; background:#363636; position:relative;"><div style="width:86%; height:4px; background:#A6A6A6;"></div><span style="position:absolute; left:40%; top:-3px; width:1px; height:10px; background:#EDEDED;"></span></div><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6; text-align:right;">0,86</span></div>
+            <div style="display:grid; grid-template-columns:76px minmax(0,1fr) 34px; gap:8px; align-items:center;"><span style="color:#A6A6A6;">Occhi</span><div style="height:4px; background:#363636; position:relative;"><div style="width:92%; height:4px; background:#A6A6A6;"></div><span style="position:absolute; left:35%; top:-3px; width:1px; height:10px; background:#EDEDED;"></span></div><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6; text-align:right;">0,92</span></div>
+            <div style="display:grid; grid-template-columns:76px minmax(0,1fr) 34px; gap:8px; align-items:center;"><span style="color:#A6A6A6;">Esposiz.</span><div style="height:4px; background:#363636; position:relative;"><div style="width:71%; height:4px; background:#A6A6A6;"></div><span style="position:absolute; left:30%; top:-3px; width:1px; height:10px; background:#EDEDED;"></span></div><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6; text-align:right;">0,71</span></div>
+            <div style="font-size:11px; color:#808080;">Tacca bianca = soglia del profilo.</div>
+          </div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #303030;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Persone</div>
+          <div style="display:flex; flex-wrap:wrap; gap:4px;">
+            <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px 0 2px; border-radius:12px; background:#363636; font-size:12px;"><span style="width:20px; height:20px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Sara Bianchi</span>
+            <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px 0 2px; border-radius:12px; border:1px solid #4A4A4A; font-size:12px; color:#A6A6A6;"><span style="width:20px; height:20px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Persona 14</span>
+          </div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Tag</div>
+          <div style="display:flex; flex-wrap:wrap; gap:4px;">
+            <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; background:#363636; font-size:12px;"><span style="width:6px; height:6px; border-radius:50%; background:#EDEDED;"></span>sposi</span>
+            <span style="display:flex; align-items:center; height:24px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px;">abito da sposa</span>
+            <span style="display:flex; align-items:center; height:24px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px;">chiesa</span>
+            <span style="display:flex; align-items:center; height:24px; padding:0 8px; border-radius:4px; border:1px dashed #4A4A4A; font-size:12px; color:#808080;">+ Tag <span style="font:500 10px 'IBM Plex Mono',monospace; margin-left:6px;">T</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.8 Dialoghi + 5.9 Wizard -->
+  <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:40px; align-items:start;">
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <span style="font-size:15px; font-weight:500;">Dialogo di conferma</span>
+      <div style="padding:32px; background:#0E0E0E; border-radius:6px; display:flex; flex-direction:column; gap:24px; align-items:center;">
+        <div style="width:100%; max-width:460px; background:#2B2B2B; border:1px solid #4A4A4A; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.5); display:flex; flex-direction:column;">
+          <div style="padding:20px 20px 0; display:flex; flex-direction:column; gap:8px;">
+            <div style="font-size:15px; font-weight:600;">Scrivere i metadati XMP per 1.248 foto?</div>
+            <div style="font-size:13px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">Politica della libreria: incorporati in JPG, sidecar per i RAW. I RAW non vengono modificati.</div>
+          </div>
+          <div style="margin:16px 20px 0; border:1px solid #363636; border-radius:4px; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); font-size:12px;">
+            <div style="padding:8px; display:flex; flex-direction:column; gap:2px;"><span style="color:#4CC38A;">★</span><span style="font-family:'IBM Plex Mono',monospace;">142</span><span style="color:#808080; font-size:11px;">Migliori</span></div>
+            <div style="padding:8px; display:flex; flex-direction:column; gap:2px; border-left:1px solid #363636;"><span style="color:#E9B13C;">?</span><span style="font-family:'IBM Plex Mono',monospace;">186</span><span style="color:#808080; font-size:11px;">Da rivedere</span></div>
+            <div style="padding:8px; display:flex; flex-direction:column; gap:2px; border-left:1px solid #363636;"><span style="color:#9C9AE0;">≈</span><span style="font-family:'IBM Plex Mono',monospace;">604</span><span style="color:#808080; font-size:11px;">Simili</span></div>
+            <div style="padding:8px; display:flex; flex-direction:column; gap:2px; border-left:1px solid #363636;"><span style="color:#A6A6A6;">✓</span><span style="font-family:'IBM Plex Mono',monospace;">204</span><span style="color:#808080; font-size:11px;">Tenute</span></div>
+            <div style="padding:8px; display:flex; flex-direction:column; gap:2px; border-left:1px solid #363636;"><span style="color:#EB5A50;">✕</span><span style="font-family:'IBM Plex Mono',monospace;">112</span><span style="color:#808080; font-size:11px;">Scarti</span></div>
+          </div>
+          <div style="margin:12px 20px 0; display:flex; align-items:center; gap:8px; font-size:12px; color:#A6A6A6;"><span style="width:14px; height:14px; border-radius:3px; background:#5E9EEA; color:#111; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span>Modalità prudente: scarti come etichetta rossa</div>
+          <div style="padding:20px; display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap;">
+            <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:transparent; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Annulla<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">Esc</span></button>
+            <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Scrivi XMP<span style="font:500 10px 'IBM Plex Mono',monospace; color:#555;">Ctrl ↵</span></button>
+          </div>
+        </div>
+      </div>
+      <p style="margin:0; font-size:12px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">Titolo = domanda con il numero esatto. Il pulsante primario ripete il verbo. Le azioni irreversibili non esistono (I4); quelle "pesanti" (spostare scarti) usano il pulsante con contorno rosso e mai il default su Invio.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <span style="font-size:15px; font-weight:500;">Procedura guidata a passi</span>
+      <div style="background:#222222; border:1px solid #303030; border-radius:8px; display:flex; flex-direction:column;">
+        <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-bottom:1px solid #303030;">
+          <div style="padding:14px 16px; display:flex; gap:10px; align-items:flex-start;"><span style="width:22px; height:22px; flex:none; border-radius:50%; background:#A6A6A6; color:#111; font:600 11px 'IBM Plex Mono',monospace; display:flex; align-items:center; justify-content:center;">✓</span><div style="display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-size:13px; color:#A6A6A6;">Sorgente ed evento</span><span style="font-size:11px; color:#808080;">NIKON Z5_2 · 1.248 foto</span></div></div>
+          <div style="padding:14px 16px; display:flex; gap:10px; align-items:flex-start; box-shadow:inset 0 -2px 0 #5E9EEA;"><span style="width:22px; height:22px; flex:none; border-radius:50%; background:#EDEDED; color:#111; font:600 11px 'IBM Plex Mono',monospace; display:flex; align-items:center; justify-content:center;">2</span><div style="display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-size:13px; font-weight:500;">Analisi</span><span style="font-size:11px; color:#808080;">Profilo, volti</span></div></div>
+          <div style="padding:14px 16px; display:flex; gap:10px; align-items:flex-start;"><span style="width:22px; height:22px; flex:none; border-radius:50%; border:1px solid #4A4A4A; color:#808080; font:600 11px 'IBM Plex Mono',monospace; display:flex; align-items:center; justify-content:center;">3</span><div style="display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-size:13px; color:#A6A6A6;">Destinazioni e XMP</span><span style="font-size:11px; color:#808080;">Copia, backup, scrittura</span></div></div>
+        </div>
+        <div style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+          <div style="font-size:12px; font-weight:500; color:#A6A6A6;">Profilo di scena</div>
+          <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px;">
+            <div style="padding:10px; border-radius:4px; border:1px solid #5E9EEA; background:#2B2B2B; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13px; font-weight:500;">Eventi</span><span style="font-size:11px; color:#808080;">Ultimo usato</span></div>
+            <div style="padding:10px; border-radius:4px; border:1px solid #303030; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13px;">Ritratto</span><span style="font-size:11px; color:#808080;">Occhi/volto</span></div>
+            <div style="padding:10px; border-radius:4px; border:1px solid #303030; display:flex; flex-direction:column; gap:2px;"><span style="font-size:13px;">Automatico</span><span style="font-size:11px; color:#808080;">+ profilo di riserva</span></div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#808080;"><span style="width:6px; height:6px; border-radius:50%; background:#808080;"></span>Impostazioni ricordate dall'ultimo import</div>
+        </div>
+        <div style="padding:12px 20px; border-top:1px solid #303030; display:flex; align-items:center; gap:8px;">
+          <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:transparent; color:#A6A6A6; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">← Indietro<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">Alt ←</span></button>
+          <span style="margin-left:auto; font-size:12px; color:#808080;">Passo 2 di 3</span>
+          <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Avanti<span style="font:500 10px 'IBM Plex Mono',monospace; color:#555;">↵</span></button>
+        </div>
+      </div>
+      <p style="margin:0; font-size:12px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">I passi completati mostrano il riepilogo e sono cliccabili. All'ultimo passo il primario diventa "Avvia import". Ctrl+Invio avvia subito con le impostazioni ricordate.</p>
+    </div>
+  </div>
+
+  <!-- Stati vuoto / attesa -->
+  <div style="display:flex; flex-direction:column; gap:16px;">
+    <span style="font-size:15px; font-weight:500;">Stato vuoto, attesa, errore</span>
+    <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px;">
+      <div style="background:#151515; border:1px solid #303030; border-radius:6px; padding:48px 24px; display:flex; flex-direction:column; gap:10px; align-items:center; text-align:center;">
+        <span style="width:40px; height:40px; border:1px dashed #4A4A4A; border-radius:4px;"></span>
+        <span style="font-size:15px; font-weight:500;">Nessuna foto da rivedere</span>
+        <span style="font-size:13px; color:#A6A6A6; max-width:280px; text-wrap:pretty;">Inserisci una scheda o importa una cartella per iniziare.</span>
+        <button style="margin-top:6px; display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Importa cartella<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">Ctrl I</span></button>
+      </div>
+      <div style="background:#151515; border:1px solid #303030; border-radius:6px; padding:16px; display:flex; flex-direction:column; gap:12px;">
+        <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px;">
+          <div style="aspect-ratio:1; background:#1E1E1E;"></div><div style="aspect-ratio:1; background:#1E1E1E;"></div><div style="aspect-ratio:1; background:#1E1E1E;"></div><div style="aspect-ratio:1; background:#1E1E1E;"></div><div style="aspect-ratio:1; background:#1E1E1E;"></div><div style="aspect-ratio:1; background:#1E1E1E;"></div><div style="aspect-ratio:1; background:#1E1E1E;"></div><div style="aspect-ratio:1; background:#1E1E1E;"></div>
+        </div>
+        <div style="font-size:12px; color:#A6A6A6;">Attesa: celle vuote statiche (nessuna animazione di shimmer), testo "Caricamento anteprime… 312/1.248" nella barra di stato.</div>
+      </div>
+      <div style="background:#151515; border:1px solid #303030; border-radius:6px; padding:16px; display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; gap:10px; align-items:flex-start; padding:12px; background:#222222; border:1px solid #303030; border-left:0; border-radius:4px; box-shadow:inset 0 2px 0 #EB5A50;">
+          <span style="width:12px; height:12px; flex:none; margin-top:4px; background:#EB5A50; transform:rotate(45deg);"></span>
+          <div style="display:flex; flex-direction:column; gap:6px; font-size:13px;">
+            <span style="font-weight:500;">Catalogo aperto su un altro PC</span>
+            <span style="color:#A6A6A6; font-size:12px; line-height:1.5;">\\nas\foto\catalogo.pfdb è bloccato da STUDIO-PC dalle 09:14. Chiudi PhotoFlow lì o apri una copia locale in sola lettura.</span>
+            <div style="display:flex; gap:12px; font-size:12px;"><span style="color:#5E9EEA;">Riprova</span><span style="color:#5E9EEA;">Apri in sola lettura</span></div>
+          </div>
+        </div>
+        <div style="font-size:12px; color:#A6A6A6;">Banner in testa al contenuto: causa, conseguenza, azione. Mai codici senza spiegazione.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 TEMA CHIARO -->
+<section style="display:flex; flex-direction:column; gap:28px;">
+  <div style="display:flex; align-items:baseline; gap:16px;"><span style="font:500 12px 'IBM Plex Mono',monospace; color:#808080;">06</span><h2 style="margin:0; font-size:24px; font-weight:600;">Tema chiaro</h2></div>
+  <div style="background:#F2F2F2; border-radius:6px; padding:24px; display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:24px; color:#1A1A1A;">
+    <div style="background:#DCDCDC; border-radius:4px; padding:12px; display:flex; flex-wrap:wrap; gap:8px; align-content:flex-start;">
+      <div style="position:relative; width:140px; height:140px; background:#E6E6E6; border-radius:2px; display:flex; align-items:center; justify-content:center; box-shadow:inset 0 0 0 2px #1E8A55;"><div style="width:140px; height:93px; background:repeating-linear-gradient(135deg,#BDBDBD 0 6px,#B5B5B5 6px 12px);"></div><span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#1E8A55; color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">★</span></div>
+      <div style="position:relative; width:140px; height:140px; background:#E6E6E6; border-radius:2px; display:flex; align-items:center; justify-content:center;"><div style="width:140px; height:93px; background:repeating-linear-gradient(135deg,#BDBDBD 0 6px,#B5B5B5 6px 12px);"></div><span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#5F5BB8; color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;">≈</span></div>
+      <div style="position:relative; width:140px; height:140px; background:#E6E6E6; border-radius:2px; display:flex; align-items:center; justify-content:center; outline:2px dashed #A86F00; outline-offset:-2px;"><div style="width:140px; height:93px; background:repeating-linear-gradient(135deg,#BDBDBD 0 6px,#B5B5B5 6px 12px);"></div><span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#A86F00; color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;">?</span></div>
+      <div style="position:relative; width:140px; height:140px; background:#E6E6E6; border-radius:2px; display:flex; align-items:center; justify-content:center;"><div style="width:140px; height:93px; opacity:.35; background:repeating-linear-gradient(135deg,#9A9A9A 0 6px,#8F8F8F 6px 12px);"></div><span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#C8372D; color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">✕</span></div>
+      <div style="position:relative; width:140px; height:140px; background:#E6E6E6; border-radius:2px; display:flex; align-items:center; justify-content:center; outline:2px solid #1F6FD1; outline-offset:2px;"><div style="width:93px; height:136px; background:repeating-linear-gradient(135deg,#BDBDBD 0 6px,#B5B5B5 6px 12px);"></div><span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:#D4D4D4; color:#1A1A1A; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">✓</span></div>
+    </div>
+    <div style="background:#FAFAFA; border:1px solid #D4D4D4; border-radius:6px; padding:12px; display:flex; flex-direction:column; gap:12px;">
+      <div style="font:500 13px 'IBM Plex Mono',monospace;">DSC_4821.NEF</div>
+      <div style="font:400 11px 'IBM Plex Mono',monospace; color:#4F4F4F;">1/1000 · f/2,8 · ISO 1600 · 85 mm</div>
+      <div style="display:flex; flex-wrap:wrap; gap:4px;">
+        <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; background:#E0E0E0; font-size:12px;"><span style="width:6px; height:6px; border-radius:50%; background:#1A1A1A;"></span>sposi</span>
+        <span style="display:flex; align-items:center; height:24px; padding:0 8px; border-radius:4px; border:1px solid #ABABAB; font-size:12px;">chiesa</span>
+        <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; border:1px dashed #ABABAB; font-size:12px; color:#4F4F4F;">bouquet<span style="font:500 9px 'IBM Plex Mono',monospace; border:1px solid #ABABAB; border-radius:2px; padding:0 3px;">EN</span></span>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#1A1A1A; color:#FAFAFA; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Scrivi XMP<span style="font:500 10px 'IBM Plex Mono',monospace; color:#ABABAB;">Ctrl ↵</span></button>
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:#E8E8E8; color:#1A1A1A; border:1px solid #ABABAB; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Confronta<span style="font:500 10px 'IBM Plex Mono',monospace; color:#6B6B6B;">C</span></button>
+      </div>
+    </div>
+  </div>
+  <p style="margin:0; font-size:12px; line-height:1.5; color:#A6A6A6; max-width:880px; text-wrap:pretty;">Stessa struttura, tinte d'esito più scure (glifo bianco) per contrasto ≥ 4,5:1 su #E6E6E6. L'area griglia è un grigio medio-chiaro, non bianco, per non abbagliare attorno alle foto.</p>
+</section>
+
+<!-- 7 TESTI LUNGHI -->
+<section style="display:flex; flex-direction:column; gap:28px;">
+  <div style="display:flex; align-items:baseline; gap:16px;"><span style="font:500 12px 'IBM Plex Mono',monospace; color:#808080;">07</span><h2 style="margin:0; font-size:24px; font-weight:600;">Testi IT / EN</h2></div>
+  <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:32px;">
+    <div style="display:flex; flex-direction:column; gap:10px; font-size:13px; line-height:1.55; color:#A6A6A6;">
+      <div><span style="color:#EDEDED;">Pulsanti e chip</span> crescono col testo (padding fisso, larghezza libera). Larghezza minima 72 px.</div>
+      <div><span style="color:#EDEDED;">Barre strumenti</span> spostano le voci meno usate in un menu "Altro" quando non c'è spazio, mai a capo.</div>
+      <div><span style="color:#EDEDED;">Etichette nei pannelli</span> vanno a capo su due righe; nomi file e percorsi si troncano al centro con tooltip.</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; width:28px;">IT</span>
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Mostra in Esplora risorse</button>
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Apri con app predefinita</button>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; width:28px;">EN</span>
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Show in Explorer</button>
+        <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Open with default app</button>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+        <span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; width:28px;">…</span>
+        <span style="font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6; background:#222222; border:1px solid #303030; padding:4px 8px; border-radius:4px;">D:\Foto\2026\2026-10-…\20261012_Matrimonio_0412.NEF</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 NOTE AVALONIA -->
+<section style="display:flex; flex-direction:column; gap:28px;">
+  <div style="display:flex; align-items:baseline; gap:16px;"><span style="font:500 12px 'IBM Plex Mono',monospace; color:#808080;">08</span><h2 style="margin:0; font-size:24px; font-weight:600;">Note per Avalonia</h2></div>
+  <div style="border:1px solid #303030; border-radius:6px; overflow:hidden; font-size:13px;">
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:10px 16px; background:#1B1B1B; font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;"><div>Elemento</div><div>Tipo</div><div>Note</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Tema e token</div><div style="color:#A6A6A6;">Standard</div><div style="color:#A6A6A6;">ResourceDictionary con ThemeVariant Dark/Light sopra FluentTheme; colori come sopra, nessun Acrylic/Mica.</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Griglia miniature 60.000</div><div style="color:#E9B13C;">Personalizzato</div><div style="color:#A6A6A6;">ItemsRepeater con layout a righe virtualizzato (o VirtualizingWrapPanel di terze parti); intestazioni di gruppo "sticky" richiedono codice dedicato.</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Miniatura (badge, cornici)</div><div style="color:#A6A6A6;">Template</div><div style="color:#A6A6A6;">ControlTemplate con Grid sovrapposto. Cornice tratteggiata: Rectangle con StrokeDashArray (Border non supporta il tratteggio). Attenuazione = Opacity sull'Image.</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Pila "raffica chiusa"</div><div style="color:#A6A6A6;">Template</div><div style="color:#A6A6A6;">Tre Border sfalsati; nessuna difficoltà.</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Barra fasi segmentata</div><div style="color:#A6A6A6;">Template</div><div style="color:#A6A6A6;">UniformGrid di 9 ProgressBar ristilizzate; stato "richiede l'utente" con Rectangle tratteggiato.</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Campo di ricerca a gettoni</div><div style="color:#E9B13C;">Personalizzato</div><div style="color:#A6A6A6;">TextBox + WrapPanel di chip + Popup suggerimenti; gestione Backspace sul gettone e navigazione frecce da scrivere.</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Cursore ISO a due maniglie</div><div style="color:#E9B13C;">Personalizzato</div><div style="color:#A6A6A6;">Avalonia non ha RangeSlider nativo: controllo da scrivere o pacchetto community.</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Volti circolari</div><div style="color:#A6A6A6;">Standard</div><div style="color:#A6A6A6;">Image con Clip = EllipseGeometry (o Border CornerRadius + ClipToBounds).</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Barra del titolo</div><div style="color:#A6A6A6;">Standard</div><div style="color:#A6A6A6;">ExtendClientAreaToDecorationsHint con pulsanti di sistema nativi; il campo "Cerca ovunque" vive nell'area estesa.</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Font</div><div style="color:#A6A6A6;">Standard</div><div style="color:#A6A6A6;">IBM Plex Sans/Mono come risorse avares; FontFeatures "tnum" per cifre tabulari.</div></div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:16px; padding:12px 16px; border-top:1px solid #303030;"><div>Animazioni</div><div style="color:#A6A6A6;">Standard</div><div style="color:#A6A6A6;">Solo transizioni brevi (≤ 120 ms) su opacità e colore. Nessuno shimmer, nessuna sfocatura.</div></div>
+  </div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;simulaGrigi&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Verifica accessibilità&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { rootFilter: this.props.simulaGrigi ? 'grayscale(1)' : 'none' };
+  }
+}
+</script>
+</body>
+</html>

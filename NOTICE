@@ -1,0 +1,18 @@
+PhotoFlow
+Copyright 2026 Foyer Labs
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party components: see THIRD-PARTY-NOTICES.md for the full list with licenses.
+Third-party components bundled with this product:
+
+- IBM Plex Sans and IBM Plex Mono fonts
+  Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"
+  Licensed under the SIL Open Font License, Version 1.1
+  (see src/PhotoFlow.App/Assets/Fonts/OFL.txt)
+
+Machine-learning models are NOT distributed with this product. They are
+downloaded on first use from the sources listed in models/manifest.json,
+each under its own license, which is shown before download. Some models
+(e.g. InsightFace buffalo_l) are licensed for non-commercial research use only
+and require explicit acceptance.

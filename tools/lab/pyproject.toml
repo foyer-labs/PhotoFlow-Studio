@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: Apache-2.0
+# PhotoFlow lab: benchmarks, ONNX export and parity references (spec D1, §13 phase 0).
+# All outputs go to PHOTOFLOW_TESTDATA, never inside the repository.
+
+[project]
+name = "photoflow-lab"
+version = "0.1.0"
+description = "PhotoFlow lab tools: benchmark, D-FINE export, parity references"
+license = "Apache-2.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # CUDA 13 wheels, consistent with onnxruntime-gpu 1.31 (CUDA 13 + cuDNN 9).
+    "torch==2.14.1",
+    "torchvision==0.29.1",
+    # 4.55.x is the only line that has D-FINE (>= 4.52.1) and still exports the helpers
+    # used by the original RAM++ code (removed in 4.56).
+    "transformers==4.55.4",
+    "onnx==1.23.2",
+    "onnxscript==0.7.2",
+    "onnxruntime-gpu==1.31.0",
+    "numpy>=2.1,<3",
+    "pillow>=11",
+    "huggingface_hub>=0.34",
+    "safetensors>=0.5",
+    # Reference values for the C# image analysis (decision F1-4: C# verified against OpenCV).
+    "opencv-python-headless==5.0.0.93",
+    "scipy>=1.14",
+    # Blur effect reference (Crete-Roffet et al. 2007) for the sharpness measure (spec §6).
+    "scikit-image==0.25.2",
+    "scikit-learn>=1.6",
+    "rapidocr-onnxruntime>=1.4",
+]
+
+[project.optional-dependencies]
+# Original RAM++ (PyTorch) for verify_ramplus.py only.
+ram = [
+    "ram @ git+https://github.com/xinyu1205/recognize-anything@7cb804a8609e9f4b1a50b7f31436d2df40bb9481",
+    "clip @ git+https://github.com/openai/CLIP@d05afc436d78f1c48dc0dbf8e5980a9d471f35f6",
+    "timm==0.4.12",
+    "fairscale==0.4.4",
+    "scipy>=1.14",  # imported by ram/models/swin_transformer.py, not declared upstream
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu130" }
+torchvision = { index = "pytorch-cu130" }
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true

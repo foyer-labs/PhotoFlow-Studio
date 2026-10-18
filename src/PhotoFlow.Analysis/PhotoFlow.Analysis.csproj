@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Culling analyzers, groupings, decisions; model adapters for detection. -->
+  <ItemGroup>
+    <ProjectReference Include="..\PhotoFlow.Core\PhotoFlow.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Built-in scene profiles (spec §6), versioned in the repository root. -->
+    <EmbeddedResource Include="..\..\profiles\*.json" LogicalName="PhotoFlow.Profiles.%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- xUnit v3 test projects are executables. -->
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RootNamespace>PhotoFlow.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PhotoFlow.Core\PhotoFlow.Core.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Imaging\PhotoFlow.Imaging.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Sources\PhotoFlow.Sources.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Metadata\PhotoFlow.Metadata.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Data\PhotoFlow.Data.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Inference\PhotoFlow.Inference.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Analysis\PhotoFlow.Analysis.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Faces\PhotoFlow.Faces.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.Tagging\PhotoFlow.Tagging.csproj" />
+    <ProjectReference Include="..\..\src\PhotoFlow.App\PhotoFlow.App.csproj" />
+    <ProjectReference Include="..\PhotoFlow.ScenarioHost\PhotoFlow.ScenarioHost.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Avalonia.Headless.XUnit" />
+  </ItemGroup>
+</Project>

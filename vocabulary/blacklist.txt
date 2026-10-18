@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0
+# Tags blacklisted at first start (spec §8 "Lista nera": tags that say nothing about the photo). The user can take
+# them out of the blacklist in the Vocabulary section; tags already in the catalog are never changed.
+image
+photo
+picture
+snapshot
+file photo
+screenshot
+stock

@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "id": "events",
+  "version": 1,
+  "name": "Events",
+  "cullingEnabled": true,
+  "sharpnessZones": [
+    "AfArea",
+    "Faces"
+  ],
+  "exposure": "Normal",
+  "faces": "Recognize",
+  "subjectClasses": [
+    "person"
+  ],
+  "ocr": false,
+  "absoluteSharpness": true,
+  "weights": {
+    "sharpness": 35,
+    "eyes": 30,
+    "exposure": 15,
+    "subject": 10,
+    "aesthetic": 10
+  },
+  "thresholds": {
+    "blurDiscard": 0.35,
+    "blurReview": 0.45,
+    "eyesClosed": 0.12,
+    "eyesOpen": 0.18,
+    "eyesMinFaceSize": 80,
+    "eyesDiscardFaceSize": 150,
+    "highlightsReview": 0.25,
+    "shadowsReview": 0.4,
+    "blankFrame": 0.95
+  },
+  "grouping": {
+    "maxBurstGapSeconds": 2.0,
+    "minSimilarity": 0.9,
+    "tieMargin": 0.02
+  }
+}

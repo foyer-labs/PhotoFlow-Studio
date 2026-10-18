@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Level D captions (phase 5b, decision U4): Qwen2.5-VL with ONNX Runtime GenAI in a process of its own, so its
+       native libraries never mix with the application's. Requests and answers are JSON lines on stdin/stdout. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>PhotoFlow.Vlm</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntimeGenAI.Cuda" />
+  </ItemGroup>
+</Project>

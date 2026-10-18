@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- CLIP zero-shot, RAM++, captions, OCR, vocabulary (phases 3-5). -->
+  <ItemGroup>
+    <ProjectReference Include="..\PhotoFlow.Core\PhotoFlow.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- RAM++ tags with Italian labels and categories (decision F3-2), versioned in the repository root. -->
+    <EmbeddedResource Include="..\..\vocabulary\ramplus.tsv" LogicalName="PhotoFlow.Vocabulary.ramplus.tsv" />
+    <EmbeddedResource Include="..\..\vocabulary\blacklist.txt" LogicalName="PhotoFlow.Vocabulary.blacklist.txt" />
+  </ItemGroup>
+</Project>

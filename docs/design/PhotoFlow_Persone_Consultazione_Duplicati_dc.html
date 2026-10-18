@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#0B0B0B;color:#EDEDED;font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#5E9EEA;text-decoration:none}a:hover{color:#8DBAF0;text-decoration:underline}*{box-sizing:border-box}</style>
+</helmet>
+<section id="t4" style="padding:48px; display:flex; flex-direction:column; gap:40px;">
+
+<div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:48px; max-width:2920px;">
+  <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="display:flex; align-items:center; gap:10px;"><a href="#t4" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 8px; background:#EDEDED; color:#111; border-radius:4px;">4</a><span style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; letter-spacing:.06em; text-transform:uppercase;">PhotoFlow · Passo 3 · Gruppo B</span></div>
+    <h1 style="margin:0; font-size:40px; font-weight:600; line-height:1.1;">Persone, Consultazione, Duplicati</h1>
+    <p style="margin:0; font-size:15px; line-height:1.55; color:#A6A6A6; max-width:720px; text-wrap:pretty;">Fine del flusso d'import: Revisione → Persone, solo i nuovi gruppi (<a href="#4a">4a</a>). Ricerca quotidiana: Consultazione → dettaglio → Apri in Photoshop (<a href="#4d">4d</a>). Altri gruppi: <a href="PhotoFlow Home Import Job.dc.html">A</a> · <a href="PhotoFlow Librerie Vocabolario Profili Impostazioni.dc.html">C</a>.</p>
+  </div>
+  <div style="display:flex; flex-direction:column; gap:10px; font-size:13px; line-height:1.55; color:#A6A6A6;">
+    <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Note per Avalonia</div>
+    <div><span style="color:#EDEDED;">Griglia volti</span> — ItemsRepeater virtualizzato con selezione multipla (Ctrl/Maiusc, rettangolo di trascinamento): la selezione a rettangolo è <span style="color:#E9B13C;">personalizzata</span>.</div>
+    <div><span style="color:#EDEDED;">Rinomina inline con suggerimenti</span> — AutoCompleteBox (standard) ristilizzato.</div>
+    <div><span style="color:#EDEDED;">Campo di ricerca a gettoni</span> — <span style="color:#E9B13C;">personalizzato</span> (TextBox + gettoni + popup), come nel sistema visivo.</div>
+    <div><span style="color:#EDEDED;">Riquadri volti sull'anteprima</span> — Canvas sovrapposto con coordinate normalizzate; etichette con sfondo pieno, nessuna sfocatura.</div>
+    <div><span style="color:#EDEDED;">"Apri in Photoshop"</span> — Process.Start con percorso configurato; "Mostra in Esplora risorse" = explorer.exe /select (Mac: Finder, Linux: file manager).</div>
+  </div>
+</div>
+
+<div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+<!-- 4a PERSONE GALLERIA -->
+<div id="4a" style="display:flex; flex-direction:column; gap:10px; flex:none;"><div style="display:flex; align-items:baseline; gap:10px;"><a href="#4a" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">4a</a><span style="font-size:14px; font-weight:500;">Persone — nuovi gruppi dal job</span><span style="font-size:12px; color:#808080;">Ordinati per dimensione · 2 selezionati · rinomina in corso</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:184px minmax(0,1fr) 300px; min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navs.persone }}" as="n" hint-placeholder-count="7"><div style="display:flex; align-items:center; justify-content:space-between; gap:8px; height:30px; padding:0 10px; border-radius:4px; background:{{ n.bg }}; color:{{ n.color }}; box-shadow:{{ n.shadow }};"><span>{{ n.label }}</span><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ n.key }}</span></div></sc-for><div style="margin-top:auto; border-top:1px solid #303030; padding-top:8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navb.persone }}" as="n" hint-placeholder-count="4"><div style="display:flex; align-items:center; height:28px; padding:0 10px; border-radius:4px; color:{{ n.color }}; background:{{ n.bg }}; box-shadow:{{ n.shadow }}; font-size:12px;">{{ n.label }}</div></sc-for></div></div>
+      <div style="display:grid; grid-template-rows:56px 44px minmax(0,1fr); min-width:0; min-height:0;">
+        <div style="display:flex; align-items:center; gap:16px; padding:0 16px; border-bottom:1px solid #303030;">
+          <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:18px; font-weight:600;">Persone</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">38 con nome · 212 senza nome · 9 ignorate · impronte cifrate</span></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid #303030;">
+          <div style="display:flex; gap:2px; padding:2px; background:#151515; border:1px solid #303030; border-radius:5px; flex:none; font-size:12px; white-space:nowrap;">
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; border-radius:3px; background:#363636;">Nuovi · Matrimonio Sara e Luca<span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">14</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; color:#A6A6A6;">Senza nome<span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">212</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; color:#A6A6A6;">Con nome<span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">38</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; color:#A6A6A6;">Ignorate<span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">9</span></span>
+          </div>
+          <span style="margin-left:auto; font-size:12px; color:#A6A6A6; white-space:nowrap;">Per dimensione ▾</span>
+        </div>
+        <div style="overflow:hidden; background:#151515; padding:16px; display:flex; flex-wrap:wrap; gap:16px 12px; align-content:flex-start;">
+          <div style="width:136px; display:flex; flex-direction:column; gap:8px; align-items:center;">
+            <div style="position:relative; width:112px; height:112px; border-radius:50%; background:repeating-linear-gradient(135deg,#4A4A4A 0 5px,#424242 5px 10px);"><span style="position:absolute; right:0; bottom:2px; font:500 10px 'IBM Plex Mono',monospace; background:#1B1B1B; border:1px solid #4A4A4A; border-radius:8px; padding:0 5px;">37</span></div>
+            <div style="position:relative; width:136px;">
+              <div style="display:flex; align-items:center; height:28px; padding:0 8px; background:#2B2B2B; border:1px solid #5E9EEA; border-radius:4px; font-size:13px;">Mar<span style="width:1px; height:14px; background:#EDEDED; margin-left:1px;"></span></div>
+              <div style="position:absolute; top:32px; left:0; width:220px; background:#2B2B2B; border:1px solid #4A4A4A; border-radius:6px; box-shadow:0 8px 24px rgba(0,0,0,.5); display:flex; flex-direction:column; padding:4px; z-index:2; font-size:12px;">
+                <div style="display:flex; gap:8px; align-items:center; padding:6px 8px; background:#363636; border-radius:4px;"><span style="width:20px; height:20px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Marco Bianchi<span style="margin-left:auto; color:#808080; font-size:11px;">unisci · 0,52</span></div>
+                <div style="display:flex; gap:8px; align-items:center; padding:6px 8px;"><span style="width:20px; height:20px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Martina Sala<span style="margin-left:auto; color:#808080; font-size:11px;">unisci · 0,21</span></div>
+                <div style="display:flex; gap:8px; align-items:center; padding:6px 8px; border-top:1px solid #363636; color:#A6A6A6;">Nuova persona "Mar"<span style="margin-left:auto;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">↵</span></span></div>
+              </div>
+            </div>
+          </div>
+          <sc-for list="{{ clusters }}" as="c" hint-placeholder-count="13">
+            <div style="width:136px; display:flex; flex-direction:column; gap:6px; align-items:center;">
+              <div style="position:relative; width:112px; height:112px; border-radius:50%; background:{{ c.bg }}; outline:{{ c.outline }}; outline-offset:3px;">
+                <span style="position:absolute; right:0; bottom:2px; font:500 10px 'IBM Plex Mono',monospace; background:#1B1B1B; border:1px solid #4A4A4A; border-radius:8px; padding:0 5px;">{{ c.count }}</span>
+                <sc-if value="{{ c.sel }}"><span style="position:absolute; left:0; top:0; width:18px; height:18px; border-radius:3px; background:#5E9EEA; color:#111; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span></sc-if>
+              </div>
+              <span style="font-size:13px; color:{{ c.color }};">{{ c.name }}</span>
+              <sc-if value="{{ c.hasHint }}"><span style="font-size:11px; color:#E9B13C; border:1px dashed #E9B13C; border-radius:3px; padding:0 5px;">{{ c.hint }}</span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="border-left:1px solid #303030; background:#222222; display:flex; flex-direction:column; overflow:hidden;">
+        <div style="padding:12px; display:flex; flex-direction:column; gap:10px; border-bottom:1px solid #303030;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">2 gruppi selezionati</div>
+          <div style="display:flex; align-items:center; gap:8px;"><span style="width:44px; height:44px; border-radius:50%; background:repeating-linear-gradient(135deg,#4A4A4A 0 4px,#424242 4px 8px);"></span><span style="font-size:18px; color:#808080;">+</span><span style="width:44px; height:44px; border-radius:50%; background:repeating-linear-gradient(135deg,#505050 0 4px,#464646 4px 8px);"></span><div style="display:flex; flex-direction:column; gap:2px; margin-left:4px;"><span>Persona 22 + Persona 31</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">21 + 9 volti · somiglianza 0,61</span></div></div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <div style="display:flex; align-items:center; gap:8px; height:32px; padding:0 10px; background:#E6E6E6; color:#111; border-radius:4px; font-weight:500;">Unisci<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; color:#444;">M</span></div>
+            <div style="display:flex; align-items:center; gap:8px; height:32px; padding:0 10px; border:1px solid #3A3A3A; border-radius:4px;">Rinomina entrambi…<span style="margin-left:auto;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">F2</span></span></div>
+            <div style="display:flex; align-items:center; gap:8px; height:32px; padding:0 10px; border:1px solid #3A3A3A; border-radius:4px;">Ignora<span style="font-size:11px; color:#808080;">sconosciuti, non riproporre</span><span style="margin-left:auto;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">I</span></span></div>
+          </div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #303030;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Volti in Persona 22</div>
+          <div style="display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px;"><sc-for list="{{ miniFaces }}" as="m" hint-placeholder-count="10"><div style="aspect-ratio:1; border-radius:4px; background:{{ m.bg }};"></div></sc-for></div>
+          <span style="font-size:12px; color:#5E9EEA;">Apri pagina persona ↵</span>
+        </div>
+        <div style="padding:12px; font-size:12px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">Le soglie preferiscono dividere: unire è un clic, separare è un lavoro. Per questo vedi più gruppi della stessa persona.</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080; white-space:nowrap; overflow:hidden;"><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">← → ↑ ↓</span>Naviga</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Ctrl clic</span>Seleziona più</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">F2</span>Rinomina</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">M</span>Unisci</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">I</span>Ignora</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">↵</span>Apri</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Ctrl Z</span>Annulla</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace;">Nomi scritti negli XMP solo per foto confermate</span></div>
+  </div>
+</div>
+
+<!-- 4b PAGINA PERSONA -->
+<div id="4b" style="display:flex; flex-direction:column; gap:10px; flex:none;"><div style="display:flex; align-items:baseline; gap:10px;"><a href="#4b" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">4b</a><span style="font-size:14px; font-weight:500;">Pagina della singola persona</span><span style="font-size:12px; color:#808080;">Separa volti · campioni per anno</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:184px minmax(0,1fr) 300px; min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navs.persone }}" as="n" hint-placeholder-count="7"><div style="display:flex; align-items:center; justify-content:space-between; gap:8px; height:30px; padding:0 10px; border-radius:4px; background:{{ n.bg }}; color:{{ n.color }}; box-shadow:{{ n.shadow }};"><span>{{ n.label }}</span><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ n.key }}</span></div></sc-for><div style="margin-top:auto; border-top:1px solid #303030; padding-top:8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navb.persone }}" as="n" hint-placeholder-count="4"><div style="display:flex; align-items:center; height:28px; padding:0 10px; border-radius:4px; color:{{ n.color }}; background:{{ n.bg }}; box-shadow:{{ n.shadow }}; font-size:12px;">{{ n.label }}</div></sc-for></div></div>
+      <div style="display:grid; grid-template-rows:88px 44px minmax(0,1fr) 52px; min-width:0; min-height:0;">
+        <div style="display:flex; align-items:center; gap:16px; padding:0 16px; border-bottom:1px solid #303030;">
+          <span style="font-size:12px; color:#5E9EEA; white-space:nowrap;">← Persone</span>
+          <span style="width:64px; height:64px; flex:none; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 5px,#4A4A4A 5px 10px);"></span>
+          <div style="display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-size:24px; font-weight:600;">Sara Bianchi</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">412 foto · 1.208 volti · 2016–2026 · copertina scelta da te</span></div>
+          <div style="margin-left:auto; display:flex; gap:8px;"><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Rinomina<span style="font:500 10px 'IBM Plex Mono',monospace; color:#A6A6A6;">F2</span></button><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Cambia copertina</button><button style="flex:none; white-space:nowrap; height:32px; padding:0 12px; background:transparent; color:#EB5A50; border:1px solid #6B3330; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Elimina persona…</button></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid #303030;">
+          <div style="display:flex; gap:2px; padding:2px; background:#151515; border:1px solid #303030; border-radius:5px; flex:none; font-size:12px;"><span style="height:26px; padding:0 10px; display:flex; align-items:center; background:#363636; border-radius:3px;">Volti</span><span style="height:26px; padding:0 10px; display:flex; align-items:center; color:#A6A6A6;">Foto</span></div>
+          <span style="display:flex; align-items:center; gap:6px; font-size:12px; color:#A6A6A6;"><span style="width:14px; height:14px; border-radius:3px; background:#5E9EEA; color:#111; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span>Prima i meno simili</span>
+          <span style="margin-left:auto; font-size:12px; color:#808080;">Bordo tratteggiato = somiglianza bassa, da verificare</span>
+        </div>
+        <div style="overflow:hidden; background:#151515; padding:12px 16px; display:flex; flex-direction:column; gap:16px;">
+          <sc-for list="{{ years }}" as="y" hint-placeholder-count="3">
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; gap:10px; align-items:baseline;"><span style="font-size:13px; font-weight:500;">{{ y.year }}</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">{{ y.count }}</span></div>
+              <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <sc-for list="{{ y.faces }}" as="f" hint-placeholder-count="12"><div style="position:relative; width:72px; height:72px; border-radius:4px; background:{{ f.bg }}; outline:{{ f.outline }}; outline-offset:2px; border:{{ f.border }};"><sc-if value="{{ f.sel }}"><span style="position:absolute; right:3px; top:3px; width:16px; height:16px; border-radius:3px; background:#5E9EEA; color:#111; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span></sc-if><sc-if value="{{ f.hasSim }}"><span style="position:absolute; left:3px; bottom:3px; font:500 9px 'IBM Plex Mono',monospace; background:#E9B13C; color:#111; padding:0 3px; border-radius:2px;">{{ f.sim }}</span></sc-if></div></sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; padding:0 16px; border-top:1px solid #303030; background:#222222;">
+          <span style="font-size:13px; font-weight:500;">3 volti selezionati</span>
+          <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Separa in nuova persona<span style="font:500 10px 'IBM Plex Mono',monospace; color:#444; border:1px solid #9A9A9A; border-radius:3px; padding:0 4px;">S</span></button><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Sposta a…<span style="font:500 10px 'IBM Plex Mono',monospace; color:#A6A6A6;">Ctrl M</span></button><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Non è lei<span style="font:500 10px 'IBM Plex Mono',monospace; color:#A6A6A6;">Canc</span></button>
+          <span style="margin-left:auto; font-size:12px; color:#808080;">Nessuna foto viene modificata finché non confermi</span>
+        </div>
+      </div>
+      <div style="border-left:1px solid #303030; background:#222222; display:flex; flex-direction:column; overflow:hidden;">
+        <div style="padding:12px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #303030;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Campioni di riferimento</div>
+          <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px;"><sc-for list="{{ protos }}" as="p" hint-placeholder-count="8"><div style="display:flex; flex-direction:column; gap:2px; align-items:center;"><div style="width:100%; aspect-ratio:1; border-radius:4px; background:{{ p.bg }};"></div><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ p.y }}</span></div></sc-for></div>
+          <span style="font-size:12px; color:#A6A6A6; line-height:1.5;">Aggiornati per anno: il volto cambia nel tempo. Si rinnovano da soli quando confermi nuovi volti.</span>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:6px; border-bottom:1px solid #303030; font-size:12px;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Nei metadati</div>
+          <span style="font:400 12px 'IBM Plex Mono',monospace; color:#EDEDED;">Persone|Sara Bianchi</span>
+          <span style="color:#A6A6A6;">Regioni volto MWG con nome · 398 foto scritte</span>
+        </div>
+        <div style="padding:12px; font-size:12px; line-height:1.5; color:#A6A6A6;">"Elimina persona" cancella nome e tutte le impronte. Le foto restano.</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080; white-space:nowrap; overflow:hidden;"><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Maiusc clic</span>Intervallo</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">S</span>Separa</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Canc</span>Non è lei</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">↵</span>Apri foto</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Ctrl Z</span>Annulla</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Esc</span>Torna</span></div>
+  </div>
+</div>
+
+<!-- 4c PERSONE stati -->
+<div style="display:flex; flex-direction:column; gap:32px; flex:none;">
+<div id="4c" style="display:flex; flex-direction:column; gap:10px;"><div style="display:flex; align-items:baseline; gap:10px;"><a href="#4c" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">4c</a><span style="font-size:14px; font-weight:500;">Persone — vuoto</span><span style="font-size:12px; color:#808080;">Volti non ancora analizzati</span></div>
+  <div style="width:720px; height:300px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:32px;">
+    <span style="width:44px; height:44px; border-radius:50%; border:1px dashed #4A4A4A;"></span>
+    <span style="font-size:15px; font-weight:500;">Ancora nessun volto</span>
+    <span style="font-size:13px; color:#A6A6A6; max-width:420px; line-height:1.5;">I gruppi compaiono dopo un import o un'analisi con il riconoscimento volti attivo.</span>
+    <div style="display:flex; gap:8px; margin-top:6px;"><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Analizza una libreria…</button><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:transparent; color:#A6A6A6; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Impostazioni volti</button></div>
+  </div>
+</div>
+<div id="4c2" style="display:flex; flex-direction:column; gap:10px;"><div style="display:flex; align-items:baseline; gap:10px;"><a href="#4c2" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">4c2</a><span style="font-size:14px; font-weight:500;">Persone — raggruppamento in corso</span><span style="font-size:12px; color:#808080;">Stato di attesa</span></div>
+  <div style="width:720px; height:240px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; padding:24px; display:flex; flex-direction:column; gap:14px;">
+    <div style="display:flex; gap:10px; align-items:flex-start; padding:12px; background:#222222; border:1px solid #303030; border-radius:4px;"><span style="width:16px; height:16px; flex:none; border-radius:50%; border:1.5px solid #5E9EEA; color:#5E9EEA; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">i</span><div style="display:flex; flex-direction:column; gap:6px; font-size:13px; flex:1;"><span>Raggruppamento dell'archivio: anno 2019 di 2015–2024</span><div style="height:4px; background:#363636; border-radius:2px;"><div style="width:48%; height:4px; background:#5E9EEA; border-radius:2px;"></div></div><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">38.112 / 79.400 volti · ~50 min</span></div></div>
+    <span style="font-size:12px; color:#A6A6A6; line-height:1.5;">I gruppi degli anni già completati sono disponibili subito, ordinati per dimensione. Inizia dai più grandi: un nome assegnato ora aiuta il riconoscimento negli anni successivi.</span>
+  </div>
+</div>
+<div id="4c3" style="display:flex; flex-direction:column; gap:10px;"><div style="display:flex; align-items:baseline; gap:10px;"><a href="#4c3" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">4c3</a><span style="font-size:14px; font-weight:500;">Persone — chiave impronte non disponibile</span><span style="font-size:12px; color:#808080;">Stato di errore</span></div>
+  <div style="width:720px; height:280px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; padding:24px; display:flex; flex-direction:column; gap:14px;">
+    <div style="display:flex; gap:10px; align-items:flex-start; padding:12px; background:#222222; border:1px solid #303030; border-radius:4px; box-shadow:inset 0 2px 0 #EB5A50;">
+      <span style="width:12px; height:12px; flex:none; margin-top:4px; background:#EB5A50; transform:rotate(45deg);"></span>
+      <div style="display:flex; flex-direction:column; gap:6px; font-size:13px;"><span style="font-weight:500;">Impronte dei volti non leggibili su questo account</span><span style="font-size:12px; color:#A6A6A6; line-height:1.5;">Il catalogo è stato aperto da un altro utente o PC. I nomi e le assegnazioni restano; serve la chiave solo per riconoscere nuovi volti.</span><div style="display:flex; gap:8px; margin-top:4px;"><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Inserisci password<span style="font:500 10px 'IBM Plex Mono',monospace; color:#444; border:1px solid #9A9A9A; border-radius:3px; padding:0 4px;">↵</span></button><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Ricalcola impronte (~40 min)</button></div></div>
+    </div>
+    <span style="font-size:12px; color:#808080;">Fino ad allora: galleria consultabile, riconoscimento sospeso.</span>
+  </div>
+</div>
+</div>
+
+<!-- 4d CONSULTAZIONE -->
+<div id="4d" style="display:flex; flex-direction:column; gap:10px; flex:none;"><div style="display:flex; align-items:baseline; gap:10px;"><a href="#4d" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">4d</a><span style="font-size:14px; font-weight:500;">Consultazione — ricerca mista e dettaglio</span><span style="font-size:12px; color:#808080;">Gettoni + linguaggio naturale, tag modificabili, volti evidenziati</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:184px minmax(0,1fr) 340px; min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navs.consult }}" as="n" hint-placeholder-count="7"><div style="display:flex; align-items:center; justify-content:space-between; gap:8px; height:30px; padding:0 10px; border-radius:4px; background:{{ n.bg }}; color:{{ n.color }}; box-shadow:{{ n.shadow }};"><span>{{ n.label }}</span><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ n.key }}</span></div></sc-for><div style="margin-top:auto; border-top:1px solid #303030; padding-top:8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navb.consult }}" as="n" hint-placeholder-count="4"><div style="display:flex; align-items:center; height:28px; padding:0 10px; border-radius:4px; color:{{ n.color }}; background:{{ n.bg }}; box-shadow:{{ n.shadow }}; font-size:12px;">{{ n.label }}</div></sc-for></div></div>
+      <div style="display:grid; grid-template-rows:auto 40px minmax(0,1fr); min-width:0; min-height:0;">
+        <div style="padding:14px 16px 10px; display:flex; flex-direction:column; gap:10px; border-bottom:1px solid #303030;">
+          <div style="display:flex; align-items:center; gap:8px; min-height:40px; padding:6px 10px; background:#2B2B2B; border:1px solid #5E9EEA; border-radius:6px; font-size:14px;">
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px 0 2px; border-radius:13px; background:#363636; font-size:12px; white-space:nowrap;"><span style="width:22px; height:22px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Sara Bianchi<span style="color:#808080;">✕</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px; white-space:nowrap;"><span style="color:#808080;">tag</span>mare<span style="color:#808080;">✕</span></span>
+            <span>che ride al tramonto</span><span style="width:1px; height:18px; background:#EDEDED;"></span>
+            <span style="margin-left:auto; display:flex; align-items:center; gap:8px; font:500 10px 'IBM Plex Mono',monospace; color:#808080; white-space:nowrap;"><span style="border:1px solid #4A4A4A; border-radius:3px; padding:1px 5px; color:#A6A6A6;">+ SIGNIFICATO</span>Ctrl K</span>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; font-size:12px;">
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; border-radius:4px; background:#2B2B2B; white-space:nowrap;"><span style="color:#808080;">Data</span>2022–2025<span style="color:#808080;">✕</span></span>
+            <span style="display:flex; align-items:center; height:26px; padding:0 8px; border-radius:4px; border:1px dashed #3A3A3A; color:#A6A6A6;">Evento ▾</span>
+            <span style="display:flex; align-items:center; height:26px; padding:0 8px; border-radius:4px; border:1px dashed #3A3A3A; color:#A6A6A6;">EXIF ▾</span>
+            <span style="display:flex; align-items:center; height:26px; padding:0 8px; border-radius:4px; border:1px dashed #3A3A3A; color:#A6A6A6;">Rating ▾</span>
+            <span style="display:flex; align-items:center; height:26px; padding:0 8px; border-radius:4px; border:1px dashed #3A3A3A; color:#A6A6A6;">Esito ▾</span>
+            <span style="display:flex; align-items:center; height:26px; padding:0 8px; color:#5E9EEA;">Azzera</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid #303030; font-size:12px; color:#A6A6A6;">
+          <span><span style="color:#EDEDED; font-family:'IBM Plex Mono',monospace;">86</span> foto · per pertinenza · 0,4 s</span>
+          <span style="color:#808080;">Persona e tag sono filtri esatti; "che ride al tramonto" ordina per significato</span>
+          <span style="margin-left:auto; white-space:nowrap;">Pertinenza ▾</span>
+        </div>
+        <div style="overflow:hidden; background:#151515; padding:12px 16px; display:flex; flex-wrap:wrap; gap:6px; align-content:flex-start;">
+          <sc-for list="{{ results }}" as="t" hint-placeholder-count="20"><div style="position:relative; width:144px; height:144px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center; outline:{{ t.outline }}; outline-offset:2px;"><div style="width:{{ t.pw }}; height:{{ t.ph }}; background:{{ t.bg }};"></div><sc-if value="{{ t.hasStars }}"><span style="position:absolute; bottom:5px; left:6px; font-size:10px; letter-spacing:1px; color:#EDEDED; background:rgba(0,0,0,.6); padding:0 4px; border-radius:3px;">{{ t.stars }}</span></sc-if></div></sc-for>
+        </div>
+      </div>
+      <div style="border-left:1px solid #303030; background:#222222; display:flex; flex-direction:column; overflow:hidden;">
+        <div style="padding:12px; display:flex; flex-direction:column; gap:10px; border-bottom:1px solid #303030;">
+          <div style="position:relative; height:211px; background:#0E0E0E;"><div style="position:absolute; inset:0; background:repeating-linear-gradient(135deg,#2F2F2F 0 8px,#2A2A2A 8px 16px);"></div>
+            <div style="position:absolute; left:22%; top:18%; width:18%; height:28%; border:1.5px solid #EDEDED;"><span style="position:absolute; top:100%; left:-1px; margin-top:2px; font-size:10px; background:#EDEDED; color:#111; padding:0 4px; white-space:nowrap;">Sara Bianchi</span></div>
+            <div style="position:absolute; left:58%; top:24%; width:15%; height:24%; border:1.5px dashed #A6A6A6;"><span style="position:absolute; top:100%; left:-1px; margin-top:2px; font-size:10px; background:#1B1B1B; color:#A6A6A6; border:1px solid #4A4A4A; padding:0 4px; white-space:nowrap;">Persona 14 · Nomina</span></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:2px;"><span style="font:500 13px 'IBM Plex Mono',monospace;">20230815_Ferragosto_0231.JPG</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">D:\Foto\2023\2023-08-15_Ferragosto\…</span></div>
+          <div style="display:grid; grid-template-columns:auto minmax(0,1fr); gap:3px 12px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;"><span style="color:#808080;">Scatto</span><span>15 ago 2023 · 19:42</span><span style="color:#808080;">Evento</span><span>Ferragosto Maremma</span><span style="color:#808080;">Esposiz.</span><span>1/500 · f/4 · ISO 200 · 35 mm</span><span style="color:#808080;">Valutaz.</span><span>★★★★ · Tenuta</span></div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #303030;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Tag</div>
+          <div style="display:flex; flex-wrap:wrap; gap:4px;">
+            <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; background:#363636; font-size:12px;"><span style="width:6px; height:6px; border-radius:50%; background:#EDEDED;"></span>vacanze</span>
+            <span style="display:flex; align-items:center; height:24px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px;">mare</span>
+            <span style="display:flex; align-items:center; height:24px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px;">tramonto</span>
+            <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px; background:#2B2B2B;">spiaggia<span style="color:#808080;">✕</span></span>
+            <span style="display:flex; align-items:center; height:24px; padding:0 8px; border-radius:4px; border:1px solid #4A4A4A; font-size:12px;"><span style="color:#808080; margin-right:4px;">Luoghi ›</span>Toscana</span>
+            <span style="display:flex; align-items:center; height:24px; padding:0 8px; border-radius:4px; border:1px dashed #4A4A4A; font-size:12px; color:#808080;">+ Tag <span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">T</span></span>
+          </div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:4px;">
+          <div style="display:flex; align-items:center; gap:8px; height:34px; padding:0 10px; background:#E6E6E6; color:#111; border-radius:4px; font-weight:500;">Apri in Photoshop<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; color:#444;">Ctrl E</span></div>
+          <div style="display:flex; align-items:center; gap:8px; height:32px; padding:0 10px; border:1px solid #3A3A3A; border-radius:4px;">Apri con app predefinita<span style="margin-left:auto;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Ctrl ↵</span></span></div>
+          <div style="display:flex; align-items:center; gap:8px; height:32px; padding:0 10px; border:1px solid #3A3A3A; border-radius:4px;">Mostra in Esplora risorse<span style="margin-left:auto;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Ctrl Maiusc E</span></span></div>
+          <div style="display:flex; align-items:center; gap:8px; height:32px; padding:0 10px; color:#A6A6A6;">Trova simili<span style="margin-left:auto;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">S</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080; white-space:nowrap; overflow:hidden;"><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Ctrl K</span>Cerca</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">← →</span>Naviga</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Ctrl E</span>Photoshop</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">T</span>Tag</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">1–5</span>Stelle</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Spazio</span>Anteprima grande</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace;">Ricerca su 57.630 foto · 2 librerie</span></div>
+  </div>
+</div>
+
+<!-- 4e CONSULTAZIONE stati -->
+<div style="display:flex; flex-direction:column; gap:32px; flex:none;">
+<div id="4e" style="display:flex; flex-direction:column; gap:10px;"><div style="display:flex; align-items:baseline; gap:10px;"><a href="#4e" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">4e</a><span style="font-size:14px; font-weight:500;">Consultazione — nessun risultato</span><span style="font-size:12px; color:#808080;">Stato vuoto</span></div>
+  <div style="width:720px; height:320px; background:#151515; border:1px solid #3A3A3A; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:32px;">
+    <span style="font-size:15px; font-weight:500;">Nessuna foto per "barca a vela al tramonto"</span>
+    <span style="font-size:13px; color:#A6A6A6;">con Evento: Mare 2023 e Rating ≥ 4</span>
+    <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px; font-size:13px;">
+      <span style="color:#5E9EEA;">Togli "Rating ≥ 4" → 12 foto</span>
+      <span style="color:#5E9EEA;">Togli "Evento: Mare 2023" → 31 foto</span>
+      <span style="color:#5E9EEA;">Cerca solo per significato su tutto l'archivio</span>
+    </div>
+  </div>
+</div>
+<div id="4e2" style="display:flex; flex-direction:column; gap:10px;"><div style="display:flex; align-items:baseline; gap:10px;"><a href="#4e2" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">4e2</a><span style="font-size:14px; font-weight:500;">Consultazione — indice in costruzione</span><span style="font-size:12px; color:#808080;">Stato di attesa</span></div>
+  <div style="width:720px; height:200px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; padding:24px; display:flex; flex-direction:column; gap:14px;">
+    <div style="display:flex; gap:10px; align-items:flex-start; padding:12px; background:#222222; border:1px solid #303030; border-radius:4px;"><span style="width:16px; height:16px; flex:none; border-radius:50%; border:1.5px solid #5E9EEA; color:#5E9EEA; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">i</span><div style="display:flex; flex-direction:column; gap:4px; font-size:13px;"><span>Ricerca per significato disponibile su 19.420 di 57.130 foto</span><span style="font-size:12px; color:#A6A6A6;">Tag, persone, date ed EXIF funzionano già su tutto. L'analisi dell'archivio è in corso (~2 h 10 min).</span></div></div>
+  </div>
+</div>
+</div>
+
+<!-- 4f DUPLICATI -->
+<div id="4f" style="display:flex; flex-direction:column; gap:10px; flex:none;"><div style="display:flex; align-items:baseline; gap:10px;"><a href="#4f" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">4f</a><span style="font-size:14px; font-weight:500;">Duplicati — quasi-duplicati, scelta di quale tenere</span><span style="font-size:12px; color:#808080;">Confronto affiancato</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:184px 280px minmax(0,1fr); min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navs.dup }}" as="n" hint-placeholder-count="7"><div style="display:flex; align-items:center; justify-content:space-between; gap:8px; height:30px; padding:0 10px; border-radius:4px; background:{{ n.bg }}; color:{{ n.color }}; box-shadow:{{ n.shadow }};"><span>{{ n.label }}</span><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ n.key }}</span></div></sc-for><div style="margin-top:auto; border-top:1px solid #303030; padding-top:8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navb.dup }}" as="n" hint-placeholder-count="4"><div style="display:flex; align-items:center; height:28px; padding:0 10px; border-radius:4px; color:{{ n.color }}; background:{{ n.bg }}; box-shadow:{{ n.shadow }}; font-size:12px;">{{ n.label }}</div></sc-for></div></div>
+      <div style="border-right:1px solid #303030; padding:12px 8px; display:flex; flex-direction:column; gap:2px; overflow:hidden; font-size:12px;">
+        <div style="padding:4px 8px;"><div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Esatti · 12 gruppi</div></div>
+        <div style="display:flex; flex-direction:column; gap:2px; padding:8px; border-radius:4px;"><span>IMG_2041.JPG · 2 copie</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">stessa impronta · cartelle diverse</span></div>
+        <div style="display:flex; flex-direction:column; gap:2px; padding:8px; border-radius:4px;"><span>DSC_0112.NEF · 3 copie</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">stessa impronta</span></div>
+        <div style="padding:4px 8px; color:#5E9EEA;">Altri 10…</div>
+        <div style="padding:12px 8px 4px;"><div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Quasi-duplicati · 26 gruppi</div></div>
+        <div style="display:flex; flex-direction:column; gap:2px; padding:8px; border-radius:4px; background:#2B2B2B; box-shadow:inset 2px 0 0 #5E9EEA;"><span>Ferragosto_0231 · 3 versioni</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">somiglianza 0,98 · RAW, JPG, export</span></div>
+        <div style="display:flex; flex-direction:column; gap:2px; padding:8px; border-radius:4px;"><span>Matrimonio_0412 · 2 versioni</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">0,97 · ritaglio diverso</span></div>
+        <div style="display:flex; flex-direction:column; gap:2px; padding:8px; border-radius:4px;"><span>WhatsApp 2021-06 · 4 versioni</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">0,96 · ridimensionate</span></div>
+        <div style="padding:4px 8px; color:#5E9EEA;">Altri 23…</div>
+      </div>
+      <div style="display:grid; grid-template-rows:56px minmax(0,1fr) 60px; min-width:0; min-height:0;">
+        <div style="display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid #303030;">
+          <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:15px; font-weight:500;">Ferragosto_0231 · 3 versioni</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">Gruppo 1 di 26 quasi-duplicati · somiglianza 0,98</span></div>
+          <span style="margin-left:auto; display:flex; align-items:center; gap:6px; font-size:12px;"><span style="width:14px; height:14px; border-radius:3px; background:#5E9EEA; color:#111; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span>Zoom sincronizzato<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">S</span></span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; padding:12px 16px; background:#0E0E0E; min-height:0;">
+          <div style="display:grid; grid-template-rows:36px minmax(0,1fr) auto; background:#151515; border-radius:2px; min-height:0; outline:2px solid #4CC38A; outline-offset:-2px;"><div style="display:flex; align-items:center; gap:8px; padding:0 10px;"><span style="font:600 11px 'IBM Plex Mono',monospace; width:18px; height:18px; border:1px solid #4A4A4A; border-radius:3px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:12px; font-weight:500; color:#4CC38A;">✓ Da tenere</span></div><div style="background:repeating-linear-gradient(135deg,#2F2F2F 0 12px,#2A2A2A 12px 24px);"></div><div style="padding:10px; display:flex; flex-direction:column; gap:4px; font-size:12px;"><span style="font:500 12px 'IBM Plex Mono',monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">20230815_Ferragosto_0231.NEF</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">D:\Foto\2023\…</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">6048 × 4032 · 24,6 MB · RAW</span><span style="color:#A6A6A6;">4 tag manuali · ★★★★ · sidecar XMP</span><span style="color:#EDEDED;">Consigliata: originale, ha i tuoi tag</span></div></div>
+          <div style="display:grid; grid-template-rows:36px minmax(0,1fr) auto; background:#151515; border-radius:2px; min-height:0;"><div style="display:flex; align-items:center; gap:8px; padding:0 10px;"><span style="font:600 11px 'IBM Plex Mono',monospace; width:18px; height:18px; border:1px solid #4A4A4A; border-radius:3px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:12px; color:#A6A6A6;">Da spostare</span></div><div style="background:repeating-linear-gradient(135deg,#2F2F2F 0 12px,#2A2A2A 12px 24px); opacity:.7;"></div><div style="padding:10px; display:flex; flex-direction:column; gap:4px; font-size:12px;"><span style="font:500 12px 'IBM Plex Mono',monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">20230815_Ferragosto_0231.JPG</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">D:\Foto\2023\…</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">6048 × 4032 · 9,1 MB · JPG</span><span style="color:#A6A6A6;">gemello RAW+JPG</span><span style="color:#808080;">Coppia RAW+JPG: già trattata come una foto</span></div></div>
+          <div style="display:grid; grid-template-rows:36px minmax(0,1fr) auto; background:#151515; border-radius:2px; min-height:0;"><div style="display:flex; align-items:center; gap:8px; padding:0 10px;"><span style="font:600 11px 'IBM Plex Mono',monospace; width:18px; height:18px; border:1px solid #4A4A4A; border-radius:3px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:12px; color:#A6A6A6;">Da spostare</span></div><div style="background:repeating-linear-gradient(135deg,#2F2F2F 0 12px,#2A2A2A 12px 24px); opacity:.7;"></div><div style="padding:10px; display:flex; flex-direction:column; gap:4px; font-size:12px;"><span style="font:500 12px 'IBM Plex Mono',monospace; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">tramonto_sara_web.jpg</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">D:\Export\Social\</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">1600 × 1067 · 0,4 MB · JPG</span><span style="color:#A6A6A6;">nessun tag</span><span style="color:#808080;">Export ridotto · risoluzione 27%</span></div></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; padding:0 16px; border-top:1px solid #303030;">
+          <span style="font-size:12px; color:#A6A6A6;">Le altre non vengono eliminate: si spostano in <span style="font-family:'IBM Plex Mono',monospace; color:#EDEDED;">_duplicati</span> nella stessa libreria.</span>
+          <span style="margin-left:auto;"></span><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:transparent; color:#A6A6A6; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Non sono duplicati<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">I</span></button><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Salta<span style="font:500 10px 'IBM Plex Mono',monospace; color:#A6A6A6;">→</span></button><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Tieni 1, sposta l'altra<span style="font:500 10px 'IBM Plex Mono',monospace; color:#444; border:1px solid #9A9A9A; border-radius:3px; padding:0 4px;">↵</span></button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080; white-space:nowrap; overflow:hidden;"><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">1–4</span>Scegli quale tenere</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">↵</span>Conferma</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">I</span>Ignora gruppo</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Z</span>100%</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">↑ ↓</span>Gruppo</span><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0; white-space:nowrap;">Ctrl Z</span>Annulla</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace;">Ultimo controllo oggi · 57.130 foto · 2 min su GPU</span></div>
+  </div>
+</div>
+
+<div id="4g" style="display:flex; flex-direction:column; gap:10px; flex:none;"><div style="display:flex; align-items:baseline; gap:10px;"><a href="#4g" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">4g</a><span style="font-size:14px; font-weight:500;">Duplicati — nessuno trovato</span><span style="font-size:12px; color:#808080;">Stato vuoto</span></div>
+  <div style="width:720px; height:300px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:32px;">
+    <span style="display:flex; gap:4px;"><span style="width:28px; height:28px; border:1px dashed #4A4A4A; border-radius:3px;"></span><span style="width:28px; height:28px; border:1px dashed #4A4A4A; border-radius:3px;"></span></span>
+    <span style="font-size:15px; font-weight:500;">Nessun duplicato</span>
+    <span style="font-size:13px; color:#A6A6A6; max-width:400px; line-height:1.5;">Controllate 57.130 foto oggi alle 09:12. I gruppi che hai segnato come "non duplicati" (6) restano esclusi.</span>
+    <div style="display:flex; gap:8px; margin-top:6px;"><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Controlla di nuovo<span style="font:500 10px 'IBM Plex Mono',monospace; color:#A6A6A6;">F5</span></button><button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:transparent; color:#A6A6A6; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap; flex:none;">Mostra esclusi</button></div>
+  </div>
+</div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAV_TOP=[['Home','Ctrl 1'],['Import','Ctrl 2'],['Job','2 attivi'],['Revisione','Ctrl 3'],['Persone','14 nuovi'],['Consultazione','Ctrl 5'],['Duplicati','Ctrl 6']];
+const NAV_BOTTOM=['Librerie','Vocabolario','Profili','Impostazioni'];
+const nav=a=>NAV_TOP.map(([label,key])=>{const on=label===a;return {label,key,bg:on?'#2B2B2B':'transparent',color:on?'#EDEDED':'#A6A6A6',shadow:on?'inset 2px 0 0 #5E9EEA':'none'};});
+const navb=()=>NAV_BOTTOM.map(label=>({label,color:'#808080',bg:'transparent',shadow:'none'}));
+const T=[['#4A4A4A','#424242'],['#505050','#464646'],['#454545','#3D3D3D'],['#4D4D4D','#444444'],['#484848','#404040']];
+const fb=(i,s=5)=>{const t=T[i%T.length];return `repeating-linear-gradient(135deg,${t[0]} 0 ${s}px,${t[1]} ${s}px ${s*2}px)`;};
+const P=[['#2F2F2F','#2A2A2A'],['#2A2A2A','#252525'],['#343434','#2E2E2E'],['#272727','#232323'],['#313131','#2B2B2B']];
+const pb=i=>{const t=P[i%P.length];return `repeating-linear-gradient(135deg,${t[0]} 0 6px,${t[1]} 6px 12px)`;};
+class Component extends DCLogic {
+  renderVals(){
+    const counts=[29,21,18,14,11,9,8,6,5,4,4,3,3];
+    const clusters=counts.map((c,i)=>{const n=[15,22,16,17,31,18,19,20,23,24,25,26,27][i];const sel=n===22||n===31;
+      return {name:`Persona ${n}`,count:String(c),bg:fb(i),outline:sel?'2px solid #5E9EEA':'0 solid transparent',sel,color:'#A6A6A6',
+        hasHint:n===16||n===19,hint:n===16?'Luca Rossi? Y/N':'Giulia Conti? Y/N'};});
+    const miniFaces=Array.from({length:10},(_,i)=>({bg:fb(i+1,3)}));
+    const yrs=[{y:'2026',c:'148 volti',n:14},{y:'2024',c:'96 volti',n:12},{y:'2019',c:'61 volti · bambina',n:10}];
+    const years=yrs.map(({y:year,c:count,n},yi)=>({year,count,faces:Array.from({length:n},(_,i)=>{const sel=yi===0&&(i===0||i===1||i===2);const low=yi===0&&i<3;
+      return {bg:fb(i+yi*3,4),sel,outline:sel?'2px solid #5E9EEA':'0 solid transparent',border:low?'1.5px dashed #E9B13C':'0 solid transparent',hasSim:low,sim:['0,41','0,44','0,46'][i]||''};})}));
+    const protos=['2016','2018','2019','2021','2023','2024','2025','2026'].map((y,i)=>({y,bg:fb(i,3)}));
+    const results=Array.from({length:20},(_,i)=>{const v=[3,7,12,16].includes(i);const s=[4,0,3,5,0,4,0,0,3,0,4,0,0,5,0,0,3,0,0,4][i];
+      return {pw:v?'94px':'144px',ph:v?'140px':'96px',bg:pb(i),outline:i===0?'2px solid #5E9EEA':'0 solid transparent',hasStars:s>0,stars:'★'.repeat(s)};});
+    return {navs:{persone:nav('Persone'),consult:nav('Consultazione'),dup:nav('Duplicati')},navb:{persone:navb(),consult:navb(),dup:navb()},
+      clusters,miniFaces,years,protos,results};
+  }
+}
+</script>
+</body>
+</html>

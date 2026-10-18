@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#0B0B0B;color:#EDEDED;font-family:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#5E9EEA;text-decoration:none}a:hover{color:#8DBAF0;text-decoration:underline}*{box-sizing:border-box}</style>
+</helmet>
+<section id="t2" style="padding:48px; display:flex; flex-direction:column; gap:40px;">
+
+<div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:48px; width:2920px; max-width:100%;">
+  <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="display:flex; align-items:center; gap:10px;"><a href="#t2" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 8px; background:#EDEDED; color:#111; border-radius:4px;">2</a><span style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; letter-spacing:.06em; text-transform:uppercase;">PhotoFlow · Passo 2 di 3 · Revisione</span></div>
+    <h1 style="margin:0; font-size:40px; font-weight:600; line-height:1.1;">Revisione</h1>
+    <p style="margin:0; font-size:15px; line-height:1.55; color:#A6A6A6; max-width:720px; text-wrap:pretty;">La schermata principale. La tavola <a href="#2a">2a</a> è interattiva: frecce per navigare, <b style="color:#EDEDED;">P</b> tieni, <b style="color:#EDEDED;">X</b> scarta, <b style="color:#EDEDED;">1–5</b> stelle, <b style="color:#EDEDED;">Ctrl+Z</b> annulla, clic sui filtri d'esito. Le altre tavole sono stati statici. Sistema visivo: <a href="PhotoFlow Sistema Visivo.dc.html">Passo 1</a>.</p>
+  </div>
+  <div style="display:flex; flex-direction:column; gap:14px;">
+    <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Flusso "Import dopo un evento"</div>
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:13px;">
+      <span style="padding:6px 10px; border:1px solid #3A3A3A; border-radius:4px; color:#A6A6A6;">Home · scheda rilevata</span><span style="color:#808080;">→</span>
+      <span style="padding:6px 10px; border:1px solid #3A3A3A; border-radius:4px; color:#A6A6A6;">Import</span><span style="color:#808080;">→</span>
+      <span style="padding:6px 10px; border:1px solid #3A3A3A; border-radius:4px; color:#A6A6A6;">Job</span><span style="color:#808080;">→</span>
+      <span style="padding:6px 10px; background:#EDEDED; color:#111; border-radius:4px; font-weight:500;">Revisione</span><span style="color:#808080;">→</span>
+      <span style="padding:6px 10px; border:1px solid #3A3A3A; border-radius:4px; color:#A6A6A6;">Persone · solo nuovi gruppi</span>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; font-size:12px; line-height:1.5; color:#A6A6A6;">
+      <div><span style="color:#EDEDED;">Ingresso</span> — dal Job ("Apri revisione") anche durante l'analisi: <a href="#2e">2e</a>.</div>
+      <div><span style="color:#EDEDED;">Uscita</span> — "Conferma e scrivi XMP" <a href="#2g">2g</a> → esito <a href="#2h">2h</a> → Persone.</div>
+      <div><span style="color:#EDEDED;">Modalità</span> — Griglia G · Confronto C · Numeri N · Etichettatura L, stessa barra.</div>
+    </div>
+  </div>
+</div>
+
+<div style="display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+
+<!-- ===================== 2a GRIGLIA (interattiva) ===================== -->
+<div id="2a" style="display:flex; flex-direction:column; gap:10px; flex:none;">
+  <div style="display:flex; align-items:baseline; gap:10px;"><a href="#2a" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">2a</a><span style="font-size:14px; font-weight:500;">Griglia per raffiche — stato tipico</span><span style="font-size:12px; color:#808080;">Interattiva · clicca la tavola e usa la tastiera</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:184px minmax(0,1fr) 300px; min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px;">
+        <sc-for list="{{ navTop }}" as="n" hint-placeholder-count="7"><div style="display:flex; align-items:center; justify-content:space-between; gap:8px; height:30px; padding:0 10px; border-radius:4px; background:{{ n.bg }}; color:{{ n.color }}; box-shadow:{{ n.shadow }};"><span>{{ n.label }}</span><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ n.key }}</span></div></sc-for>
+        <div style="margin-top:auto; border-top:1px solid #303030; padding-top:8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navBottom }}" as="n" hint-placeholder-count="4"><div style="height:28px; padding:0 10px; display:flex; align-items:center; color:#808080; font-size:12px;">{{ n.label }}</div></sc-for></div>
+      </div>
+      <div style="display:grid; grid-template-rows:56px 44px minmax(0,1fr); min-width:0; min-height:0;">
+        <div style="display:flex; align-items:center; gap:16px; padding:0 16px; border-bottom:1px solid #303030;">
+          <div style="display:flex; flex-direction:column; gap:2px; min-width:0;"><span style="font-size:18px; font-weight:600; white-space:nowrap;">Matrimonio Sara e Luca</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080; white-space:nowrap;">12 ott 2026 · 1.248 foto · profilo Eventi · modalità prudente</span></div>
+          <div style="margin-left:auto; display:flex; align-items:center; gap:16px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;"><span>Decisioni tue: <span style="color:#EDEDED;">{{ manualCount }}</span></span><span>XMP in sospeso: 1.248</span></div>
+          <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif; white-space:nowrap;">Conferma e scrivi XMP<span style="font:500 10px 'IBM Plex Mono',monospace; color:#444; border:1px solid #9A9A9A; border-radius:3px; padding:0 4px;">Ctrl ↵</span></button>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid #303030; background:#1B1B1B;">
+          <div style="display:flex; gap:2px; padding:2px; background:#151515; border:1px solid #303030; border-radius:5px; flex:none; white-space:nowrap;">
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; border-radius:3px; background:#363636; font-size:12px;">Griglia<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">G</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; font-size:12px; color:#A6A6A6;">Confronto<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">C</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; font-size:12px; color:#A6A6A6;">Numeri<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">N</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; font-size:12px; color:#A6A6A6;">Etichettatura<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">L</span></span>
+          </div>
+          <span style="width:1px; height:20px; background:#303030;"></span>
+          <div style="display:flex; gap:4px;">
+            <sc-for list="{{ filters }}" as="f" hint-placeholder-count="6"><span onClick="{{ f.onClick }}" style="display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border-radius:4px; background:{{ f.bg }}; border:1px solid {{ f.border }}; font-size:12px; cursor:pointer; color:{{ f.color }}; white-space:nowrap; flex:none;" style-hover="background:#2B2B2B"><sc-if value="{{ f.hasG }}"><span style="width:14px; height:14px; border-radius:3px; background:{{ f.gbg }}; color:{{ f.gfg }}; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center;">{{ f.g }}</span></sc-if>{{ f.label }}<span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">{{ f.count }}</span></span></sc-for>
+          </div>
+          <div style="margin-left:auto; display:flex; align-items:center; gap:12px; font-size:12px; color:#A6A6A6;">
+            <span style="display:flex; align-items:center; gap:6px;">Raffiche aperte<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">Maiusc ↵</span></span>
+            <span style="display:flex; gap:2px; font:500 11px 'IBM Plex Mono',monospace;"><span style="padding:2px 6px; color:#808080;">S</span><span style="padding:2px 6px; background:#363636; border-radius:3px;">M</span><span style="padding:2px 6px; color:#808080;">L</span></span>
+          </div>
+        </div>
+        <div style="overflow:auto; background:#151515; padding:12px 16px 24px; display:flex; flex-direction:column; gap:20px;">
+          <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; align-items:center; gap:10px; height:28px;">
+                <span style="font-size:13px; font-weight:500;">{{ g.title }}</span>
+                <span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">{{ g.meta }}</span>
+                <span style="font-size:11px; padding:1px 6px; border:1px solid #3A3A3A; border-radius:3px; color:#A6A6A6;">{{ g.profile }}</span>
+                <sc-if value="{{ g.hasNote }}"><span style="font-size:12px; color:#E9B13C;">{{ g.note }}</span></sc-if>
+                <sc-if value="{{ g.hasSuggest }}"><span style="display:flex; align-items:center; gap:8px; height:24px; padding:0 8px; border:1px solid #3A3A3A; border-radius:4px; font-size:12px; color:#A6A6A6;"><span style="width:10px; height:10px; border-radius:50%; border:1.5px solid #5E9EEA;"></span>{{ g.suggest }}<span style="color:#5E9EEA;">Rianalizza come Ritratto</span><span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">Maiusc R</span></span></sc-if>
+                <span style="margin-left:auto; font-size:12px; color:#808080; display:flex; gap:6px; align-items:center;">Confronta il gruppo<span style="font:500 10px 'IBM Plex Mono',monospace; border:1px solid #4A4A4A; border-radius:3px; padding:0 4px;">C</span></span>
+              </div>
+              <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <sc-for list="{{ g.items }}" as="t" hint-placeholder-count="6">
+                  <div onClick="{{ t.onClick }}" style="position:relative; width:144px; height:144px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center; box-shadow:{{ t.ring }}; outline:{{ t.outline }}; outline-offset:2px; cursor:pointer;">
+                    <div style="width:{{ t.pw }}; height:{{ t.ph }}; background:{{ t.bg }}; opacity:{{ t.op }};"></div>
+                    <div style="position:absolute; inset:0; border:{{ t.dash }}; pointer-events:none;"></div>
+                    <span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:{{ t.gbg }}; color:{{ t.gfg }}; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">{{ t.g }}</span>
+                    <sc-if value="{{ t.manual }}"><span style="position:absolute; top:6px; left:26px; width:16px; height:16px; border-radius:50%; background:#EDEDED; color:#111; display:flex; align-items:center; justify-content:center; font:600 9px 'IBM Plex Mono',monospace;">M</span></sc-if>
+                    <sc-if value="{{ t.hasRank }}"><span style="position:absolute; top:6px; right:6px; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.6); padding:1px 5px; border-radius:3px;">{{ t.rank }}</span></sc-if>
+                    <sc-if value="{{ t.hasReason }}"><span style="position:absolute; bottom:6px; right:6px; font:500 10px 'IBM Plex Mono',monospace; color:{{ t.rfg }}; background:{{ t.rbg }}; padding:0 5px; border-radius:3px;">{{ t.reason }}</span></sc-if>
+                    <sc-if value="{{ t.hasStars }}"><span style="position:absolute; bottom:5px; left:6px; font-size:10px; letter-spacing:1px; color:#EDEDED; background:rgba(0,0,0,.6); padding:0 4px; border-radius:3px;">{{ t.son }}<span style="color:#555;">{{ t.soff }}</span></span></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noResults }}"><div style="padding:64px 0; display:flex; flex-direction:column; align-items:center; gap:8px; color:#A6A6A6;"><span style="font-size:15px; color:#EDEDED; font-weight:500;">Nessuna foto con questo esito in questa parte del job</span><span style="font-size:13px;">Clicca di nuovo il filtro per vederle tutte.</span></div></sc-if>
+        </div>
+      </div>
+      <div style="border-left:1px solid #303030; background:#222222; display:flex; flex-direction:column; min-height:0; overflow:auto;">
+        <div style="padding:12px; display:flex; flex-direction:column; gap:10px; border-bottom:1px solid #303030;">
+          <div style="height:184px; background:#0E0E0E; display:flex; align-items:center; justify-content:center; position:relative;"><div style="width:{{ d.pw }}; height:{{ d.ph }}; background:{{ d.bg }}; opacity:{{ d.op }};"></div><span style="position:absolute; left:8px; bottom:6px; font:400 10px 'IBM Plex Mono',monospace; color:#6E6E6E;">anteprima · Z 100%</span></div>
+          <div style="font:500 13px 'IBM Plex Mono',monospace;">{{ d.file }} <span style="color:#808080; font-weight:400;">{{ d.pair }}</span></div>
+          <div style="display:grid; grid-template-columns:auto minmax(0,1fr); gap:3px 12px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">
+            <span style="color:#808080;">Gruppo</span><span>{{ d.group }}</span>
+            <span style="color:#808080;">Esposiz.</span><span>{{ d.exif }}</span>
+            <span style="color:#808080;">Ottica</span><span>Z 85 mm f/1.8 S</span>
+          </div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:10px; border-bottom:1px solid #303030;">
+          <div style="display:flex; align-items:center; gap:8px;"><span style="width:18px; height:18px; border-radius:3px; background:{{ d.gbg }}; color:{{ d.gfg }}; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;">{{ d.g }}</span><span style="font-size:15px; font-weight:500;">{{ d.label }}</span><span style="font-size:11px; color:#808080;">{{ d.origin }}</span></div>
+          <div style="font-size:12px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">{{ d.why }}</div>
+          <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px;">
+            <span onClick="{{ onKeep }}" style="display:flex; align-items:center; gap:6px; height:30px; padding:0 8px; border-radius:4px; border:1px solid #3A3A3A; background:{{ d.keepBg }}; font-size:12px; cursor:pointer;" style-hover="background:#2B2B2B">✓ Tieni<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; color:#808080;">P</span></span>
+            <span onClick="{{ onReject }}" style="display:flex; align-items:center; gap:6px; height:30px; padding:0 8px; border-radius:4px; border:1px solid #3A3A3A; background:{{ d.rejBg }}; font-size:12px; cursor:pointer;" style-hover="background:#2B2B2B">✕ Scarta<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; color:#808080;">X</span></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:2px; height:30px; padding:0 8px; border-radius:4px; border:1px solid #3A3A3A;"><sc-for list="{{ d.stars }}" as="s" hint-placeholder-count="5"><span onClick="{{ s.onClick }}" style="font-size:15px; color:{{ s.color }}; cursor:pointer; padding:0 2px;">★</span></sc-for><span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; color:#808080;">1–5</span></div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #303030;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Segnali · profilo Eventi</div>
+          <sc-for list="{{ d.signals }}" as="s" hint-placeholder-count="3"><div style="display:grid; grid-template-columns:78px minmax(0,1fr) 72px; gap:8px; align-items:center; font-size:12px;"><span style="color:#A6A6A6;">{{ s.label }}</span><div style="height:4px; background:#363636; position:relative;"><div style="width:{{ s.w }}; height:4px; background:{{ s.col }};"></div><span style="position:absolute; left:{{ s.mark }}; top:-3px; width:1px; height:10px; background:#EDEDED;"></span></div><span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6; text-align:right;">{{ s.val }}</span></div></sc-for>
+          <div style="font-size:11px; color:#808080;">Tacca = soglia del profilo.</div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Persone</div>
+          <div style="display:flex; flex-wrap:wrap; gap:4px;">
+            <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px 0 2px; border-radius:12px; background:#363636; font-size:12px;"><span style="width:20px; height:20px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Sara Bianchi</span>
+            <span style="display:flex; align-items:center; gap:6px; height:24px; padding:0 8px 0 2px; border-radius:12px; border:1px solid #4A4A4A; font-size:12px; color:#A6A6A6;"><span style="width:20px; height:20px; border-radius:50%; background:repeating-linear-gradient(135deg,#555 0 3px,#4A4A4A 3px 6px);"></span>Persona 14</span>
+          </div>
+          <div style="font-size:11px; color:#808080;">Tag e nomi si scrivono solo dopo la conferma.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080; white-space:nowrap;">
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">← → ↑ ↓</span>Naviga</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">P</span>Tieni</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">X</span>Scarta</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">1–5</span>Stelle</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">C</span>Confronta</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">Z</span>Zoom 100%</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">Ctrl Z</span>Annulla</span>
+      <span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#A6A6A6;">{{ lastAction }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 2b CONFRONTO ===================== -->
+<div id="2b" style="display:flex; flex-direction:column; gap:10px; flex:none;">
+  <div style="display:flex; align-items:baseline; gap:10px;"><a href="#2b" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">2b</a><span style="font-size:14px; font-weight:500;">Confronto 3 scatti, zoom 100% sincronizzato</span><span style="font-size:12px; color:#808080;">Pannello dettagli chiuso (Tab) per dare spazio alle foto</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:48px minmax(0,1fr); min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 6px; display:flex; flex-direction:column; gap:4px; align-items:center;">
+        <span style="width:34px; height:30px; border-radius:4px; display:flex; align-items:center; justify-content:center; font:500 11px 'IBM Plex Mono',monospace; color:#808080;">H</span>
+        <span style="width:34px; height:30px; border-radius:4px; display:flex; align-items:center; justify-content:center; font:500 11px 'IBM Plex Mono',monospace; color:#808080;">J</span>
+        <span style="width:34px; height:30px; border-radius:4px; display:flex; align-items:center; justify-content:center; font:500 11px 'IBM Plex Mono',monospace; color:#EDEDED; background:#2B2B2B; box-shadow:inset 2px 0 0 #5E9EEA;">R</span>
+        <span style="width:34px; height:30px; border-radius:4px; display:flex; align-items:center; justify-content:center; font:500 11px 'IBM Plex Mono',monospace; color:#808080;">P</span>
+        <span style="width:34px; height:30px; border-radius:4px; display:flex; align-items:center; justify-content:center; font:500 11px 'IBM Plex Mono',monospace; color:#808080;">C</span>
+        <span style="margin-top:auto; font:400 9px 'IBM Plex Mono',monospace; color:#6E6E6E; writing-mode:vertical-rl;">barra compressa · icone</span>
+      </div>
+      <div style="display:grid; grid-template-rows:56px 44px minmax(0,1fr) 112px; min-width:0; min-height:0;">
+        <div style="display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid #303030;">
+          <span style="font-size:18px; font-weight:600;">Raffica 15</span>
+          <span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">5 scatti · 14:41:12,8 – 14:41:13,9</span>
+          <span style="font-size:12px; color:#E9B13C;">Prime due a pari merito: scegli la migliore</span>
+          <span style="margin-left:auto; display:flex; align-items:center; gap:8px; height:28px; padding:0 10px; border:1px solid #3A3A3A; border-radius:4px; font-size:12px; color:#A6A6A6;">Profilo<span style="color:#EDEDED;">Eventi ▾</span><span style="color:#808080;">· suggerito Ritratto 81%</span><span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">Maiusc R</span></span>
+          <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Torna alla griglia<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">Esc</span></button>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid #303030;">
+          <div style="display:flex; gap:2px; padding:2px; background:#151515; border:1px solid #303030; border-radius:5px; flex:none; white-space:nowrap;">
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; font-size:12px; color:#A6A6A6;">Griglia<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">G</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; border-radius:3px; background:#363636; font-size:12px;">Confronto<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">C</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; font-size:12px; color:#A6A6A6;">Numeri<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">N</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; font-size:12px; color:#A6A6A6;">Etichettatura<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">L</span></span>
+          </div>
+          <span style="width:1px; height:20px; background:#303030;"></span>
+          <div style="display:flex; gap:2px; font-size:12px;">
+            <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border-radius:4px; color:#A6A6A6;">Adatta<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">F</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border-radius:4px; background:#363636;">100%<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">Z</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border-radius:4px; color:#A6A6A6;">200%</span>
+          </div>
+          <span style="display:flex; align-items:center; gap:6px; font-size:12px;"><span style="width:14px; height:14px; border-radius:3px; background:#5E9EEA; color:#111; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span>Zoom e posizione sincronizzati<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">S</span></span>
+          <span style="display:flex; align-items:center; gap:6px; font-size:12px; color:#A6A6A6;"><span style="width:14px; height:14px; border-radius:3px; border:1px solid #4A4A4A;"></span>Riquadri volti</span>
+          <span style="margin-left:auto; font:400 11px 'IBM Plex Mono',monospace; color:#808080;">centro zoom: punto AF · trascina per spostare tutte</span>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; padding:8px 16px; background:#0E0E0E; min-height:0;">
+          <div style="display:grid; grid-template-rows:36px minmax(0,1fr) 30px; background:#151515; outline:2px solid #5E9EEA; outline-offset:-2px; border-radius:2px; min-height:0;">
+            <div style="display:flex; align-items:center; gap:8px; padding:0 10px;"><span style="font:600 11px 'IBM Plex Mono',monospace; width:18px; height:18px; border:1px solid #4A4A4A; border-radius:3px; display:flex; align-items:center; justify-content:center;">1</span><span style="font:500 12px 'IBM Plex Mono',monospace;">DSC_5012</span><span style="width:16px; height:16px; border-radius:3px; background:#E9B13C; color:#111; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:center;">?</span><span style="font-size:12px; color:#A6A6A6;">Da rivedere</span><span style="margin-left:auto; font:400 11px 'IBM Plex Mono',monospace; color:#EDEDED;">0,81</span></div>
+            <div style="position:relative; background:repeating-linear-gradient(135deg,#2F2F2F 0 14px,#2A2A2A 14px 28px); overflow:hidden;">
+              <div style="position:absolute; left:28%; top:22%; width:44%; height:40%; border:1px solid rgba(237,237,237,.7);"><span style="position:absolute; top:-18px; left:0; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.6); padding:0 4px;">occhi 0,90 · nitidezza 0,81</span></div>
+              <span style="position:absolute; left:10px; bottom:10px; font:400 10px 'IBM Plex Mono',monospace; color:#808080;">ritaglio a 100% · volto sposa</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; padding:0 10px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;"><span>Nit 0,81</span><span>Occhi 0,90</span><span>Esp 0,72</span><span style="margin-left:auto; color:#EDEDED;">P = migliore</span></div>
+          </div>
+          <div style="display:grid; grid-template-rows:36px minmax(0,1fr) 30px; background:#151515; border-radius:2px; min-height:0;">
+            <div style="display:flex; align-items:center; gap:8px; padding:0 10px;"><span style="font:600 11px 'IBM Plex Mono',monospace; width:18px; height:18px; border:1px solid #4A4A4A; border-radius:3px; display:flex; align-items:center; justify-content:center;">2</span><span style="font:500 12px 'IBM Plex Mono',monospace;">DSC_5013</span><span style="width:16px; height:16px; border-radius:3px; background:#E9B13C; color:#111; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:center;">?</span><span style="font-size:12px; color:#A6A6A6;">Da rivedere</span><span style="margin-left:auto; font:400 11px 'IBM Plex Mono',monospace; color:#EDEDED;">0,80</span></div>
+            <div style="position:relative; background:repeating-linear-gradient(135deg,#2C2C2C 0 14px,#272727 14px 28px); overflow:hidden;">
+              <div style="position:absolute; left:28%; top:22%; width:44%; height:40%; border:1px solid rgba(237,237,237,.7);"><span style="position:absolute; top:-18px; left:0; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.6); padding:0 4px;">occhi 0,91 · nitidezza 0,80</span></div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; padding:0 10px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;"><span>Nit 0,80</span><span>Occhi 0,91</span><span>Esp 0,73</span></div>
+          </div>
+          <div style="display:grid; grid-template-rows:36px minmax(0,1fr) 30px; background:#151515; border-radius:2px; min-height:0;">
+            <div style="display:flex; align-items:center; gap:8px; padding:0 10px;"><span style="font:600 11px 'IBM Plex Mono',monospace; width:18px; height:18px; border:1px solid #4A4A4A; border-radius:3px; display:flex; align-items:center; justify-content:center;">3</span><span style="font:500 12px 'IBM Plex Mono',monospace;">DSC_5014</span><span style="width:16px; height:16px; border-radius:3px; background:#9C9AE0; color:#111; font-size:11px; font-weight:600; display:flex; align-items:center; justify-content:center;">≈</span><span style="font-size:12px; color:#A6A6A6;">Simile</span><span style="margin-left:auto; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">0,72</span></div>
+            <div style="position:relative; background:repeating-linear-gradient(135deg,#303030 0 14px,#2B2B2B 14px 28px); overflow:hidden;">
+              <div style="position:absolute; left:28%; top:22%; width:44%; height:40%; border:1px solid rgba(237,237,237,.7);"><span style="position:absolute; top:-18px; left:0; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.6); padding:0 4px;">occhi 0,88 · nitidezza 0,72</span></div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; padding:0 10px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;"><span>Nit 0,72</span><span>Occhi 0,88</span><span>Esp 0,70</span></div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #303030; display:flex; align-items:center; gap:6px; padding:0 16px;">
+          <div style="position:relative; width:120px; height:80px; background:repeating-linear-gradient(135deg,#2F2F2F 0 6px,#2A2A2A 6px 12px); outline:2px solid #5E9EEA; outline-offset:2px;"><span style="position:absolute; top:4px; left:4px; font:600 10px 'IBM Plex Mono',monospace; background:#EDEDED; color:#111; padding:0 4px; border-radius:2px;">1</span></div>
+          <div style="position:relative; width:120px; height:80px; background:repeating-linear-gradient(135deg,#2C2C2C 0 6px,#272727 6px 12px); box-shadow:inset 0 0 0 1px #4A4A4A;"><span style="position:absolute; top:4px; left:4px; font:600 10px 'IBM Plex Mono',monospace; background:#EDEDED; color:#111; padding:0 4px; border-radius:2px;">2</span></div>
+          <div style="position:relative; width:120px; height:80px; background:repeating-linear-gradient(135deg,#303030 0 6px,#2B2B2B 6px 12px); box-shadow:inset 0 0 0 1px #4A4A4A;"><span style="position:absolute; top:4px; left:4px; font:600 10px 'IBM Plex Mono',monospace; background:#EDEDED; color:#111; padding:0 4px; border-radius:2px;">3</span></div>
+          <div style="position:relative; width:120px; height:80px; background:repeating-linear-gradient(135deg,#2A2A2A 0 6px,#252525 6px 12px); opacity:.8;"></div>
+          <div style="position:relative; width:120px; height:80px; background:repeating-linear-gradient(135deg,#2A2A2A 0 6px,#252525 6px 12px); opacity:.35;"><span style="position:absolute; top:4px; left:4px; width:14px; height:14px; border-radius:3px; background:#EB5A50; color:#111; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center;">✕</span></div>
+          <div style="margin-left:16px; font-size:12px; line-height:1.6; color:#A6A6A6;">Maiusc+clic aggiunge o toglie dal confronto (2–4).<br>Scegliere la migliore rende "simili" le altre valide della raffica.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080; white-space:nowrap;">
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">← →</span>Pannello</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">P</span>Migliore</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">X</span>Scarta</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">1–5</span>Stelle</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">Z</span>100% / adatta</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">S</span>Sincronizza</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">Ctrl Z</span>Annulla</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">Esc</span>Griglia</span>
+      <span style="margin-left:auto; font-family:'IBM Plex Mono',monospace;">Raffica 15 di 212 · Pag ↓ raffica successiva</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 2c NUMERI ===================== -->
+<div id="2c" style="display:flex; flex-direction:column; gap:10px; flex:none;">
+  <div style="display:flex; align-items:baseline; gap:10px;"><a href="#2c" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">2c</a><span style="font-size:14px; font-weight:500;">Vista Numeri (motorsport) — candidati ambigui</span><span style="font-size:12px; color:#808080;">Correzione rapida: digita il numero + Invio</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:184px minmax(0,1fr) 300px; min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px;">
+        <sc-for list="{{ navTop }}" as="n" hint-placeholder-count="7"><div style="display:flex; align-items:center; justify-content:space-between; gap:8px; height:30px; padding:0 10px; border-radius:4px; background:{{ n.bg }}; color:{{ n.color }}; box-shadow:{{ n.shadow }};"><span>{{ n.label }}</span><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ n.key }}</span></div></sc-for>
+        <div style="margin-top:auto; border-top:1px solid #303030; padding-top:8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navBottom }}" as="n" hint-placeholder-count="4"><div style="height:28px; padding:0 10px; display:flex; align-items:center; color:#808080; font-size:12px;">{{ n.label }}</div></sc-for></div>
+      </div>
+      <div style="display:grid; grid-template-rows:56px 44px minmax(0,1fr); min-width:0; min-height:0;">
+        <div style="display:flex; align-items:center; gap:16px; padding:0 16px; border-bottom:1px solid #303030;">
+          <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:18px; font-weight:600;">Coppa Italia Turismo — Monza</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">5 ott 2026 · 2.064 foto · profilo Motorsport · 34 vetture in elenco</span></div>
+          <button style="margin-left:auto; display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Conferma e scrivi XMP<span style="font:500 10px 'IBM Plex Mono',monospace; color:#444; border:1px solid #9A9A9A; border-radius:3px; padding:0 4px;">Ctrl ↵</span></button>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid #303030;">
+          <div style="display:flex; gap:2px; padding:2px; background:#151515; border:1px solid #303030; border-radius:5px; flex:none; white-space:nowrap;">
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; font-size:12px; color:#A6A6A6;">Griglia<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">G</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; font-size:12px; color:#A6A6A6;">Confronto<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">C</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; border-radius:3px; background:#363636; font-size:12px;">Numeri<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">N</span></span>
+            <span style="display:flex; align-items:center; gap:6px; height:26px; padding:0 8px; font-size:12px; color:#A6A6A6;">Etichettatura<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">L</span></span>
+          </div>
+          <span style="margin-left:auto; display:flex; align-items:center; gap:6px; font-size:12px;"><span style="width:14px; height:14px; border-radius:3px; background:#5E9EEA; color:#111; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span>Propaga la correzione alla raffica</span>
+        </div>
+        <div style="display:grid; grid-template-columns:272px minmax(0,1fr); min-height:0;">
+          <div style="border-right:1px solid #303030; overflow:auto; padding:10px 8px; display:flex; flex-direction:column; gap:2px; font-size:12px;">
+            <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em; padding:4px 8px;">Da risolvere</div>
+            <div style="display:flex; align-items:center; gap:8px; padding:7px 8px; border-radius:4px; background:#2B2B2B; box-shadow:inset 2px 0 0 #5E9EEA;"><span style="width:14px; height:14px; border-radius:3px; background:#E9B13C; color:#111; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center;">?</span><span style="font:600 13px 'IBM Plex Mono',monospace;">6 o 9</span><span style="color:#A6A6A6;">confusione cifre</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#EDEDED;">7</span></div>
+            <div style="display:flex; align-items:center; gap:8px; padding:7px 8px; border-radius:4px;"><span style="width:14px; height:14px; border-radius:3px; background:#E9B13C; color:#111; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center;">?</span><span style="font:600 13px 'IBM Plex Mono',monospace;">1 o 7</span><span style="color:#A6A6A6;">confusione cifre</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#808080;">3</span></div>
+            <div style="display:flex; align-items:center; gap:8px; padding:7px 8px; border-radius:4px;"><span style="width:14px; height:14px; border-radius:3px; background:#E9B13C; color:#111; font-size:9px; font-weight:600; display:flex; align-items:center; justify-content:center;">?</span><span style="font:600 13px 'IBM Plex Mono',monospace;">2_</span><span style="color:#A6A6A6;">parziale</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#808080;">5</span></div>
+            <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em; padding:12px 8px 4px;">In elenco · 31 di 34</div>
+            <div style="display:grid; grid-template-columns:40px minmax(0,1fr) auto; gap:8px; padding:6px 8px; align-items:baseline;"><span style="font:600 13px 'IBM Plex Mono',monospace;">27</span><span style="display:flex; flex-direction:column;"><span>Marco Ferri</span><span style="font-size:11px; color:#808080;">Lario Corse</span></span><span style="font-family:'IBM Plex Mono',monospace; color:#808080;">48</span></div>
+            <div style="display:grid; grid-template-columns:40px minmax(0,1fr) auto; gap:8px; padding:6px 8px; align-items:baseline;"><span style="font:600 13px 'IBM Plex Mono',monospace;">12</span><span style="display:flex; flex-direction:column;"><span>Giulia Conti</span><span style="font-size:11px; color:#808080;">RS Team</span></span><span style="font-family:'IBM Plex Mono',monospace; color:#808080;">41</span></div>
+            <div style="display:grid; grid-template-columns:40px minmax(0,1fr) auto; gap:8px; padding:6px 8px; align-items:baseline;"><span style="font:600 13px 'IBM Plex Mono',monospace;">112</span><span style="display:flex; flex-direction:column;"><span style="display:flex; gap:6px; align-items:center;">Equipaggio<span style="font:500 9px 'IBM Plex Mono',monospace; border:1px solid #4A4A4A; border-radius:2px; padding:0 3px; color:#A6A6A6;">2 PILOTI</span></span><span style="font-size:11px; color:#808080;">Gruppo Quattro · solo numero in XMP</span></span><span style="font-family:'IBM Plex Mono',monospace; color:#808080;">36</span></div>
+            <div style="display:grid; grid-template-columns:40px minmax(0,1fr) auto; gap:8px; padding:6px 8px; align-items:baseline;"><span style="font:600 13px 'IBM Plex Mono',monospace;">44</span><span style="display:flex; flex-direction:column;"><span>Luca Sala</span><span style="font-size:11px; color:#808080;">Autodromo Racing</span></span><span style="font-family:'IBM Plex Mono',monospace; color:#808080;">29</span></div>
+            <div style="display:grid; grid-template-columns:40px minmax(0,1fr) auto; gap:8px; padding:6px 8px; align-items:baseline;"><span style="font:600 13px 'IBM Plex Mono',monospace;">8</span><span style="display:flex; flex-direction:column;"><span>Sofia Moretti</span><span style="font-size:11px; color:#808080;">Moretti Motorsport</span></span><span style="font-family:'IBM Plex Mono',monospace; color:#808080;">22</span></div>
+            <div style="padding:6px 8px; color:#5E9EEA;">Altre 26…</div>
+            <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em; padding:12px 8px 4px;">Altro</div>
+            <div style="display:flex; padding:6px 8px; color:#A6A6A6;">Nessun numero leggibile<span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#808080;">31</span></div>
+            <div style="display:flex; padding:6px 8px; color:#A6A6A6;">Fuori elenco, ignorati<span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#808080;">14</span></div>
+          </div>
+          <div style="overflow:auto; background:#151515; padding:12px 16px; display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:baseline; gap:10px;"><span style="font-size:15px; font-weight:500;">6 o 9 · 7 foto</span><span style="font-size:12px; color:#A6A6A6;">Candidati in elenco: <b style="color:#EDEDED; font-family:'IBM Plex Mono',monospace;">6</b> A. Neri · <b style="color:#EDEDED; font-family:'IBM Plex Mono',monospace;">9</b> P. Galli</span></div>
+            <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px;">
+              <div style="display:flex; flex-direction:column; background:#1B1B1B; outline:2px solid #5E9EEA; outline-offset:2px; border-radius:2px;">
+                <div style="position:relative; aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#2F2F2F 0 6px,#2A2A2A 6px 12px);"><div style="position:absolute; left:38%; top:34%; width:24%; height:22%; border:1.5px solid #E9B13C;"></div><span style="position:absolute; left:6px; top:6px; width:16px; height:16px; border-radius:3px; background:#E9B13C; color:#111; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:center;">?</span></div>
+                <div style="display:grid; grid-template-columns:96px minmax(0,1fr); gap:8px; padding:8px; align-items:center;">
+                  <div style="height:56px; background:repeating-linear-gradient(135deg,#3A3A3A 0 4px,#333 4px 8px); display:flex; align-items:center; justify-content:center; font:400 9px 'IBM Plex Mono',monospace; color:#808080;">ritaglio ×4</div>
+                  <div style="display:flex; flex-direction:column; gap:4px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;"><span>6 · 0,48</span><span>9 · 0,44</span></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px; padding:0 8px 8px;"><span style="font-size:12px; color:#A6A6A6;">Numero</span><span style="flex:1; display:flex; align-items:center; height:28px; padding:0 8px; background:#2B2B2B; border:1px solid #5E9EEA; border-radius:4px; font:500 13px 'IBM Plex Mono',monospace;">9<span style="width:1px; height:14px; background:#EDEDED; margin-left:1px;"></span><span style="margin-left:auto; font:400 11px 'IBM Plex Sans',sans-serif; color:#808080;">P. Galli</span></span><span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">↵</span></div>
+              </div>
+              <div style="display:flex; flex-direction:column; background:#1B1B1B; border-radius:2px;">
+                <div style="position:relative; aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#2A2A2A 0 6px,#252525 6px 12px);"><div style="position:absolute; left:52%; top:40%; width:20%; height:20%; border:1.5px solid #E9B13C;"></div><span style="position:absolute; left:6px; top:6px; width:16px; height:16px; border-radius:3px; background:#E9B13C; color:#111; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:center;">?</span><span style="position:absolute; top:6px; right:6px; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.6); padding:1px 5px; border-radius:3px;">raffica · 4</span></div>
+                <div style="display:grid; grid-template-columns:96px minmax(0,1fr); gap:8px; padding:8px; align-items:center;">
+                  <div style="height:56px; background:repeating-linear-gradient(135deg,#3A3A3A 0 4px,#333 4px 8px); display:flex; align-items:center; justify-content:center; font:400 9px 'IBM Plex Mono',monospace; color:#808080;">ritaglio ×4</div>
+                  <div style="display:flex; flex-direction:column; gap:4px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;"><span>9 · 0,51</span><span>6 · 0,47</span></div>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; background:#1B1B1B; border-radius:2px;">
+                <div style="position:relative; aspect-ratio:3/2; background:repeating-linear-gradient(135deg,#333 0 6px,#2E2E2E 6px 12px);"><div style="position:absolute; left:20%; top:30%; width:22%; height:24%; border:1.5px solid #E9B13C;"></div><div style="position:absolute; left:62%; top:36%; width:16%; height:18%; border:1px solid #808080;"></div><span style="position:absolute; left:6px; top:6px; width:16px; height:16px; border-radius:3px; background:#E9B13C; color:#111; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:center;">?</span><span style="position:absolute; top:6px; right:6px; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.6); padding:1px 5px; border-radius:3px;">2 vetture</span></div>
+                <div style="display:grid; grid-template-columns:96px minmax(0,1fr); gap:8px; padding:8px; align-items:center;">
+                  <div style="height:56px; background:repeating-linear-gradient(135deg,#3A3A3A 0 4px,#333 4px 8px); display:flex; align-items:center; justify-content:center; font:400 9px 'IBM Plex Mono',monospace; color:#808080;">ritaglio ×4</div>
+                  <div style="display:flex; flex-direction:column; gap:4px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;"><span>6 · 0,46</span><span>9 · 0,45</span><span style="color:#808080;">+ 44 certo</span></div>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:12px; color:#808080; line-height:1.5;">Riquadro amber = vettura con numero incerto; grigio = altra vettura già riconosciuta. Altre 4 foto sotto.</div>
+          </div>
+        </div>
+      </div>
+      <div style="border-left:1px solid #303030; background:#222222; display:flex; flex-direction:column; gap:0; overflow:auto;">
+        <div style="padding:12px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #303030;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Elenco iscritti</div>
+          <div style="font-size:13px; font-weight:500;">Coppa Italia Turismo 2026</div>
+          <div style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">iscritti_monza.csv · 34 vetture · usato in 3 eventi</div>
+          <div style="display:flex; gap:6px;"><button style="height:28px; padding:0 10px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 12px 'IBM Plex Sans',sans-serif;">Importa CSV/Excel</button><button style="height:28px; padding:0 10px; background:transparent; color:#A6A6A6; border:1px solid #3A3A3A; border-radius:4px; font:500 12px 'IBM Plex Sans',sans-serif;">Modifica</button></div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:10px; border-bottom:1px solid #303030;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Candidati per la foto</div>
+          <div style="display:grid; grid-template-columns:36px minmax(0,1fr); gap:2px 8px; padding:8px; border:1px solid #303030; border-radius:4px;"><span style="font:600 15px 'IBM Plex Mono',monospace; grid-row:span 2;">6</span><span>Andrea Neri</span><span style="font-size:11px; color:#808080;">Neri Motorsport · Gr. N · Clio RS</span></div>
+          <div style="display:grid; grid-template-columns:36px minmax(0,1fr); gap:2px 8px; padding:8px; border:1px solid #5E9EEA; border-radius:4px; background:#2B2B2B;"><span style="font:600 15px 'IBM Plex Mono',monospace; grid-row:span 2;">9</span><span>Paolo Galli</span><span style="font-size:11px; color:#808080;">Galli Racing · Gr. A · Civic Type R</span></div>
+          <div style="font-size:11px; color:#808080; line-height:1.5;">Il colore e il modello aiutano a distinguere: arrivano dall'elenco iscritti.</div>
+        </div>
+        <div style="padding:12px; display:flex; flex-direction:column; gap:6px; font-size:12px; color:#A6A6A6; line-height:1.5;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em;">Cosa viene scritto</div>
+          <div>Pilota singolo: <span style="font-family:'IBM Plex Mono',monospace; color:#EDEDED;">Motorsport|Numero 9</span>, pilota, team.</div>
+          <div>Equipaggio: solo numero e team; i nomi restano nel catalogo.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080; white-space:nowrap;">
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">0–9</span>Digita numero</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">↵</span>Conferma e avanti</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">Canc</span>Nessun numero</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">← →</span>Foto</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">↑ ↓</span>Numero nell'elenco</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">Ctrl Z</span>Annulla</span>
+      <span style="margin-left:auto; font-family:'IBM Plex Mono',monospace;">In questa vista le cifre scrivono il numero, non le stelle</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 2d ETICHETTATURA ===================== -->
+<div id="2d" style="display:flex; flex-direction:column; gap:10px; flex:none;">
+  <div style="display:flex; align-items:baseline; gap:10px;"><a href="#2d" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">2d</a><span style="font-size:14px; font-weight:500;">Modalità Etichettatura — alla cieca, con metriche</span><span style="font-size:12px; color:#808080;">I tasti 1–5 cambiano significato: indicato in barra</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:48px minmax(0,1fr) 320px; min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 6px; display:flex; flex-direction:column; gap:4px; align-items:center;">
+        <span style="width:34px; height:30px; border-radius:4px; display:flex; align-items:center; justify-content:center; font:500 11px 'IBM Plex Mono',monospace; color:#808080;">H</span>
+        <span style="width:34px; height:30px; border-radius:4px; display:flex; align-items:center; justify-content:center; font:500 11px 'IBM Plex Mono',monospace; color:#808080;">J</span>
+        <span style="width:34px; height:30px; border-radius:4px; display:flex; align-items:center; justify-content:center; font:500 11px 'IBM Plex Mono',monospace; color:#EDEDED; background:#2B2B2B; box-shadow:inset 2px 0 0 #5E9EEA;">R</span>
+        <span style="width:34px; height:30px; border-radius:4px; display:flex; align-items:center; justify-content:center; font:500 11px 'IBM Plex Mono',monospace; color:#808080;">P</span>
+      </div>
+      <div style="display:grid; grid-template-rows:48px minmax(0,1fr) 132px; min-width:0; min-height:0;">
+        <div style="display:flex; align-items:center; gap:14px; padding:0 16px; border-bottom:1px solid #303030;">
+          <span style="font:600 11px 'IBM Plex Mono',monospace; letter-spacing:.06em; background:#EDEDED; color:#111; padding:3px 8px; border-radius:3px;">ETICHETTATURA</span>
+          <span style="font-size:13px;">Sessione 3</span>
+          <div style="width:220px; height:4px; background:#363636; border-radius:2px;"><div style="width:37%; height:4px; background:#A6A6A6; border-radius:2px;"></div></div>
+          <span style="font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6;">37 / 100 · ~9 min</span>
+          <span style="display:flex; align-items:center; gap:6px; font-size:12px; color:#A6A6A6;"><span style="width:14px; height:14px; border-radius:3px; background:#5E9EEA; color:#111; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span>Alla cieca · verdetto nascosto</span>
+          <button style="margin-left:auto; display:flex; align-items:center; gap:10px; height:30px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 12px 'IBM Plex Sans',sans-serif;">Interrompi, riprendi dopo<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">Esc</span></button>
+        </div>
+        <div style="background:#0E0E0E; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; min-height:0; padding:16px;">
+          <div style="width:820px; height:547px; max-height:100%; background:repeating-linear-gradient(135deg,#2F2F2F 0 10px,#2A2A2A 10px 20px); display:flex; align-items:flex-end; padding:10px; font:400 10px 'IBM Plex Mono',monospace; color:#6E6E6E;">foto a schermo · Z per 100%</div>
+          <div style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">DSC_3318.NEF · Eventi · scatto singolo</div>
+        </div>
+        <div style="border-top:1px solid #303030; display:flex; flex-direction:column; gap:10px; padding:14px 16px;">
+          <div style="display:grid; grid-template-columns:repeat(5,minmax(0,1fr)) minmax(0,.8fr); gap:8px;">
+            <div style="display:flex; align-items:center; gap:10px; height:56px; padding:0 14px; border:1px solid #4A4A4A; border-radius:6px; background:#2B2B2B;"><span style="font:600 18px 'IBM Plex Mono',monospace; width:32px; height:32px; border:1px solid #6A6A6A; border-bottom-width:3px; border-radius:4px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:14px; font-weight:500;">Buona</span></div>
+            <div style="display:flex; align-items:center; gap:10px; height:56px; padding:0 14px; border:1px solid #4A4A4A; border-radius:6px;"><span style="font:600 18px 'IBM Plex Mono',monospace; width:32px; height:32px; border:1px solid #6A6A6A; border-bottom-width:3px; border-radius:4px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:14px; font-weight:500;">Mossa</span></div>
+            <div style="display:flex; align-items:center; gap:10px; height:56px; padding:0 14px; border:1px solid #4A4A4A; border-radius:6px;"><span style="font:600 18px 'IBM Plex Mono',monospace; width:32px; height:32px; border:1px solid #6A6A6A; border-bottom-width:3px; border-radius:4px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:14px; font-weight:500;">Occhi chiusi</span></div>
+            <div style="display:flex; align-items:center; gap:10px; height:56px; padding:0 14px; border:1px solid #4A4A4A; border-radius:6px;"><span style="font:600 18px 'IBM Plex Mono',monospace; width:32px; height:32px; border:1px solid #6A6A6A; border-bottom-width:3px; border-radius:4px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:14px; font-weight:500;">Esposizione</span></div>
+            <div style="display:flex; align-items:center; gap:10px; height:56px; padding:0 14px; border:1px solid #4A4A4A; border-radius:6px;"><span style="font:600 18px 'IBM Plex Mono',monospace; width:32px; height:32px; border:1px solid #6A6A6A; border-bottom-width:3px; border-radius:4px; display:flex; align-items:center; justify-content:center;">5</span><span style="font-size:14px; font-weight:500;">Altro</span></div>
+            <div style="display:flex; align-items:center; gap:10px; height:56px; padding:0 14px; border:1px dashed #4A4A4A; border-radius:6px; color:#A6A6A6;"><span style="font:600 12px 'IBM Plex Mono',monospace; height:32px; padding:0 8px; border:1px solid #6A6A6A; border-bottom-width:3px; border-radius:4px; display:flex; align-items:center; justify-content:center;">Spazio</span><span style="font-size:14px;">Salta</span></div>
+          </div>
+          <div style="display:flex; gap:16px; font-size:12px; color:#808080;"><span>Precedente: <span style="font-family:'IBM Plex Mono',monospace; color:#A6A6A6;">DSC_3317 → Mossa</span> · Ctrl Z per correggere</span><span style="margin-left:auto;">Raffiche: la sessione mostra la raffica intera, clic sulla migliore + Invio</span></div>
+        </div>
+      </div>
+      <div style="border-left:1px solid #303030; background:#222222; overflow:auto; display:flex; flex-direction:column;">
+        <div style="padding:14px; display:flex; flex-direction:column; gap:4px; border-bottom:1px solid #303030;">
+          <div style="font-size:15px; font-weight:500;">Metriche del culling</div>
+          <div style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">312 foto etichettate · obiettivo 300–500</div>
+          <div style="font-size:11px; color:#808080;">Barra = intervallo di confidenza al 95%; tacca = obiettivo.</div>
+        </div>
+        <div style="padding:14px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #303030;">
+          <div style="display:flex; align-items:baseline; gap:8px;"><span style="font-size:12px; color:#A6A6A6;">Scarti sbagliati</span><span style="margin-left:auto; font:500 18px 'IBM Plex Mono',monospace;">1,4%</span></div>
+          <div style="position:relative; height:10px;"><div style="position:absolute; top:4px; left:0; right:0; height:2px; background:#363636;"></div><div style="position:absolute; top:2px; left:5%; width:27%; height:6px; background:#6A6A6A; border-radius:1px;"></div><span style="position:absolute; left:14%; top:0; width:2px; height:10px; background:#EDEDED;"></span><span style="position:absolute; left:20%; top:-2px; width:1px; height:14px; background:#E9B13C;"></span></div>
+          <div style="display:flex; font:400 11px 'IBM Plex Mono',monospace; color:#808080;"><span>0,5 – 3,2%</span><span style="margin-left:auto;">obiettivo &lt; 2%</span></div>
+          <div style="display:flex; align-items:center; gap:6px; font-size:12px;"><span style="width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:10px solid #E9B13C;"></span>Incerto: l'intervallo supera l'obiettivo</div>
+        </div>
+        <div style="padding:14px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #303030;">
+          <div style="display:flex; align-items:baseline; gap:8px;"><span style="font-size:12px; color:#A6A6A6;">Scarti intercettati</span><span style="margin-left:auto; font:500 18px 'IBM Plex Mono',monospace;">78%</span></div>
+          <div style="position:relative; height:10px;"><div style="position:absolute; top:4px; left:0; right:0; height:2px; background:#363636;"></div><div style="position:absolute; top:2px; left:72%; width:11%; height:6px; background:#6A6A6A; border-radius:1px;"></div><span style="position:absolute; left:78%; top:0; width:2px; height:10px; background:#EDEDED;"></span><span style="position:absolute; left:70%; top:-2px; width:1px; height:14px; background:#E9B13C;"></span></div>
+          <div style="display:flex; font:400 11px 'IBM Plex Mono',monospace; color:#808080;"><span>72 – 83%</span><span style="margin-left:auto;">obiettivo &gt; 70%</span></div>
+          <div style="display:flex; align-items:center; gap:6px; font-size:12px;"><span style="color:#4CC38A;">✓</span>Entro obiettivo</div>
+        </div>
+        <div style="padding:14px; display:flex; flex-direction:column; gap:8px; border-bottom:1px solid #303030;">
+          <div style="display:flex; align-items:baseline; gap:8px;"><span style="font-size:12px; color:#A6A6A6;">Quota da rivedere</span><span style="margin-left:auto; font:500 18px 'IBM Plex Mono',monospace;">18%</span></div>
+          <div style="position:relative; height:10px;"><div style="position:absolute; top:4px; left:0; right:0; height:2px; background:#363636;"></div><div style="position:absolute; top:2px; left:30%; width:12%; height:6px; background:#6A6A6A; border-radius:1px;"></div><span style="position:absolute; left:36%; top:0; width:2px; height:10px; background:#EDEDED;"></span><span style="position:absolute; left:40%; top:-2px; width:1px; height:14px; background:#E9B13C;"></span></div>
+          <div style="display:flex; font:400 11px 'IBM Plex Mono',monospace; color:#808080;"><span>15 – 21%</span><span style="margin-left:auto;">obiettivo &lt; 20%</span></div>
+          <div style="display:flex; align-items:center; gap:6px; font-size:12px;"><span style="width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:10px solid #E9B13C;"></span>Incerto</div>
+        </div>
+        <div style="padding:14px; display:flex; flex-direction:column; gap:6px; border-bottom:1px solid #303030; font-size:12px;">
+          <div style="font:500 11px 'IBM Plex Mono',monospace; color:#808080; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Per profilo</div>
+          <div style="display:flex;"><span>Eventi</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#A6A6A6;">214</span></div>
+          <div style="display:flex;"><span>Ritratto</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#A6A6A6;">61</span></div>
+          <div style="display:flex;"><span>Motorsport</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace; color:#A6A6A6;">37</span></div>
+          <div style="display:flex; color:#808080;"><span>Notturna/Aurora</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace;">0 · nessun dato</span></div>
+        </div>
+        <div style="padding:14px; font-size:12px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">Modalità prudente attiva. Potrai passare alla normale (Impostazioni) quando tutte e tre le metriche saranno entro obiettivo.</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080; white-space:nowrap; background:#222222;">
+      <span style="font:600 10px 'IBM Plex Mono',monospace; color:#111; background:#EDEDED; padding:0 5px; border-radius:2px;">TASTI ETICHETTATURA</span>
+      <span>1 Buona · 2 Mossa · 3 Occhi chiusi · 4 Esposizione · 5 Altro · Spazio Salta</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">Ctrl Z</span>Annulla</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">Z</span>100%</span>
+      <span style="margin-left:auto;">Le stelle non sono disponibili in questa modalità</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 2e ATTESA ===================== -->
+<div id="2e" style="display:flex; flex-direction:column; gap:10px; flex:none;">
+  <div style="display:flex; align-items:baseline; gap:10px;"><a href="#2e" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">2e</a><span style="font-size:14px; font-weight:500;">Attesa — analisi ancora in corso</span><span style="font-size:12px; color:#808080;">Raffiche ed esiti arrivano dopo le fasi 4–5</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:184px minmax(0,1fr) 300px; min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px;">
+        <sc-for list="{{ navTop }}" as="n" hint-placeholder-count="7"><div style="display:flex; align-items:center; justify-content:space-between; gap:8px; height:30px; padding:0 10px; border-radius:4px; background:{{ n.bg }}; color:{{ n.color }}; box-shadow:{{ n.shadow }};"><span>{{ n.label }}</span><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ n.key }}</span></div></sc-for>
+        <div style="margin-top:auto; border-top:1px solid #303030; padding-top:8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navBottom }}" as="n" hint-placeholder-count="4"><div style="height:28px; padding:0 10px; display:flex; align-items:center; color:#808080; font-size:12px;">{{ n.label }}</div></sc-for></div>
+      </div>
+      <div style="display:grid; grid-template-rows:56px auto 44px minmax(0,1fr); min-width:0; min-height:0;">
+        <div style="display:flex; align-items:center; gap:16px; padding:0 16px; border-bottom:1px solid #303030;">
+          <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:18px; font-weight:600;">Matrimonio Sara e Luca</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">12 ott 2026 · 1.248 foto · profilo Eventi</span></div>
+          <div style="margin-left:auto; display:flex; align-items:center; gap:10px; font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;"><span>Analisi</span><div style="width:160px; height:4px; background:#363636; border-radius:2px;"><div style="width:62%; height:4px; background:#5E9EEA; border-radius:2px;"></div></div><span>774/1.248 · ~4 min</span></div>
+          <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#222222; color:#5A5A5A; border:1px solid #303030; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Conferma e scrivi XMP</button>
+        </div>
+        <div style="margin:12px 16px 0; display:flex; gap:10px; align-items:flex-start; padding:10px 12px; background:#222222; border:1px solid #303030; border-radius:4px;">
+          <span style="width:16px; height:16px; flex:none; border-radius:50%; border:1.5px solid #5E9EEA; color:#5E9EEA; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">i</span>
+          <div style="display:flex; flex-direction:column; gap:2px; font-size:13px;"><span>Esiti e raffiche compariranno quando l'analisi sarà terminata per tutte le foto.</span><span style="font-size:12px; color:#A6A6A6;">Il raggruppamento deve vedere l'intero lotto. Intanto puoi scorrere le anteprime e assegnare stelle; P e X sono già validi e vinceranno sulla proposta.</span></div>
+          <span style="margin-left:auto; font-size:12px; color:#5E9EEA; white-space:nowrap;">Apri il job</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:0 16px; border-bottom:1px solid #303030;">
+          <span style="font-size:12px; color:#A6A6A6;">Ordine di scatto</span>
+          <span style="display:flex; gap:4px;"><span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border-radius:4px; border:1px solid #303030; font-size:12px; color:#5A5A5A;">Filtri d'esito non ancora disponibili</span></span>
+        </div>
+        <div style="overflow:hidden; background:#151515; padding:12px 16px; display:flex; flex-wrap:wrap; gap:6px; align-content:flex-start;">
+          <sc-for list="{{ procThumbs }}" as="t" hint-placeholder-count="24">
+            <div style="position:relative; width:144px; height:144px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center; border:{{ t.border }};">
+              <sc-if value="{{ t.hasPhoto }}"><div style="width:{{ t.pw }}; height:{{ t.ph }}; background:{{ t.bg }};"></div></sc-if>
+              <sc-if value="{{ t.hasBar }}"><div style="position:absolute; left:0; right:0; bottom:0; height:3px; background:#303030;"><div style="width:{{ t.pct }}; height:3px; background:#A6A6A6;"></div></div></sc-if>
+              <sc-if value="{{ t.hasLabel }}"><span style="position:absolute; bottom:8px; left:6px; font:500 10px 'IBM Plex Mono',monospace; color:#A6A6A6; background:rgba(0,0,0,.6); padding:0 5px; border-radius:3px;">{{ t.label }}</span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="border-left:1px solid #303030; background:#222222; padding:12px; display:flex; flex-direction:column; gap:10px;">
+        <div style="height:184px; background:#0E0E0E; display:flex; align-items:center; justify-content:center;"><div style="width:276px; height:184px; background:repeating-linear-gradient(135deg,#2F2F2F 0 6px,#2A2A2A 6px 12px);"></div></div>
+        <div style="font:500 13px 'IBM Plex Mono',monospace;">DSC_4807.NEF</div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="width:18px; height:18px; border-radius:3px; border:1px dashed #4A4A4A;"></span><span style="font-size:13px; color:#A6A6A6;">Esito non ancora disponibile</span></div>
+        <div style="font-size:12px; color:#808080; line-height:1.5;">Segnali calcolati: nitidezza, esposizione, volti. In attesa di raggruppamento e decisione.</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080; white-space:nowrap;">
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">← →</span>Naviga</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">P X</span>Decidi in anticipo</span>
+      <span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">1–5</span>Stelle</span>
+      <span style="margin-left:auto; font-family:'IBM Plex Mono',monospace;">Caricamento anteprime 1.112/1.248</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 2f VUOTO ===================== -->
+<div id="2f" style="display:flex; flex-direction:column; gap:10px; flex:none;">
+  <div style="display:flex; align-items:baseline; gap:10px;"><a href="#2f" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">2f</a><span style="font-size:14px; font-weight:500;">Stato vuoto</span><span style="font-size:12px; color:#808080;">Nessun job da rivedere</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:184px minmax(0,1fr); min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px;">
+        <sc-for list="{{ navTop }}" as="n" hint-placeholder-count="7"><div style="display:flex; align-items:center; justify-content:space-between; gap:8px; height:30px; padding:0 10px; border-radius:4px; background:{{ n.bg }}; color:{{ n.color }}; box-shadow:{{ n.shadow }};"><span>{{ n.label }}</span><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ n.key }}</span></div></sc-for>
+        <div style="margin-top:auto; border-top:1px solid #303030; padding-top:8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navBottom }}" as="n" hint-placeholder-count="4"><div style="height:28px; padding:0 10px; display:flex; align-items:center; color:#808080; font-size:12px;">{{ n.label }}</div></sc-for></div>
+      </div>
+      <div style="background:#151515; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; text-align:center; padding:48px;">
+        <span style="width:48px; height:48px; border:1px dashed #4A4A4A; border-radius:4px;"></span>
+        <span style="font-size:18px; font-weight:600;">Niente da rivedere</span>
+        <span style="font-size:13px; color:#A6A6A6; max-width:420px; line-height:1.55; text-wrap:pretty;">Tutti i job sono confermati. L'ultimo, "Matrimonio Sara e Luca", è stato scritto il 12 ott alle 15:21.</span>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Importa<span style="font:500 10px 'IBM Plex Mono',monospace; color:#555;">Ctrl I</span></button>
+          <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Riapri l'ultimo job</button>
+          <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:transparent; color:#A6A6A6; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Etichettatura<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">L</span></button>
+        </div>
+        <span style="font-size:12px; color:#808080; margin-top:16px;">Riaprire un job confermato è sicuro: le modifiche riscrivono solo gli XMP interessati.</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080;"><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace;">Nessun job attivo</span></div>
+  </div>
+</div>
+
+<!-- ===================== 2g CONFERMA ===================== -->
+<div id="2g" style="display:flex; flex-direction:column; gap:10px; flex:none;">
+  <div style="display:flex; align-items:baseline; gap:10px;"><a href="#2g" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">2g</a><span style="font-size:14px; font-weight:500;">Conferma e scrittura XMP</span><span style="font-size:12px; color:#808080;">Ctrl+Invio dalla griglia</span></div>
+  <div style="position:relative; width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span></div>
+    <div style="display:grid; grid-template-columns:184px minmax(0,1fr); min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px;">
+        <sc-for list="{{ navTop }}" as="n" hint-placeholder-count="7"><div style="display:flex; align-items:center; justify-content:space-between; gap:8px; height:30px; padding:0 10px; border-radius:4px; background:{{ n.bg }}; color:{{ n.color }}; box-shadow:{{ n.shadow }};"><span>{{ n.label }}</span><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ n.key }}</span></div></sc-for>
+      </div>
+      <div style="background:#151515; padding:16px; display:flex; flex-wrap:wrap; gap:6px; align-content:flex-start; overflow:hidden;">
+        <sc-for list="{{ staticThumbs }}" as="t" hint-placeholder-count="18">
+          <div style="position:relative; width:144px; height:144px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center; box-shadow:{{ t.ring }};">
+            <div style="width:{{ t.pw }}; height:{{ t.ph }}; background:{{ t.bg }}; opacity:{{ t.op }};"></div>
+            <div style="position:absolute; inset:0; border:{{ t.dash }};"></div>
+            <span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:{{ t.gbg }}; color:{{ t.gfg }}; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">{{ t.g }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="border-top:1px solid #303030;"></div>
+    <div style="position:absolute; inset:0; background:rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center;">
+      <div style="width:520px; background:#2B2B2B; border:1px solid #4A4A4A; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.5); display:flex; flex-direction:column;">
+        <div style="padding:20px 20px 0; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:15px; font-weight:600;">Scrivere i metadati XMP per 1.248 foto?</div>
+          <div style="font-size:13px; line-height:1.5; color:#A6A6A6; text-wrap:pretty;">Libreria Principale: incorporati in JPG, sidecar per i RAW. I RAW non vengono modificati, nessun file viene spostato.</div>
+        </div>
+        <div style="margin:16px 20px 0; border:1px solid #363636; border-radius:4px; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); font-size:12px;">
+          <div style="padding:8px; display:flex; flex-direction:column; gap:2px;"><span style="color:#4CC38A;">★</span><span style="font-family:'IBM Plex Mono',monospace;">142</span><span style="color:#808080; font-size:11px;">Migliori</span></div>
+          <div style="padding:8px; display:flex; flex-direction:column; gap:2px; border-left:1px solid #363636;"><span style="color:#E9B13C;">?</span><span style="font-family:'IBM Plex Mono',monospace;">186</span><span style="color:#808080; font-size:11px;">Da rivedere</span></div>
+          <div style="padding:8px; display:flex; flex-direction:column; gap:2px; border-left:1px solid #363636;"><span style="color:#9C9AE0;">≈</span><span style="font-family:'IBM Plex Mono',monospace;">604</span><span style="color:#808080; font-size:11px;">Simili</span></div>
+          <div style="padding:8px; display:flex; flex-direction:column; gap:2px; border-left:1px solid #363636;"><span style="color:#A6A6A6;">✓</span><span style="font-family:'IBM Plex Mono',monospace;">204</span><span style="color:#808080; font-size:11px;">Tenute</span></div>
+          <div style="padding:8px; display:flex; flex-direction:column; gap:2px; border-left:1px solid #363636;"><span style="color:#EB5A50;">✕</span><span style="font-family:'IBM Plex Mono',monospace;">112</span><span style="color:#808080; font-size:11px;">Scarti</span></div>
+        </div>
+        <div style="margin:12px 20px 0; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#A6A6A6;">
+          <div style="display:flex; align-items:center; gap:8px;"><span style="width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:10px solid #E9B13C;"></span>186 ancora da rivedere: verranno scritte con etichetta rossa.</div>
+          <div style="display:flex; align-items:center; gap:8px;"><span style="width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:10px solid #E9B13C;"></span>1 raffica segnalata come "Ritratto" non è stata rianalizzata.</div>
+          <div style="display:flex; align-items:center; gap:8px;"><span style="width:14px; height:14px; border-radius:3px; background:#5E9EEA; color:#111; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span>Modalità prudente: scarti come etichetta rossa, non rating −1</div>
+          <div style="display:flex; align-items:center; gap:8px;"><span style="width:14px; height:14px; border-radius:3px; background:#5E9EEA; color:#111; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;">✓</span>Al termine apri Persone (14 nuovi gruppi)</div>
+        </div>
+        <div style="padding:20px; display:flex; align-items:center; gap:8px;">
+          <span style="font-size:12px; color:#5E9EEA;">Vai alle 186 da rivedere</span>
+          <button style="margin-left:auto; display:flex; align-items:center; gap:10px; height:32px; padding:0 12px; background:transparent; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Annulla<span style="font:500 10px 'IBM Plex Mono',monospace; color:#808080;">Esc</span></button>
+          <button style="display:flex; align-items:center; gap:10px; height:32px; padding:0 14px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 13px 'IBM Plex Sans',sans-serif;">Scrivi XMP<span style="font:500 10px 'IBM Plex Mono',monospace; color:#555;">Ctrl ↵</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 2h ESITO / ERRORE ===================== -->
+<div id="2h" style="display:flex; flex-direction:column; gap:10px; flex:none;">
+  <div style="display:flex; align-items:baseline; gap:10px;"><a href="#2h" style="font:600 11px 'IBM Plex Mono',monospace; padding:3px 7px; background:#2B2B2B; color:#EDEDED; border-radius:4px;">2h</a><span style="font-size:14px; font-weight:500;">Errore parziale di scrittura + passaggio a Persone</span><span style="font-size:12px; color:#808080;">Gli errori non bloccano il resto</span></div>
+  <div style="width:1440px; height:900px; background:#1B1B1B; border:1px solid #3A3A3A; border-radius:8px; overflow:hidden; display:grid; grid-template-rows:32px minmax(0,1fr) 24px; font-size:13px;">
+    <div style="display:flex; align-items:center; gap:12px; padding-left:12px; border-bottom:1px solid #303030; font-size:12px;"><span style="font-weight:600;">PhotoFlow</span><span style="color:#808080;">Libreria Principale</span><span style="margin-left:auto; display:flex; align-items:center; gap:8px; padding:3px 8px; background:#222222; border:1px solid #303030; border-radius:4px; color:#808080; width:320px;">Cerca ovunque<span style="margin-left:auto; font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px;">Ctrl K</span></span><span style="margin-left:auto; display:flex; color:#A6A6A6;"><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">—</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">☐</span><span style="width:46px; height:32px; display:flex; align-items:center; justify-content:center;">✕</span></span></div>
+    <div style="display:grid; grid-template-columns:184px minmax(0,1fr); min-height:0;">
+      <div style="border-right:1px solid #303030; padding:10px 8px; display:flex; flex-direction:column; gap:2px;">
+        <sc-for list="{{ navTop }}" as="n" hint-placeholder-count="7"><div style="display:flex; align-items:center; justify-content:space-between; gap:8px; height:30px; padding:0 10px; border-radius:4px; background:{{ n.bg }}; color:{{ n.color }}; box-shadow:{{ n.shadow }};"><span>{{ n.label }}</span><span style="font:400 10px 'IBM Plex Mono',monospace; color:#808080;">{{ n.key }}</span></div></sc-for>
+        <div style="margin-top:auto; border-top:1px solid #303030; padding-top:8px; display:flex; flex-direction:column; gap:2px;"><sc-for list="{{ navBottom }}" as="n" hint-placeholder-count="4"><div style="height:28px; padding:0 10px; display:flex; align-items:center; color:#808080; font-size:12px;">{{ n.label }}</div></sc-for></div>
+      </div>
+      <div style="display:grid; grid-template-rows:56px auto auto 44px minmax(0,1fr); min-width:0; min-height:0;">
+        <div style="display:flex; align-items:center; gap:16px; padding:0 16px; border-bottom:1px solid #303030;">
+          <div style="display:flex; flex-direction:column; gap:2px;"><span style="font-size:18px; font-weight:600;">Matrimonio Sara e Luca</span><span style="font:400 11px 'IBM Plex Mono',monospace; color:#808080;">Confermato 12 ott 2026 · 15:21 · 1.236 XMP scritti</span></div>
+        </div>
+        <div style="margin:12px 16px 0; display:flex; gap:10px; align-items:flex-start; padding:12px; background:#222222; border:1px solid #303030; border-radius:4px; box-shadow:inset 0 2px 0 #EB5A50;">
+          <span style="width:12px; height:12px; flex:none; margin-top:4px; background:#EB5A50; transform:rotate(45deg);"></span>
+          <div style="display:flex; flex-direction:column; gap:4px; font-size:13px; flex:1;">
+            <span style="font-weight:500;">12 XMP non scritti: cartella in sola lettura</span>
+            <span style="font:400 12px 'IBM Plex Mono',monospace; color:#A6A6A6;">D:\Foto\2026\2026-10-12_Matrimonio\jpg_cliente\ — accesso negato</span>
+            <span style="font-size:12px; color:#A6A6A6;">Le decisioni sono salvate nel catalogo; la scrittura resta in sospeso e verrà ritentata.</span>
+          </div>
+          <div style="display:flex; gap:8px; flex:none;">
+            <button style="height:30px; padding:0 12px; background:#2B2B2B; color:#EDEDED; border:1px solid #4A4A4A; border-radius:4px; font:500 12px 'IBM Plex Sans',sans-serif;">Riprova</button>
+            <button style="height:30px; padding:0 12px; background:transparent; color:#EDEDED; border:1px solid #3A3A3A; border-radius:4px; font:500 12px 'IBM Plex Sans',sans-serif;">Solo catalogo per questi</button>
+            <button style="height:30px; padding:0 12px; background:transparent; color:#A6A6A6; border:0; font:500 12px 'IBM Plex Sans',sans-serif;">Apri log</button>
+          </div>
+        </div>
+        <div style="margin:8px 16px 0; display:flex; gap:10px; align-items:center; padding:12px; background:#222222; border:1px solid #303030; border-radius:4px;">
+          <span style="width:16px; height:16px; flex:none; border-radius:50%; border:1.5px solid #5E9EEA; color:#5E9EEA; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">i</span>
+          <span style="font-size:13px;">14 nuovi gruppi di volti in questo job</span><span style="font-size:12px; color:#A6A6A6;">da 3 a 37 foto ciascuno</span>
+          <button style="margin-left:auto; display:flex; align-items:center; gap:10px; height:30px; padding:0 12px; background:#E6E6E6; color:#111; border:0; border-radius:4px; font:500 12px 'IBM Plex Sans',sans-serif;">Rivedi in Persone<span style="font:500 10px 'IBM Plex Mono',monospace; color:#555;">↵</span></button>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; padding:0 16px; margin-top:8px; border-bottom:1px solid #303030;">
+          <span style="display:flex; align-items:center; gap:6px; height:28px; padding:0 8px; border-radius:4px; background:#363636; font-size:12px;"><span style="width:10px; height:10px; background:#EB5A50; transform:rotate(45deg);"></span>XMP non scritti<span style="font:400 11px 'IBM Plex Mono',monospace; color:#A6A6A6;">12</span><span style="color:#808080;">✕</span></span>
+          <span style="font-size:12px; color:#808080;">filtro applicato dal banner</span>
+        </div>
+        <div style="background:#151515; padding:12px 16px; display:flex; flex-wrap:wrap; gap:6px; align-content:flex-start; overflow:hidden;">
+          <sc-for list="{{ errThumbs }}" as="t" hint-placeholder-count="12">
+            <div style="position:relative; width:144px; height:144px; background:#1B1B1B; border-radius:2px; display:flex; align-items:center; justify-content:center; box-shadow:{{ t.ring }};">
+              <div style="width:{{ t.pw }}; height:{{ t.ph }}; background:{{ t.bg }}; opacity:{{ t.op }};"></div>
+              <div style="position:absolute; inset:0; border:{{ t.dash }};"></div>
+              <span style="position:absolute; top:6px; left:6px; width:16px; height:16px; border-radius:3px; background:{{ t.gbg }}; color:{{ t.gfg }}; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;">{{ t.g }}</span>
+              <span style="position:absolute; bottom:6px; right:6px; display:flex; align-items:center; gap:5px; font:500 10px 'IBM Plex Mono',monospace; color:#EDEDED; background:rgba(0,0,0,.7); padding:1px 5px; border-radius:3px;"><span style="width:7px; height:7px; background:#EB5A50; transform:rotate(45deg);"></span>XMP</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:14px; padding:0 12px; border-top:1px solid #303030; font-size:11px; color:#808080;"><span style="display:flex; gap:5px; align-items:center;"><span style="font:500 10px 'IBM Plex Mono',monospace; padding:0 4px; border:1px solid #4A4A4A; border-radius:3px; color:#D0D0D0;">Ctrl R</span>Riprova scrittura</span><span style="margin-left:auto; font-family:'IBM Plex Mono',monospace;">12 scritture in sospeso · nuovo tentativo all'avvio</span></div>
+  </div>
+</div>
+
+</div>
+
+<!-- NOTE -->
+<div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:48px; width:2920px; max-width:100%; border-top:1px solid #303030; padding-top:32px;">
+  <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="font-size:18px; font-weight:600;">Note per Avalonia — Revisione</div>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px minmax(0,2.4fr); gap:10px 16px; font-size:13px; line-height:1.5;">
+      <span>Griglia raggruppata</span><span style="color:#E9B13C;">Personalizzato</span><span style="color:#A6A6A6;">ItemsRepeater con layout virtualizzato a gruppi (intestazione + righe a capo). Navigazione ↑↓ per colonna calcolata dal layout, non dall'indice.</span>
+      <span>Confronto sincronizzato</span><span style="color:#E9B13C;">Personalizzato</span><span style="color:#A6A6A6;">2–4 ZoomBorder (pacchetto PanAndZoom, MIT) che condividono una sola matrice di trasformazione; decodifica a piena risoluzione a tasselli solo al 100%.</span>
+      <span>Riquadri volti / OCR</span><span style="color:#A6A6A6;">Standard</span><span style="color:#A6A6A6;">Canvas sovrapposto all'Image con coordinate normalizzate; CroppedBitmap per i ritagli ×4.</span>
+      <span>Mappe di tasti per modalità</span><span style="color:#A6A6A6;">Standard</span><span style="color:#A6A6A6;">KeyBindings per vista; la barra di stato è generata dalla stessa tabella dei comandi, così non si disallinea.</span>
+      <span>Barre metriche con intervallo</span><span style="color:#A6A6A6;">Template</span><span style="color:#A6A6A6;">Canvas con tre Rectangle (pista, intervallo, valore) e una linea obiettivo.</span>
+      <span>Dialogo modale</span><span style="color:#A6A6A6;">Standard</span><span style="color:#A6A6A6;">OverlayLayer o DialogHost; velo nero 60% senza sfocatura.</span>
+    </div>
+  </div>
+  <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="font-size:18px; font-weight:600;">Decisioni prese qui (da validare)</div>
+    <div style="display:flex; flex-direction:column; gap:8px; font-size:13px; line-height:1.5; color:#A6A6A6;">
+      <div><span style="color:#EDEDED;">P su una "Migliore"</span> la conferma (resta ★ con M); su qualsiasi altra la rende Tenuta (M).</div>
+      <div><span style="color:#EDEDED;">P nel Confronto</span> = "questa è la migliore": le altre valide diventano Simili.</div>
+      <div><span style="color:#EDEDED;">Le cifre cambiano significato</span> per vista: stelle in Griglia/Confronto, numero in Numeri, etichetta in Etichettatura. La barra di stato lo dichiara sempre.</div>
+      <div><span style="color:#EDEDED;">Tasti nuovi</span>: G/N/L viste, F adatta, S sincronizza, Maiusc R rianalizza il gruppo, Ctrl R riprova XMP, Tab pannello.</div>
+      <div><span style="color:#EDEDED;">Durante l'analisi</span> P/X/stelle sono già accettati e prevalgono sulla proposta successiva.</div>
+    </div>
+  </div>
+</div>
+
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const OUT = {
+  best:{g:'★',bg:'#4CC38A',fg:'#111',label:'Migliore'},
+  review:{g:'?',bg:'#E9B13C',fg:'#111',label:'Da rivedere'},
+  similar:{g:'≈',bg:'#9C9AE0',fg:'#111',label:'Simile'},
+  kept:{g:'✓',bg:'#3A3A3A',fg:'#EDEDED',label:'Tenuta'},
+  reject:{g:'✕',bg:'#EB5A50',fg:'#111',label:'Scarto'}
+};
+const BASE = {best:142,review:186,similar:604,kept:204,reject:112};
+const TONES=[['#2F2F2F','#2A2A2A'],['#2A2A2A','#252525'],['#343434','#2E2E2E'],['#272727','#232323'],['#313131','#2B2B2B']];
+const R=(id,auto,reason,rank,sh,ey,ex,v)=>({id,auto,reason,rank,sh,ey,ex,v:!!v});
+const GROUPS=[
+ {title:'Raffica 14',meta:'8 scatti · 14:32:05,1 – 14:32:07,4',profile:'Eventi',suggest:'',note:'',items:[
+  R('4821','best','','1/8',.86,.92,.71,1),R('4822','similar','','2/8',.79,.90,.70,1),R('4823','similar','','3/8',.77,.88,.69,1),R('4824','reject','mossa','8/8',.18,.90,.70,1),R('4825','similar','','4/8',.74,.85,.72,1),R('4826','similar','','5/8',.70,.91,.71,1),R('4827','reject','mossa','7/8',.22,.87,.69,1),R('4828','similar','','6/8',.66,.80,.70,1)]},
+ {title:'Raffica 15',meta:'5 scatti · 14:41:12,8 – 14:41:13,9',profile:'Eventi',suggest:'Sembra Ritratto · 81%',note:'Prime due a pari merito',items:[
+  R('5012','review','pari merito','1/5',.81,.90,.72),R('5013','review','pari merito','2/5',.80,.91,.73),R('5014','similar','','3/5',.72,.88,.70),R('5015','similar','','4/5',.70,.62,.71),R('5016','reject','occhi chiusi','5/5',.75,.08,.70)]},
+ {title:'Scatti singoli',meta:'6 scatti · 14:44 – 15:02',profile:'Eventi',suggest:'',note:'',items:[
+  R('5101','kept','','',.80,.85,.75),R('5102','kept','','',.76,.88,.70,1),R('5103','review','esposizione','',.78,.86,.31),R('5104','kept','','',.83,0,.74),R('5105','reject','mossa','',.15,.80,.70),R('5106','kept','','',.79,.90,.72,1)]},
+ {title:'Bracketing',meta:'3 scatti · −1 / 0 / +1 EV · nessuna classifica',profile:'Eventi',suggest:'',note:'',items:[
+  R('5201','kept','','−1 EV',.82,0,.55),R('5202','kept','','0 EV',.82,0,.74),R('5203','kept','','+1 EV',.81,0,.62)]}
+];
+const ALL=[]; GROUPS.forEach(g=>g.items.forEach(p=>{p.group=g;p.idx=ALL.length;ALL.push(p);}));
+const f2=n=>n.toFixed(2).replace('.',',');
+const stripe=(i,s)=>{const t=TONES[i%TONES.length];return `repeating-linear-gradient(135deg,${t[0]} 0 ${s}px,${t[1]} ${s}px ${s*2}px)`;};
+function vm(p,o,manual,stars,focused){
+  const O=OUT[o];
+  return {id:p.id,bg:stripe(p.idx,6),pw:p.v?'94px':'144px',ph:p.v?'140px':'96px',op:o==='reject'?'.35':'1',
+    ring:o==='best'?'inset 0 0 0 2px #4CC38A':'none',dash:o==='review'?'2px dashed #E9B13C':'0 solid transparent',
+    outline:focused?'2px solid #5E9EEA':'0 solid transparent',g:O.g,gbg:O.bg,gfg:O.fg,manual:!!manual,
+    hasRank:!!p.rank,rank:p.rank,hasReason:!!p.reason&&!manual&&(o==='review'||o==='reject'),reason:p.reason,
+    rbg:o==='review'?'#E9B13C':'rgba(0,0,0,.65)',rfg:o==='review'?'#111':'#EDEDED',
+    hasStars:stars>0,son:'★'.repeat(stars),soff:'★'.repeat(5-stars)};
+}
+function why(p){
+  if(p.auto==='best')return 'Prima della raffica: punteggio composito 0,84 contro 0,78 della seconda.';
+  if(p.auto==='similar')return `Valida ma non prima: posizione ${p.rank} nella raffica.`;
+  if(p.reason==='pari merito')return 'Le prime due sono quasi a pari merito (0,81 e 0,80): il sistema non sceglie da solo.';
+  if(p.reason==='esposizione')return 'Alte luci perse sul soggetto, appena sopra il limite (0,31 su soglia 0,30).';
+  if(p.reason==='mossa')return `Mosso grave: nitidezza ${f2(p.sh)} con soglia 0,40.`;
+  if(p.reason==='occhi chiusi')return 'Occhi chiusi sul volto principale (apertura 0,08, volto grande).';
+  if(p.rank&&p.rank.indexOf('EV')>=0)return 'Bracketing: nessuna classifica e nessuna "simile".';
+  return 'Scatto singolo senza problemi tecnici.';
+}
+function sig(label,v,th){
+  if(label==='Occhi'&&v===0)return {label,val:'nessun volto',w:'0%',mark:Math.round(th*100)+'%',col:'#A6A6A6'};
+  const col=v<th?'#EB5A50':(v<th+.05?'#E9B13C':'#A6A6A6');
+  return {label,val:f2(v),w:Math.round(v*100)+'%',mark:Math.round(th*100)+'%',col};
+}
+const NAV_TOP=[['Home','Ctrl 1'],['Import','Ctrl I'],['Job','2 attivi'],['Revisione','Ctrl 3'],['Persone','14 nuovi'],['Consultazione','Ctrl 5'],['Duplicati','']];
+const NAV_BOTTOM=['Librerie','Vocabolario','Profili','Impostazioni'];
+
+class Component extends DCLogic {
+  state={focus:'4821',user:{},stars:{},filter:'all',undo:[],last:'Pronto · 1.248 foto'};
+  componentDidMount(){this._k=e=>this.onKey(e);window.addEventListener('keydown',this._k);}
+  componentWillUnmount(){window.removeEventListener('keydown',this._k);}
+  eff(p){return this.state.user[p.id]||p.auto;}
+  visible(){const f=this.state.filter;return ALL.filter(p=>f==='all'||this.eff(p)===f);}
+  curId(){const v=this.visible();return v.find(p=>p.id===this.state.focus)?this.state.focus:(v[0]&&v[0].id);}
+  pushUndo(id){return [...this.state.undo,{id,user:this.state.user[id],stars:this.state.stars[id]}];}
+  setOut(kind){const id=this.curId();if(!id)return;const p=ALL.find(x=>x.id===id);
+    const o=kind==='keep'?(p.auto==='best'?'best':'kept'):'reject';
+    this.setState({undo:this.pushUndo(id),user:{...this.state.user,[id]:o},focus:id,last:`DSC_${id} → ${OUT[o].label} · Ctrl Z annulla`});}
+  setStars(n,idArg){const id=idArg||this.curId();if(!id)return;const cur=this.state.stars[id]||0;const v=cur===n?0:n;
+    this.setState({undo:this.pushUndo(id),stars:{...this.state.stars,[id]:v},focus:id,last:`DSC_${id} → ${v} stelle`});}
+  undo(){const u=[...this.state.undo];const a=u.pop();if(!a)return;const user={...this.state.user},stars={...this.state.stars};
+    if(a.user===undefined)delete user[a.id];else user[a.id]=a.user;
+    if(a.stars===undefined)delete stars[a.id];else stars[a.id]=a.stars;
+    this.setState({undo:u,user,stars,focus:a.id,last:`Annullato su DSC_${a.id}`});}
+  move(d){const v=this.visible();const i=v.findIndex(p=>p.id===this.curId());const j=Math.max(0,Math.min(v.length-1,i+d));if(v[j])this.setState({focus:v[j].id});}
+  onKey(e){const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;const k=e.key;
+    if((e.ctrlKey||e.metaKey)&&(k==='z'||k==='Z')){e.preventDefault();this.undo();return;}
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    if(k==='ArrowRight'){e.preventDefault();this.move(1);}else if(k==='ArrowLeft'){e.preventDefault();this.move(-1);}
+    else if(k==='ArrowDown'){e.preventDefault();this.move(6);}else if(k==='ArrowUp'){e.preventDefault();this.move(-6);}
+    else if(k==='p'||k==='P')this.setOut('keep');else if(k==='x'||k==='X')this.setOut('reject');
+    else if(/^[0-5]$/.test(k))this.setStars(+k);}
+  renderVals(){
+    const S=this.state;const fid=this.curId();
+    const navTop=NAV_TOP.map(([label,key])=>{const a=label==='Revisione';return {label,key,bg:a?'#2B2B2B':'transparent',color:a?'#EDEDED':'#A6A6A6',shadow:a?'inset 2px 0 0 #5E9EEA':'none'};});
+    const navBottom=NAV_BOTTOM.map(label=>({label}));
+    const counts={...BASE};ALL.forEach(p=>{const o=this.eff(p);if(o!==p.auto){counts[o]++;counts[p.auto]--;}});
+    const fmt=n=>n.toLocaleString('it-IT');
+    const filters=[{key:'all',label:'Tutte',count:'1.248',hasG:false}].concat(['best','review','similar','kept','reject'].map(k=>({key:k,label:OUT[k].label,count:fmt(counts[k]),hasG:true,g:OUT[k].g,gbg:OUT[k].bg,gfg:OUT[k].fg})))
+      .map(f=>{const a=S.filter===f.key;return {...f,bg:a?'#363636':'transparent',border:a?'#4A4A4A':'transparent',color:a?'#EDEDED':'#A6A6A6',onClick:()=>this.setState({filter:S.filter===f.key&&f.key!=='all'?'all':f.key})};});
+    const groups=GROUPS.map(g=>{const items=g.items.filter(p=>S.filter==='all'||this.eff(p)===S.filter).map(p=>({...vm(p,this.eff(p),S.user[p.id],S.stars[p.id]||0,p.id===fid),onClick:()=>this.setState({focus:p.id})}));
+      return {title:g.title,meta:g.meta,profile:g.profile,hasSuggest:!!g.suggest,suggest:g.suggest,hasNote:!!g.note,note:g.note,items};}).filter(g=>g.items.length);
+    const p=ALL.find(x=>x.id===fid)||ALL[0];const o=this.eff(p);const O=OUT[o];const man=S.user[p.id];const st=S.stars[p.id]||0;const n=parseInt(p.id,10);
+    const d={file:`DSC_${p.id}.NEF`,pair:n%2?'+ JPG':'',bg:stripe(p.idx,8),pw:p.v?'123px':'276px',ph:p.v?'184px':'184px',op:o==='reject'?'.35':'1',
+      group:`${p.group.title}${p.rank?' · '+p.rank:''}`,exif:['1/1000 · f/2,8 · ISO 1600','1/800 · f/2,8 · ISO 1250','1/640 · f/2 · ISO 2000'][n%3],
+      g:O.g,gbg:O.bg,gfg:O.fg,label:O.label,origin:man?`· decisione tua (proposta: ${OUT[p.auto].label})`:'· proposta del sistema',
+      why:why(p),keepBg:man&&man!=='reject'?'#363636':'transparent',rejBg:man==='reject'?'#363636':'transparent',
+      stars:[1,2,3,4,5].map(i=>({color:i<=st?'#EDEDED':'#555',onClick:()=>this.setStars(i,p.id)})),
+      signals:[sig('Nitidezza',p.sh,.40),sig('Occhi',p.ey,.35),sig('Esposizione',p.ex,.30)]};
+    const staticThumbs=ALL.slice(0,18).map(q=>vm(q,q.auto,false,0,false));
+    const errThumbs=[0,2,5,8,9,12,13,15,17,18,19,20].map(i=>vm(ALL[i],ALL[i].auto,false,0,false));
+    const procThumbs=Array.from({length:24},(_,i)=>{const v=[1,2,5,9,14,20].includes(i);const has=i<18;const bar=i>=10&&i<18;
+      return {hasPhoto:has,pw:v?'94px':'144px',ph:v?'140px':'96px',bg:stripe(i,6),hasBar:bar,pct:bar?`${20+((i*17)%70)}%`:'0%',hasLabel:bar||!has,label:has?'analisi':'in coda',border:has?'0 solid transparent':'1px dashed #303030'};});
+    return {navTop,navBottom,filters,groups,noResults:groups.length===0,d,
+      manualCount:String(Object.keys(S.user).length),lastAction:S.last,
+      onKeep:()=>this.setOut('keep'),onReject:()=>this.setOut('reject'),
+      staticThumbs,errThumbs,procThumbs};
+  }
+}
+</script>
+</body>
+</html>

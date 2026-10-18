@@ -1,0 +1,229 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Import procedure, boards 3d (source and event), 3e (analysis), 3f (destinations and XMP). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.ImportWizardView"
+             x:DataType="vm:ImportWizardViewModel">
+  <Grid RowDefinitions="Auto,*,Auto">
+
+    <!-- Step header -->
+    <Border Grid.Row="0" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,0,1" Background="{DynamicResource PF.Brush.Window}">
+      <UniformGrid Columns="3">
+        <Border Padding="32,12" BorderBrush="{DynamicResource PF.Brush.Accent}" BorderThickness="0,0,0,2" Classes.inactive="{Binding !IsStep1}">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <Border Width="22" Height="22" CornerRadius="11" BorderBrush="{DynamicResource PF.Brush.BorderStrong}" BorderThickness="1"><TextBlock Classes="micro" Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+            <TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Import.Step.Source}" />
+          </StackPanel>
+        </Border>
+        <Border Padding="32,12" BorderBrush="{DynamicResource PF.Brush.Accent}" BorderThickness="0,0,0,2" Classes.inactive="{Binding !IsStep2}">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <Border Width="22" Height="22" CornerRadius="11" BorderBrush="{DynamicResource PF.Brush.BorderStrong}" BorderThickness="1"><TextBlock Classes="micro" Text="2" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+            <TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Import.Step.Analysis}" />
+          </StackPanel>
+        </Border>
+        <Border Padding="32,12" BorderBrush="{DynamicResource PF.Brush.Accent}" BorderThickness="0,0,0,2" Classes.inactive="{Binding !IsStep3}">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <Border Width="22" Height="22" CornerRadius="11" BorderBrush="{DynamicResource PF.Brush.BorderStrong}" BorderThickness="1"><TextBlock Classes="micro" Text="3" HorizontalAlignment="Center" VerticalAlignment="Center" /></Border>
+            <TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Import.Step.Destinations}" />
+          </StackPanel>
+        </Border>
+      </UniformGrid>
+    </Border>
+
+    <ScrollViewer Grid.Row="1">
+      <Panel Margin="32,24">
+        <TextBlock Classes="body tertiary" Text="{l:Tr Import.Loading}" IsVisible="{Binding IsLoading}" />
+        <TextBlock Classes="body error" TextWrapping="Wrap" Text="{Binding Error}" IsVisible="{Binding Error, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+        <!-- 3d: source and event -->
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="40" IsVisible="{Binding IsStep1}">
+          <StackPanel Spacing="8" IsVisible="{Binding IsLoaded}">
+            <TextBlock Classes="label" Text="{l:Tr Import.Source}" />
+            <Border Classes="card" Padding="16,12">
+              <StackPanel Spacing="2">
+                <TextBlock Classes="label" Text="{Binding SourceTitle}" />
+                <TextBlock Classes="micro tertiary" Text="{Binding SourceDetail}" />
+              </StackPanel>
+            </Border>
+            <TextBlock Classes="label" Margin="0,16,0,0" Text="{l:Tr Import.WhatToImport}" />
+            <Border Classes="card">
+              <StackPanel>
+                <RadioButton x:Name="OnlyNew" GroupName="selection" Margin="12,8" IsChecked="{Binding SelectOnlyNew}">
+                  <Grid ColumnDefinitions="*,Auto" Width="520"><TextBlock Text="{l:Tr Import.Selection.OnlyNew}" /><TextBlock Grid.Column="1" Classes="data" Text="{Binding NewCountText}" /></Grid>
+                </RadioButton>
+                <Border Classes="divider">
+                  <RadioButton GroupName="selection" Margin="12,8" IsChecked="{Binding SelectAll}">
+                    <Grid ColumnDefinitions="*,Auto" Width="520"><TextBlock Text="{Binding AllLabel}" /><TextBlock Grid.Column="1" Classes="data" Text="{Binding AllCountText}" /></Grid>
+                  </RadioButton>
+                </Border>
+              </StackPanel>
+            </Border>
+            <TextBlock Classes="label tertiary" Text="{Binding PairsNote}" />
+            <TextBlock Classes="label tertiary" Text="{Binding VideosNote}" />
+            <TextBlock Classes="label tertiary" Text="{l:Tr Import.Note.Identity}" />
+          </StackPanel>
+          <StackPanel Grid.Column="1" Spacing="8" IsVisible="{Binding IsLoaded}">
+            <TextBlock Classes="label" Text="{l:Tr Import.EventName}" />
+            <TextBox x:Name="EventName" Classes="field" Text="{Binding EventName}" PlaceholderText="{l:Tr Import.Event.Default}" />
+            <ItemsControl ItemsSource="{Binding RecentEvents}">
+              <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="6" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                  <Button Classes="secondary" MinHeight="24" Padding="8,0" Content="{Binding}"
+                          Command="{Binding $parent[UserControl].((vm:ImportWizardViewModel)DataContext).UseRecentEventCommand}" CommandParameter="{Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Classes="label" Margin="0,16,0,0" Text="{l:Tr Import.EventDate}" />
+            <CalendarDatePicker SelectedDate="{Binding EventDate}" Width="200" />
+            <TextBlock Classes="label tertiary" Text="{Binding CaptureRange}" />
+            <TextBlock Classes="label" Margin="0,16,0,0" Text="{l:Tr Import.PathPreview}" />
+            <Border Classes="card" Padding="12">
+              <TextBlock x:Name="PathPreview" Classes="data" TextWrapping="Wrap" Text="{Binding PathPreview}" />
+            </Border>
+            <TextBlock Classes="micro tertiary" Text="{l:Tr Import.TemplateNote}" />
+          </StackPanel>
+        </Grid>
+
+        <!-- 3e: analysis -->
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="40" IsVisible="{Binding IsStep2}">
+          <StackPanel Spacing="8">
+            <TextBlock Classes="label" Text="{l:Tr Import.Profile}" />
+            <ListBox x:Name="ProfileList" Classes="choices" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
+              <ListBox.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="2" /></ItemsPanelTemplate></ListBox.ItemsPanel>
+              <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:ProfileChoice">
+                  <StackPanel Spacing="2">
+                    <TextBlock Classes="label" Text="{Binding Name}" />
+                    <TextBlock Classes="micro tertiary" Text="{Binding Zone}" />
+                  </StackPanel>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+            <CheckBox IsChecked="{Binding AutomaticProfile}" IsEnabled="{Binding CanAutomaticProfile}">
+              <StackPanel Spacing="2">
+                <TextBlock Classes="label" Text="{l:Tr Import.Profile.Automatic}" />
+                <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Import.Profile.AutomaticNote}" />
+              </StackPanel>
+            </CheckBox>
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Import.Profile.NoClip}" IsVisible="{Binding !CanAutomaticProfile}" />
+            <StackPanel Spacing="6" Margin="0,12,0,0" IsVisible="{Binding ReadsNumbers}">
+              <TextBlock Classes="label" Text="{l:Tr Import.EntryList}" />
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <ComboBox Width="300" ItemsSource="{Binding EntryLists}" SelectedItem="{Binding SelectedEntryList}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:EntryListChoice"><TextBlock Text="{Binding Name}" /></DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Classes="secondary" Command="{Binding ImportEntryListCommand}" Content="{l:Tr Numbers.List.Import}" />
+              </StackPanel>
+              <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Import.EntryList.Note}" />
+              <TextBlock Classes="micro" TextWrapping="Wrap" Text="{Binding EntryListMessage}" IsVisible="{Binding EntryListMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            </StackPanel>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Spacing="8">
+            <TextBlock Classes="label" Text="{l:Tr Import.Faces}" />
+            <StackPanel Orientation="Horizontal" Spacing="16">
+              <RadioButton GroupName="faces" IsChecked="{Binding FacesOff}" Content="{l:Tr Import.Faces.Off}" />
+              <RadioButton GroupName="faces" IsChecked="{Binding FacesDetect}" Content="{l:Tr Import.Faces.DetectOnly}" />
+              <RadioButton GroupName="faces" IsChecked="{Binding FacesRecognize}" IsEnabled="{Binding CanRecognize}" Content="{l:Tr Import.Faces.Recognize}" />
+            </StackPanel>
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Import.Faces.NoRecognizer}" IsVisible="{Binding !CanRecognize}" />
+            <TextBlock Classes="label tertiary" TextWrapping="Wrap" Text="{l:Tr Import.Faces.Note}" />
+            <TextBlock Classes="label" Margin="0,16,0,0" Text="{l:Tr Import.Tags}" />
+            <StackPanel Spacing="6">
+              <CheckBox IsChecked="{Binding TagsA}" IsEnabled="{Binding CanTagA}" Content="{l:Tr Import.Tags.A}" />
+              <CheckBox IsChecked="{Binding TagsB}" IsEnabled="{Binding CanTagB}" Content="{l:Tr Import.Tags.B}" />
+              <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Import.Tags.NoModel}" IsVisible="{Binding !CanTagB}" />
+              <CheckBox IsChecked="{Binding TagsC}" IsEnabled="{Binding CanTagC}" Content="{l:Tr Import.Tags.C}" />
+              <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Import.Tags.CNoModel}" IsVisible="{Binding !CanTagC}" />
+              <CheckBox IsChecked="{Binding TagsD}" IsEnabled="{Binding CanTagD}" Content="{l:Tr Import.Tags.D}" />
+              <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Import.Tags.DNoModel}" IsVisible="{Binding !CanTagD}" />
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+
+        <!-- 3f: destinations and XMP -->
+        <Grid ColumnDefinitions="3*,2*" ColumnSpacing="40" IsVisible="{Binding IsStep3}">
+          <StackPanel Spacing="8">
+            <TextBlock Classes="label" Text="{l:Tr Import.Destinations}" />
+            <ItemsControl ItemsSource="{Binding Destinations}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:DestinationViewModel">
+                  <Border Classes="card" Classes.cardError="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}" Padding="16,12" Margin="0,0,0,8">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                      <TextBlock Classes="data tertiary" Text="{Binding Index}" />
+                      <StackPanel Grid.Column="1" Spacing="2">
+                        <TextBlock Classes="label" Text="{Binding Name}" />
+                        <TextBlock Classes="micro tertiary" Text="{Binding Detail}" TextTrimming="PathSegmentEllipsis" />
+                        <TextBlock Classes="label error" Text="{Binding Error}" IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                      </StackPanel>
+                      <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <TextBlock Classes="micro secondary" VerticalAlignment="Center" Text="{Binding State}" />
+                        <Button Classes="ghost" Content="✕" IsVisible="{Binding CanRemove}"
+                                Command="{Binding $parent[UserControl].((vm:ImportWizardViewModel)DataContext).RemoveDestinationCommand}" CommandParameter="{Binding}" />
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button x:Name="AddDestination" Classes="secondary" Content="{l:Tr Import.AddDestination}" />
+            <TextBlock Classes="label" Margin="0,16,0,0" Text="{l:Tr Import.Xmp}" />
+            <RadioButton GroupName="xmp" IsChecked="{Binding PolicyEmbedded}">
+              <StackPanel><TextBlock Text="{l:Tr Import.Xmp.Embedded}" /><TextBlock Classes="micro tertiary" Text="{l:Tr Import.Xmp.EmbeddedNote}" /></StackPanel>
+            </RadioButton>
+            <RadioButton GroupName="xmp" IsChecked="{Binding PolicySidecar}" Content="{l:Tr Import.Xmp.Sidecar}" />
+            <RadioButton GroupName="xmp" IsChecked="{Binding PolicyCatalog}" Content="{l:Tr Import.Xmp.Catalog}" />
+            <TextBlock Classes="label tertiary" Text="{l:Tr Import.Xmp.AfterConfirm}" />
+          </StackPanel>
+          <Border Grid.Column="1" Classes="card" Padding="16" VerticalAlignment="Top">
+            <StackPanel Spacing="8">
+              <TextBlock Classes="overline" Text="{l:Tr Import.Summary}" />
+              <Grid ColumnDefinitions="100,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+                <TextBlock Classes="label tertiary" Text="{l:Tr Import.Summary.SourceLabel}" />
+                <TextBlock Grid.Column="1" Classes="label" TextWrapping="Wrap" Text="{Binding SummarySource}" />
+                <TextBlock Grid.Row="1" Classes="label tertiary" Text="{l:Tr Import.Summary.EventLabel}" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Classes="label" Text="{Binding SummaryEvent}" />
+                <TextBlock Grid.Row="2" Classes="label tertiary" Text="{l:Tr Import.Summary.ProfileLabel}" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Classes="label" Text="{Binding SummaryProfile}" />
+                <TextBlock Grid.Row="3" Classes="label tertiary" Text="{l:Tr Import.Summary.FacesLabel}" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Classes="label" Text="{Binding SummaryFaces}" />
+                <TextBlock Grid.Row="4" Classes="label tertiary" Text="{l:Tr Import.Summary.CopiesLabel}" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Classes="label" Text="{Binding SummaryCopies}" />
+              </Grid>
+              <TextBlock Classes="label tertiary" Margin="0,8,0,0" TextWrapping="Wrap" Text="{l:Tr Import.CardUntouched}" />
+            </StackPanel>
+          </Border>
+        </Grid>
+      </Panel>
+    </ScrollViewer>
+
+    <!-- Footer -->
+    <Border Grid.Row="2" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,1,0,0" Background="{DynamicResource PF.Brush.Window}" Padding="32,12">
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Button Classes="secondary" Command="{Binding CancelCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Common.Cancel}" /><Border Classes="key"><TextBlock Text="Esc" /></Border></StackPanel>
+          </Button>
+          <Button Classes="secondary" Command="{Binding BackCommand}" IsVisible="{Binding CanGoBack}">
+            <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Common.Back}" /><Border Classes="key"><TextBlock Text="Alt ←" /></Border></StackPanel>
+          </Button>
+        </StackPanel>
+        <TextBlock Grid.Column="1" Classes="micro tertiary" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding StepText}" />
+        <Button Grid.Column="2" Classes="secondary" Command="{Binding StartCommand}" IsEnabled="{Binding CanStart}" IsVisible="{Binding !IsLastStep}">
+          <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Import.StartNow}" /><Border Classes="key"><TextBlock Text="Ctrl ↵" /></Border></StackPanel>
+        </Button>
+        <Button x:Name="NextButton" Grid.Column="3" Classes="primary" Command="{Binding NextOrStartCommand}" IsEnabled="{Binding IsLoaded}">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="{l:Tr Common.Next}" IsVisible="{Binding !IsLastStep}" />
+            <TextBlock Text="{Binding StartLabel}" IsVisible="{Binding IsLastStep}" />
+            <Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="↵" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border>
+          </StackPanel>
+        </Button>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

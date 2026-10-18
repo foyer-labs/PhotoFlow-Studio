@@ -1,0 +1,195 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Person page, board 4b: faces by year (least similar first), separate, move, "not this person", samples per year. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:v="using:PhotoFlow.App.Views"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.PersonPageView"
+             x:DataType="vm:PersonPageViewModel">
+  <UserControl.Styles>
+    <Style Selector="Border.photoTag">
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="8,2" />
+      <Setter Property="Margin" Value="0,0,6,6" />
+      <Setter Property="Background" Value="{DynamicResource PF.Brush.Control}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource PF.Brush.BorderStrong}" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid ColumnDefinitions="*,320">
+    <Grid RowDefinitions="Auto,Auto,*" Background="{DynamicResource PF.Brush.GridArea}">
+      <Grid ColumnDefinitions="*,Auto" Margin="20,12,20,8">
+        <StackPanel Spacing="2">
+          <Button Classes="ghost" Command="{Binding BackCommand}" Padding="0" HorizontalAlignment="Left">
+            <TextBlock Classes="label tertiary" Text="{l:Tr People.BackToList}" />
+          </Button>
+          <TextBlock Classes="pageTitle" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+          <TextBlock Classes="label tertiary" Text="{Binding Summary}" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Bottom">
+          <Button Classes="secondary" Command="{Binding StartRenameCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr People.Command.Rename}" /><Border Classes="key"><TextBlock Text="F2" /></Border></StackPanel>
+          </Button>
+          <Button Classes="secondary" Command="{Binding CoverCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr People.Command.Cover}" /><Border Classes="key"><TextBlock Text="C" /></Border></StackPanel>
+          </Button>
+          <Button Classes="ghost" Command="{Binding RequestDeleteCommand}"><TextBlock Classes="error" Text="{l:Tr People.Delete}" /></Button>
+        </StackPanel>
+      </Grid>
+
+      <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" Margin="20,0,20,8">
+        <CheckBox IsChecked="{Binding LeastSimilarFirst, Mode=OneWay}" Command="{Binding ToggleOrderCommand}">
+          <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr People.LeastSimilarFirst}" /><Border Classes="key"><TextBlock Text="O" /></Border></StackPanel>
+        </CheckBox>
+        <TextBlock Classes="label tertiary" VerticalAlignment="Center" Text="{l:Tr People.DashedNote}" />
+      </StackPanel>
+
+      <ScrollViewer Grid.Row="2" Padding="20,0,12,12">
+        <ItemsControl ItemsSource="{Binding Years}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:FaceYearViewModel">
+              <StackPanel Spacing="6" Margin="0,0,0,10">
+                <TextBlock Classes="overline" Text="{Binding Title}" />
+                <ItemsControl ItemsSource="{Binding Faces}">
+                  <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:FaceTileViewModel">
+                      <Border Classes="tile" Classes.focused="{Binding IsFocused}" Classes.selected="{Binding IsSelected}" Width="96" Height="96" Tag="{Binding}" PointerPressed="OnFacePressed">
+                        <Panel>
+                          <Image Source="{Binding Crop}" Stretch="UniformToFill" />
+                          <Rectangle IsVisible="{Binding IsDoubtful}" Stroke="{DynamicResource PF.Brush.Outcome.ToReview}" StrokeThickness="2" StrokeDashArray="3,2" />
+                          <Border Classes="badge" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3" IsVisible="{Binding IsSelected}"><TextBlock Text="✓" /></Border>
+                          <Border Classes="badge" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="3"><TextBlock Text="{Binding SimilarityText}" /></Border>
+                        </Panel>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <!-- ↵ Apri foto (board 4b): the photo the face comes from, the face marked -->
+      <Border Grid.Row="0" Grid.RowSpan="3" IsVisible="{Binding IsShowingPhoto}" Background="{DynamicResource PF.Brush.Viewer}" PointerPressed="OnPhotoPressed">
+        <Grid RowDefinitions="Auto,*,Auto">
+          <Grid ColumnDefinitions="*,Auto" Margin="16,12">
+            <TextBlock Classes="label" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding PhotoTitle}" />
+            <Button Grid.Column="1" Classes="secondary" Command="{Binding ClosePhotoCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="✕" /><TextBlock Text="{l:Tr Browse.Preview.Close}" /><Border Classes="key"><TextBlock Text="Esc" /></Border></StackPanel>
+            </Button>
+          </Grid>
+          <v:FacesPhotoView Grid.Row="1" Margin="16,0" Source="{Binding Photo}" ImageWidth="{Binding PhotoWidth}" ImageHeight="{Binding PhotoHeight}"
+                            Faces="{Binding PhotoFaces}" ShowFaces="{Binding ShowFaceBox}" />
+          <!-- Where the photo is, when, who and what (tags); the face box can be hidden -->
+          <StackPanel Grid.Row="2" Margin="16,10,16,12" Spacing="6">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+              <SelectableTextBlock Classes="data" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PhotoPath}" IsVisible="{Binding HasPhotoPath}" />
+              <Button Grid.Column="1" Classes="secondary" IsVisible="{Binding HasPhotoPath}" Command="{Binding ShowPhotoInExplorerCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Browse.Command.Explorer}" /><Border Classes="key"><TextBlock Text="Ctrl Maiusc E" /></Border></StackPanel>
+              </Button>
+            </Grid>
+            <StackPanel Orientation="Horizontal" Spacing="16">
+              <TextBlock Classes="label secondary" VerticalAlignment="Center" Text="{Binding PhotoFacts}" />
+              <TextBlock Classes="label" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding PhotoPeople}" />
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding PhotoTags}" IsVisible="{Binding HasPhotoTags}">
+              <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                  <Border Classes="photoTag"><TextBlock Classes="label" Text="{Binding}" /></Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Classes="label tertiary" IsVisible="{Binding !HasPhotoTags}" Text="{l:Tr People.PhotoNoTags}" />
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+              <CheckBox IsChecked="{Binding ShowFaceBox}">
+                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Browse.ShowFaces}" /><Border Classes="key"><TextBlock Text="V" /></Border></StackPanel>
+              </CheckBox>
+              <TextBlock Grid.Column="1" Classes="micro secondary" VerticalAlignment="Center" TextWrapping="Wrap" Text="{l:Tr People.PhotoHint}" />
+            </Grid>
+          </StackPanel>
+        </Grid>
+      </Border>
+    </Grid>
+
+    <Border Grid.Column="1" Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1,0,0,0" Padding="16">
+      <StackPanel Spacing="12">
+        <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding SelectionText}" />
+
+        <!-- Move to (Ctrl M): a list of the people, or a new one -->
+        <Border Classes="card" IsVisible="{Binding IsMoving}">
+          <StackPanel Spacing="8">
+            <TextBlock Classes="label" Text="{l:Tr People.MoveTo}" />
+            <ComboBox x:Name="MoveBox" HorizontalAlignment="Stretch" ItemsSource="{Binding MoveTargets}" SelectedItem="{Binding MoveTarget}"
+                      PlaceholderText="{l:Tr People.ChoosePerson}" MaxDropDownHeight="360">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:PersonChoice"><TextBlock Text="{Binding Label}" /></DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBox x:Name="NewPersonBox" Classes="field" IsVisible="{Binding IsNewPerson}" Text="{Binding NewPersonName}" PlaceholderText="{l:Tr People.NewPersonName}">
+              <TextBox.KeyBindings>
+                <KeyBinding Gesture="Enter" Command="{Binding ConfirmMoveCommand}" />
+                <KeyBinding Gesture="Escape" Command="{Binding CancelMoveCommand}" />
+              </TextBox.KeyBindings>
+            </TextBox>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Classes="primary" IsEnabled="{Binding CanConfirmMove}" Command="{Binding ConfirmMoveCommand}" Content="{l:Tr People.MoveConfirm}" />
+              <Button Classes="ghost" Command="{Binding CancelMoveCommand}" Content="{l:Tr Common.Cancel}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <!-- Rename (F2) -->
+        <StackPanel Spacing="6" IsVisible="{Binding IsEditing}">
+          <TextBlock Classes="label secondary" Text="{Binding EditLabel}" />
+          <AutoCompleteBox x:Name="EditBox" ItemsSource="{Binding Names}" Text="{Binding EditText}" FilterMode="StartsWithOrdinal" MinimumPrefixLength="1" />
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr People.RenameHint}" />
+        </StackPanel>
+
+        <!-- Delete confirmation -->
+        <Border Classes="cardError" IsVisible="{Binding IsConfirmingDelete}">
+          <StackPanel Spacing="8">
+            <TextBlock Classes="body" TextWrapping="Wrap" Text="{l:Tr People.DeleteQuestion}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Classes="primary" Command="{Binding DeleteCommand}"><TextBlock Text="{l:Tr People.DeleteConfirm}" /></Button>
+              <Button Classes="secondary" Command="{Binding CancelDeleteCommand}"><TextBlock Text="{l:Tr Common.Cancel}" /></Button>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <StackPanel Spacing="6">
+          <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding SeparateCommand}">
+            <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr People.Command.Separate}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="S" /></Border></Grid>
+          </Button>
+          <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding StartMoveToCommand}">
+            <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr People.Command.MoveTo}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl M" /></Border></Grid>
+          </Button>
+          <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding NotThisCommand}">
+            <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr People.Command.NotThis}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="{l:Tr Key.Delete}" /></Border></Grid>
+          </Button>
+        </StackPanel>
+        <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr People.NothingWritten}" />
+        <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+        <Border Classes="divider" />
+        <TextBlock Classes="overline" Text="{l:Tr People.Samples}" />
+        <ItemsControl ItemsSource="{Binding Samples}">
+          <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="x:String"><Border Classes="key" Margin="0,0,4,4"><TextBlock Text="{Binding}" /></Border></DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr People.SamplesNote}" />
+
+        <Border Classes="divider" />
+        <TextBlock Classes="overline" Text="{l:Tr People.InMetadata}" />
+        <TextBlock Classes="data" Text="{Binding MetadataText}" TextTrimming="CharacterEllipsis" />
+        <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr People.DeleteNote}" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

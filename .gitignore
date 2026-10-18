@@ -1,0 +1,55 @@
+# --- Local-only files ---
+PROMPT_Claude_Code.md
+
+# --- .NET build output ---
+bin/
+obj/
+artifacts/
+TestResults/
+*.user
+*.suo
+.vs/
+.idea/
+*.DotSettings.user
+*.binlog
+
+# --- Models: never in the repository (only the manifest) ---
+models/**
+!models/manifest.json
+!models/manifest.schema.json
+!models/gpu-runtime.json
+*.onnx
+*.onnx.data
+*.pth
+*.pt
+*.safetensors
+*.bin
+*.ckpt
+
+# --- Catalogs and user data ---
+*.pfdb
+*.pfdb-journal
+*.pfdb-wal
+*.pfdb-shm
+*.pfcatalog
+*.db
+*.sqlite
+
+# --- Python lab ---
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# --- Test data and lab outputs live outside the repository (PHOTOFLOW_TESTDATA) ---
+testdata/
+lab-output/
+
+# --- OS ---
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# --- CI download cache ---
+.ci-cache/

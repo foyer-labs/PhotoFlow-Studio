@@ -1,0 +1,371 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Settings, boards 5f (hardware), 5g (models), 5h (catalog), 5i (general), 5j (culling). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             xmlns:svc="using:PhotoFlow.App.Services"
+             x:Class="PhotoFlow.App.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+  <DockPanel>
+    <!-- Tabs -->
+    <Border DockPanel.Dock="Top" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,0,1" Padding="24,0">
+      <StackPanel Orientation="Horizontal" Spacing="12">
+        <ListBox Classes="tabs" ItemsSource="{Binding Tabs}" SelectedIndex="{Binding SelectedTab}">
+          <ListBox.ItemsPanel>
+            <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+          </ListBox.ItemsPanel>
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="x:String"><TextBlock Classes="label" Text="{Binding Converter={x:Static vm:Converters.Localize}}" /></DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+        <Border Classes="key" VerticalAlignment="Center"><TextBlock Text="Ctrl Tab" /></Border>
+      </StackPanel>
+    </Border>
+
+    <!-- Message and progress -->
+    <StackPanel DockPanel.Dock="Bottom" Margin="24,8" Spacing="6" IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <ProgressBar Classes="thin" Value="{Binding Progress}" Maximum="1" IsVisible="{Binding IsBusy}" />
+      <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding Message}" />
+    </StackPanel>
+
+    <ScrollViewer>
+      <Panel Margin="24" MaxWidth="{StaticResource PF.Size.SettingsColumnMax}" HorizontalAlignment="Left">
+
+        <!-- 5f Hardware -->
+        <StackPanel Spacing="16" IsVisible="{Binding IsHardware}">
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Hardware.Execution}" />
+          <Border Classes="card" Padding="16">
+            <StackPanel Spacing="6">
+              <TextBlock Classes="label" Text="{Binding BackendText}" />
+              <TextBlock Classes="data tertiary" Text="{Binding GpuText}" />
+              <TextBlock Classes="data tertiary" Text="{Binding CpuText}" />
+            </StackPanel>
+          </Border>
+          <Border Classes="card" Padding="16" IsVisible="{Binding HasGpu}">
+            <StackPanel Spacing="10">
+              <TextBlock Classes="label" Text="{l:Tr Settings.Hardware.GpuPack}" />
+              <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{l:Tr FirstRun.GpuPack}" />
+              <TextBlock Classes="micro tertiary" Text="{Binding GpuPackSize}" />
+              <StackPanel Spacing="10" IsVisible="{Binding !GpuPackInstalled}">
+                <CheckBox IsChecked="{Binding NvidiaLicensesAccepted}">
+                  <TextBlock TextWrapping="Wrap" Text="{l:Tr FirstRun.AcceptNvidiaLabel}" />
+                </CheckBox>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <Button Classes="primary" Command="{Binding InstallGpuPackCommand}" IsEnabled="{Binding !IsBusy}" Content="{l:Tr FirstRun.DownloadGpuPack}" />
+                  <Button Classes="secondary" Command="{Binding RequestOfflinePackageCommand}" IsEnabled="{Binding !IsBusy}" Content="{l:Tr Settings.Models.ImportOffline}" />
+                </StackPanel>
+              </StackPanel>
+              <TextBlock Classes="label" IsVisible="{Binding GpuPackInstalled}" Text="{l:Tr Settings.Hardware.GpuPackInstalled}" />
+            </StackPanel>
+          </Border>
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Hardware.Limits}" />
+          <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding WorkersText}" />
+          <Border Classes="card" Padding="16">
+            <StackPanel Spacing="10">
+              <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Classes="label" VerticalAlignment="Center" Text="{Binding BenchmarkTitle}" />
+                <Button Grid.Column="1" Classes="secondary" Command="{Binding RunBenchmarkCommand}" IsEnabled="{Binding !IsBusy}" Content="{l:Tr Settings.Hardware.Benchmark}" />
+              </Grid>
+              <TextBlock Classes="data tertiary" Text="{Binding BenchmarkProgress}" IsVisible="{Binding BenchmarkProgress, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+              <Grid ColumnDefinitions="*,110,110,110" IsVisible="{Binding HasBenchmark}">
+                <TextBlock Classes="micro tertiary" Text="{l:Tr Settings.Benchmark.Stage}" />
+                <TextBlock Grid.Column="1" Classes="micro tertiary" TextAlignment="Right" Text="{l:Tr Settings.Benchmark.Ms}" />
+                <TextBlock Grid.Column="2" Classes="micro tertiary" TextAlignment="Right" Text="{l:Tr Settings.Benchmark.Ram}" />
+                <TextBlock Grid.Column="3" Classes="micro tertiary" TextAlignment="Right" Text="{l:Tr Settings.Benchmark.Vram}" />
+              </Grid>
+              <ItemsControl ItemsSource="{Binding BenchmarkRows}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BenchmarkRow">
+                    <Grid ColumnDefinitions="*,110,110,110" Margin="0,2">
+                      <TextBlock Classes="label" Text="{Binding Stage}" />
+                      <TextBlock Grid.Column="1" Classes="data" TextAlignment="Right" Text="{Binding Time}" />
+                      <TextBlock Grid.Column="2" Classes="data" TextAlignment="Right" Text="{Binding Ram}" />
+                      <TextBlock Grid.Column="3" Classes="data" TextAlignment="Right" Text="{Binding Vram}" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding BenchmarkEstimates}" IsVisible="{Binding HasBenchmark}" />
+              <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Benchmark.Note}" />
+            </StackPanel>
+          </Border>
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Hardware.Note}" />
+        </StackPanel>
+
+        <!-- 5g Models -->
+        <StackPanel Spacing="16" IsVisible="{Binding IsModels}">
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Classes="label secondary" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding ModelsFolderText}" />
+            <Button Grid.Column="1" Classes="secondary" Command="{Binding RequestOfflinePackageCommand}" IsEnabled="{Binding !IsBusy}" Content="{l:Tr Settings.Models.ImportOffline}" />
+          </Grid>
+          <Border Classes="card" Padding="16" IsVisible="{Binding HasRecognizerChoice}">
+            <StackPanel Spacing="8">
+              <TextBlock Classes="sectionTitle" Text="{l:Tr Settings.Models.Recognizer}" />
+              <TextBlock Classes="micro secondary" TextWrapping="Wrap" Text="{l:Tr Settings.Models.RecognizerNote}" />
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <ComboBox Width="260" ItemsSource="{Binding Recognizers}" SelectedItem="{Binding SelectedRecognizer}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate><TextBlock Text="{Binding Label}" /></DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Classes="secondary" Command="{Binding UseRecognizerCommand}" IsEnabled="{Binding CanChangeRecognizer}" Content="{l:Tr Settings.Models.RecognizerUse}" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+          <ItemsControl ItemsSource="{Binding Models}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:ModelRowViewModel">
+                <Border BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,0,1" Padding="0,10" Opacity="{Binding IsAvailable, Converter={x:Static vm:Converters.ActiveOpacity}}">
+                  <Grid ColumnDefinitions="140,*,90,Auto" ColumnSpacing="12">
+                    <TextBlock Classes="label tertiary" Text="{Binding Function}" />
+                    <StackPanel Grid.Column="1" Spacing="4">
+                      <TextBlock Classes="label" Text="{Binding Name}" />
+                      <HyperlinkButton Padding="0" NavigateUri="{Binding LicenseUrl}">
+                        <TextBlock Classes="micro secondary" TextDecorations="Underline" Text="{Binding LicenseText}" />
+                      </HyperlinkButton>
+                      <CheckBox IsVisible="{Binding RequiresAcceptance}" IsEnabled="{Binding CanAcceptLicense}" IsChecked="{Binding LicenseAccepted}">
+                        <TextBlock Classes="micro" TextWrapping="Wrap" Text="{l:Tr Settings.Models.AcceptLicense}" />
+                      </CheckBox>
+                      <StackPanel Spacing="4" IsVisible="{Binding IsManualConvert}">
+                        <TextBlock Classes="micro secondary" TextWrapping="Wrap" Text="{Binding ManualNote}" />
+                        <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{Binding SourceFilesText}" />
+                        <TextBlock Classes="data micro" TextWrapping="Wrap" Text="{Binding SourceFolder}" />
+                        <TextBlock Classes="micro" TextWrapping="Wrap" Text="{Binding ConversionText}" IsVisible="{Binding ConversionText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                      </StackPanel>
+                    </StackPanel>
+                    <TextBlock Grid.Column="2" Classes="data tertiary" Text="{Binding SizeText}" />
+                    <StackPanel Grid.Column="3" Spacing="6" HorizontalAlignment="Right">
+                      <TextBlock Classes="micro tertiary" HorizontalAlignment="Right" Text="{Binding Status}" />
+                      <Button Classes="secondary" IsVisible="{Binding CanInstall}"
+                              Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).InstallModelCommand}" CommandParameter="{Binding}"
+                              Content="{l:Tr Settings.Models.Download}" />
+                      <Button Classes="ghost" IsVisible="{Binding CanVerify}"
+                              Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).VerifyModelCommand}" CommandParameter="{Binding}"
+                              Content="{l:Tr Settings.Models.Verify}" />
+                      <Button Classes="secondary" IsVisible="{Binding CanDownloadSource}"
+                              IsEnabled="{Binding !$parent[UserControl].((vm:SettingsViewModel)DataContext).IsBusy}"
+                              Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).DownloadSourceCommand}" CommandParameter="{Binding}"
+                              Content="{l:Tr Settings.Models.DownloadSource}" />
+                      <Button Classes="ghost" IsVisible="{Binding IsManualConvert}"
+                              Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).OpenSourceFolderCommand}" CommandParameter="{Binding}"
+                              Content="{l:Tr Settings.Models.OpenFolder}" />
+                      <Button Classes="secondary" IsVisible="{Binding CanConvert}"
+                              Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).ConvertModelCommand}" CommandParameter="{Binding}"
+                              Content="{l:Tr Settings.Models.Convert}" />
+                      <Button Classes="ghost" IsVisible="{Binding IsConverting}"
+                              Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).CancelConversionCommand}"
+                              Content="{l:Tr Settings.Models.CancelConversion}" />
+                      <Button Classes="ghost" IsVisible="{Binding CanRemoveEnvironment}"
+                              Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).RequestRemoveVlmEnvironmentCommand}" CommandParameter="{Binding}"
+                              Content="{l:Tr Settings.Models.RemoveEnvironment}" />
+                      <StackPanel Spacing="6" IsVisible="{Binding ConfirmingRemoval}" HorizontalAlignment="Right">
+                        <TextBlock Classes="micro" MaxWidth="240" TextWrapping="Wrap" Text="{l:Tr Settings.Models.RemoveEnvironmentConfirm}" />
+                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+                          <Button Classes="ghost"
+                                  Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).CancelRemoveVlmEnvironmentCommand}" CommandParameter="{Binding}"
+                                  Content="{l:Tr Settings.Models.CancelConversion}" />
+                          <Button Classes="secondary"
+                                  Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).RemoveVlmEnvironmentCommand}" CommandParameter="{Binding}"
+                                  Content="{l:Tr Settings.Models.RemoveEnvironmentYes}" />
+                        </StackPanel>
+                      </StackPanel>
+                      <TextBlock Classes="micro" HorizontalAlignment="Right" IsVisible="{Binding IsInUse}" Text="{l:Tr Settings.Models.InUse}" />
+                      <Button Classes="secondary" IsVisible="{Binding CanUse}"
+                              Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).UseModelCommand}" CommandParameter="{Binding}"
+                              Content="{l:Tr Settings.Models.Use}" />
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Models.Note}" />
+        </StackPanel>
+
+        <!-- 5h Catalog -->
+        <StackPanel Spacing="16" IsVisible="{Binding IsCatalog}">
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Catalog.Position}" />
+          <StackPanel Spacing="4">
+            <TextBlock Classes="data" TextWrapping="Wrap" Text="{Binding CatalogText}" />
+            <TextBlock Classes="micro tertiary" Text="{l:Tr Settings.Catalog.CacheNote}" />
+            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0" IsVisible="{Binding CanChangeCatalogLocation}">
+              <Button Classes="secondary" IsEnabled="{Binding !IsBusy}" Command="{Binding RequestMoveCatalogCommand}" Content="{l:Tr Settings.Catalog.Move}" />
+              <Button Classes="ghost" IsEnabled="{Binding !IsBusy}" Command="{Binding RequestOpenCatalogCommand}" Content="{l:Tr Settings.Catalog.OpenExisting}" />
+            </StackPanel>
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Catalog.MoveNote}" IsVisible="{Binding CanChangeCatalogLocation}" />
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding CatalogChangeText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+              <TextBlock Classes="label" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="560" Text="{Binding CatalogChangeText}" />
+              <Button Classes="ghost" IsVisible="{Binding HasPendingCatalogChange}" Command="{Binding CancelCatalogChangeCommand}" Content="{l:Tr Settings.Catalog.CancelChange}" />
+            </StackPanel>
+          </StackPanel>
+
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Catalog.Backup}" />
+          <StackPanel Spacing="4">
+            <TextBlock Classes="label" Text="{Binding LastBackupText}" />
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Catalog.When}" />
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{Binding BackupsText}" />
+          </StackPanel>
+          <Button Classes="secondary" HorizontalAlignment="Left" Command="{Binding BackupNowCommand}" IsEnabled="{Binding !IsBusy}" Content="{l:Tr Settings.Catalog.BackupNow}" />
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <ComboBox ItemsSource="{Binding Backups}" SelectedItem="{Binding SelectedBackup}" HorizontalAlignment="Stretch">
+              <ComboBox.ItemTemplate>
+                <DataTemplate><TextBlock Text="{Binding Label}" /></DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Grid.Column="1" Classes="secondary" Command="{Binding RequestRestoreCommand}" Content="{l:Tr Settings.Catalog.Restore}" />
+          </Grid>
+          <Border Classes="card" Padding="16" IsVisible="{Binding HasPendingRestore}">
+            <StackPanel Spacing="8">
+              <TextBlock Classes="label warning" TextWrapping="Wrap" Text="{Binding PendingRestoreText}" />
+              <Button Classes="secondary" HorizontalAlignment="Left" Command="{Binding CancelRestoreCommand}" Content="{l:Tr Common.Cancel}" />
+            </StackPanel>
+          </Border>
+
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Catalog.Encryption}" />
+          <StackPanel Spacing="8">
+            <TextBlock Classes="label" Text="{Binding EncryptionState}" />
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Encryption.Note}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBox Classes="field" Width="200" PasswordChar="•" Text="{Binding EncryptionPassword}" PlaceholderText="{l:Tr Settings.Catalog.EncryptionPassword}" />
+              <TextBox Classes="field" Width="200" PasswordChar="•" Text="{Binding EncryptionConfirm}" PlaceholderText="{l:Tr Settings.Encryption.Confirm}" />
+              <Button Classes="secondary" Command="{Binding SetEncryptionPasswordCommand}" Content="{l:Tr Settings.Encryption.SetPassword}" />
+            </StackPanel>
+          </StackPanel>
+
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Catalog.Export}" />
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Catalog.ExportNote}" />
+          <CheckBox IsChecked="{Binding ExportThumbnails}" Content="{l:Tr Settings.Catalog.ExportThumbnails}" />
+          <CheckBox IsChecked="{Binding ExportFingerprints}">
+            <StackPanel><TextBlock Text="{l:Tr Settings.Catalog.ExportFingerprints}" /><TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Catalog.ExportFingerprintsNote}" /></StackPanel>
+          </CheckBox>
+          <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding ExportFingerprints}">
+            <TextBox Classes="field" Width="200" PasswordChar="•" Text="{Binding ExportPassword}" PlaceholderText="{l:Tr Settings.Catalog.ExportPassword}" />
+            <TextBox Classes="field" Width="200" PasswordChar="•" Text="{Binding ExportConfirm}" PlaceholderText="{l:Tr Settings.Encryption.Confirm}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Classes="secondary" Command="{Binding RequestExportCommand}" IsEnabled="{Binding !IsBusy}" Content="{l:Tr Settings.Catalog.ExportButton}" />
+            <Button Classes="secondary" Command="{Binding RequestImportCommand}" IsEnabled="{Binding !IsBusy}" Content="{l:Tr Settings.Catalog.ImportButton}" />
+          </StackPanel>
+          <Border Classes="card" Padding="16" IsVisible="{Binding IsImporting}">
+            <StackPanel Spacing="10">
+              <TextBlock Classes="label" TextWrapping="Wrap" Text="{l:Tr Settings.Catalog.ImportRemap}" />
+              <ItemsControl ItemsSource="{Binding ImportLibraries}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:ImportLibraryRow">
+                    <Grid ColumnDefinitions="200,*,Auto,Auto" ColumnSpacing="8" Margin="0,0,0,6">
+                      <TextBlock Classes="label" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Title}" />
+                      <TextBox Grid.Column="1" Classes="field" Text="{Binding NewRoot}" />
+                      <TextBlock Grid.Column="2" Classes="data" VerticalAlignment="Center" Text="{Binding Found}" />
+                      <Button Grid.Column="3" Classes="ghost" Command="{Binding $parent[UserControl].((vm:SettingsViewModel)DataContext).ChooseRootCommand}" CommandParameter="{Binding}" Content="{l:Tr Settings.Catalog.ChooseFolder}" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBox Classes="field" Width="240" HorizontalAlignment="Left" PasswordChar="•" Text="{Binding ImportPassword}" PlaceholderText="{l:Tr Settings.Catalog.ImportPassword}" IsVisible="{Binding ImportNeedsPassword}" />
+              <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Catalog.ImportNote}" />
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button Classes="primary" Command="{Binding ConfirmImportCommand}" IsEnabled="{Binding !IsBusy}" Content="{l:Tr Settings.Catalog.ImportConfirm}" />
+                <Button Classes="ghost" Command="{Binding CancelImportCommand}" Content="{l:Tr Common.Cancel}" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+          <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding PackageText}" IsVisible="{Binding PackageText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <TextBlock Classes="micro tertiary" Text="{Binding SchemaText}" />
+        </StackPanel>
+
+        <!-- 5i General -->
+        <StackPanel Spacing="16" IsVisible="{Binding IsGeneral}">
+          <!-- Updates (spec §11) -->
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Updates.Title}" />
+          <StackPanel Spacing="6">
+            <TextBlock Classes="label" Text="{Binding VersionText}" />
+            <CheckBox IsChecked="{Binding CheckUpdates}"><TextBlock Classes="label" Text="{l:Tr Settings.Updates.CheckAtStart}" /></CheckBox>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Classes="secondary" IsEnabled="{Binding !IsBusy}" Command="{Binding CheckUpdatesNowCommand}" Content="{l:Tr Settings.Updates.CheckNow}" />
+              <Button Classes="primary" IsVisible="{Binding CanInstallUpdate}" IsEnabled="{Binding !IsBusy}" Command="{Binding InstallUpdateCommand}" Content="{l:Tr Settings.Updates.Install}" />
+            </StackPanel>
+            <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding UpdateText}" IsVisible="{Binding UpdateText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          </StackPanel>
+
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Language}" />
+          <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}" MinWidth="240">
+            <ComboBox.ItemTemplate>
+              <DataTemplate><TextBlock Text="{Binding Label}" /></DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Language.Note}" />
+
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Theme}" />
+          <ComboBox ItemsSource="{Binding Themes}" SelectedItem="{Binding Theme}" MinWidth="240">
+            <ComboBox.ItemTemplate>
+              <DataTemplate><TextBlock Text="{Binding Label}" /></DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+
+          <TextBlock Classes="overline" Text="{l:Tr Settings.ExifTool}" />
+          <StackPanel Spacing="4">
+            <TextBlock Classes="data" TextWrapping="Wrap" Text="{Binding ExifToolText}" />
+            <TextBlock Classes="micro tertiary" Text="{Binding ExifToolHealth}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Classes="secondary" Command="{Binding CheckExifToolCommand}" Content="{l:Tr Settings.ExifTool.Check}" />
+            <Button Classes="secondary" Command="{Binding RequestExifToolCommand}" Content="{l:Tr Settings.ExifTool.Other}" />
+            <Button Classes="ghost" Command="{Binding UseBundledExifToolCommand}" Content="{l:Tr Settings.ExifTool.UseBundled}" />
+          </StackPanel>
+
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Xmp}" />
+          <CheckBox IsChecked="{Binding WriteCaptions}">
+            <StackPanel><TextBlock Text="{l:Tr Settings.Xmp.WriteCaptions}" /><TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Xmp.WriteCaptionsNote}" /></StackPanel>
+          </CheckBox>
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Xmp.SyncNote}" />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Classes="secondary" Command="{Binding SyncXmpCommand}" Content="{l:Tr Settings.Xmp.SyncNow}" />
+            <Button Classes="ghost" Command="{Binding ImportNamedRegionsCommand}" Content="{l:Tr Settings.Xmp.ImportPeople}" />
+          </StackPanel>
+          <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding XmpSyncText}" IsVisible="{Binding XmpSyncText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Editor}" />
+          <TextBlock Classes="data" TextWrapping="Wrap" Text="{Binding EditorText}" />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Classes="secondary" Command="{Binding RequestEditorCommand}" Content="{l:Tr Settings.Editor.Choose}" />
+            <Button Classes="ghost" Command="{Binding ClearEditorCommand}" Content="{l:Tr Settings.Editor.Clear}" />
+          </StackPanel>
+
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Template}" />
+          <TextBox Classes="field" FontFamily="{StaticResource PF.Font.Mono}" Text="{Binding PathTemplate}" />
+          <ItemsControl ItemsSource="{Binding TemplateVariables}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String"><Border Classes="key" Margin="0,0,6,6"><TextBlock Text="{Binding}" /></Border></DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="data tertiary" TextWrapping="Wrap" Text="{Binding TemplateExample}" IsVisible="{Binding TemplateError, Converter={x:Static ObjectConverters.IsNull}}" />
+          <TextBlock Classes="label error" TextWrapping="Wrap" Text="{Binding TemplateError}" IsVisible="{Binding TemplateError, Converter={x:Static ObjectConverters.IsNotNull}}" />
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Template.Note}" />
+          <Button Classes="ghost" HorizontalAlignment="Left" Command="{Binding ResetTemplateCommand}" Content="{l:Tr Settings.Template.Reset}" />
+        </StackPanel>
+
+        <!-- 5j Culling -->
+        <StackPanel Spacing="16" IsVisible="{Binding IsCulling}">
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Culling.Mode}" />
+          <RadioButton GroupName="culling" IsChecked="{Binding PrudentMode, Mode=OneWay}" Command="{Binding SetCullingModeCommand}" CommandParameter="Prudent">
+            <StackPanel><TextBlock Text="{l:Tr Settings.Culling.Prudent}" /><TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Culling.PrudentNote}" /></StackPanel>
+          </RadioButton>
+          <RadioButton GroupName="culling" IsChecked="{Binding NormalMode, Mode=OneWay}" IsEnabled="{Binding NormalModeAllowed}" Command="{Binding SetCullingModeCommand}" CommandParameter="Normal">
+            <StackPanel><TextBlock Text="{l:Tr Settings.Culling.Normal}" /><TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Culling.NormalNote}" /></StackPanel>
+          </RadioButton>
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Culling.Metrics}" />
+          <ItemsControl ItemsSource="{Binding CullingMetrics}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String"><TextBlock Classes="data" Text="{Binding}" /></DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="label tertiary" TextWrapping="Wrap" Text="{Binding CullingNote}" />
+        </StackPanel>
+      </Panel>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

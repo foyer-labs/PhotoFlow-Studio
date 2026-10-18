@@ -1,0 +1,106 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Labelling mode, board 2d: blind sessions, one key per photo, metrics with their 95 % interval. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.LabelingView"
+             x:DataType="vm:LabelingViewModel">
+  <Grid ColumnDefinitions="*,340">
+    <Grid RowDefinitions="Auto,*,Auto,Auto" Background="{DynamicResource PF.Brush.Viewer}">
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16" Margin="16,10">
+        <TextBlock Classes="overline" VerticalAlignment="Center" Text="{l:Tr Labeling.Title}" />
+        <TextBlock Grid.Column="1" Classes="data" VerticalAlignment="Center" Text="{Binding Progress}" />
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12">
+          <CheckBox IsChecked="{Binding IsBlind}"><TextBlock Classes="label" Text="{l:Tr Labeling.Blind}" /></CheckBox>
+          <Button Classes="secondary" Command="{Binding ExitCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Labeling.Exit}" /><Border Classes="key"><TextBlock Text="Esc" /></Border></StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
+
+      <Panel Grid.Row="1" Margin="16,0">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+          <Image Source="{Binding Preview}" Stretch="{Binding IsZoomed, Converter={x:Static vm:Converters.ZoomStretch}}" />
+        </ScrollViewer>
+        <StackPanel IsVisible="{Binding IsFinished}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+          <TextBlock Classes="subtitle" HorizontalAlignment="Center" Text="{l:Tr Labeling.Done}" />
+          <TextBlock Classes="label tertiary" HorizontalAlignment="Center" Text="{l:Tr Labeling.DoneBody}" />
+        </StackPanel>
+      </Panel>
+
+      <ItemsControl Grid.Row="2" ItemsSource="{Binding Burst}" Margin="16,8" IsVisible="{Binding IsBurst}">
+        <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="6" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:LabelingPhoto">
+            <Border Classes="key"><TextBlock Text="{Binding Name}" /></Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <Border Grid.Row="3" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,1,0,0" Padding="16,10" Background="{DynamicResource PF.Brush.Window}">
+        <StackPanel Spacing="8">
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Classes="data" Text="{Binding CurrentName}" TextTrimming="CharacterEllipsis" />
+            <TextBlock Grid.Column="1" Classes="label tertiary" Text="{Binding Verdict}" />
+          </Grid>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button Classes="secondary" Command="{Binding LabelCommand}" CommandParameter="Good"><StackPanel Orientation="Horizontal" Spacing="6"><Border Classes="key"><TextBlock Text="1" /></Border><TextBlock Text="{l:Tr Label.Good}" /></StackPanel></Button>
+            <Button Classes="secondary" Command="{Binding LabelCommand}" CommandParameter="Blurred"><StackPanel Orientation="Horizontal" Spacing="6"><Border Classes="key"><TextBlock Text="2" /></Border><TextBlock Text="{l:Tr Label.Blurred}" /></StackPanel></Button>
+            <Button Classes="secondary" Command="{Binding LabelCommand}" CommandParameter="EyesClosed"><StackPanel Orientation="Horizontal" Spacing="6"><Border Classes="key"><TextBlock Text="3" /></Border><TextBlock Text="{l:Tr Label.EyesClosed}" /></StackPanel></Button>
+            <Button Classes="secondary" Command="{Binding LabelCommand}" CommandParameter="Exposure"><StackPanel Orientation="Horizontal" Spacing="6"><Border Classes="key"><TextBlock Text="4" /></Border><TextBlock Text="{l:Tr Label.Exposure}" /></StackPanel></Button>
+            <Button Classes="secondary" Command="{Binding LabelCommand}" CommandParameter="Other"><StackPanel Orientation="Horizontal" Spacing="6"><Border Classes="key"><TextBlock Text="5" /></Border><TextBlock Text="{l:Tr Label.Other}" /></StackPanel></Button>
+            <Button Classes="ghost" Command="{Binding SkipCommand}"><StackPanel Orientation="Horizontal" Spacing="6"><Border Classes="key"><TextBlock Text="{l:Tr Key.Space}" /></Border><TextBlock Text="{l:Tr Labeling.Skip}" /></StackPanel></Button>
+          </StackPanel>
+          <TextBlock Classes="micro tertiary" Text="{Binding Previous}" IsVisible="{Binding Previous, Converter={x:Static ObjectConverters.IsNotNull}}" />
+          <TextBlock Classes="micro tertiary" Text="{l:Tr Labeling.BurstHint}" IsVisible="{Binding IsBurst}" />
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <!-- Metrics -->
+    <Border Grid.Column="1" Background="{DynamicResource PF.Brush.Window}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1,0,0,0">
+      <ScrollViewer>
+        <StackPanel Margin="16" Spacing="14">
+          <TextBlock Classes="sectionTitle" Text="{l:Tr Labeling.Metrics}" />
+          <TextBlock Classes="label tertiary" Text="{Binding LabeledText}" />
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Labeling.MetricsNote}" />
+          <ItemsControl ItemsSource="{Binding Metrics}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:MetricViewModel">
+                <StackPanel Spacing="4" Margin="0,0,0,14">
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Classes="label" Text="{Binding Label}" />
+                    <TextBlock Grid.Column="1" Classes="data" Text="{Binding Value}" />
+                  </Grid>
+                  <Panel Height="10" Width="300" HorizontalAlignment="Left">
+                    <Border Background="{DynamicResource PF.Brush.Control}" CornerRadius="2" />
+                    <Canvas>
+                      <Rectangle Height="10" Fill="{DynamicResource PF.Brush.TextSecondary}"
+                                 Canvas.Left="{Binding Low, Converter={x:Static vm:Converters.MetricOffset}}"
+                                 Width="{Binding ., Converter={x:Static vm:Converters.MetricWidth}}" />
+                      <Rectangle Width="2" Height="14" Canvas.Top="-2" Fill="{DynamicResource PF.Brush.Accent}"
+                                 Canvas.Left="{Binding TargetValue, Converter={x:Static vm:Converters.MetricOffset}}" />
+                    </Canvas>
+                  </Panel>
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Classes="micro tertiary" Text="{Binding Interval}" />
+                    <TextBlock Grid.Column="1" Classes="micro tertiary" Text="{Binding Target}" />
+                  </Grid>
+                  <TextBlock Classes="micro" Text="{Binding Verdict}" />
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="overline" Text="{l:Tr Labeling.PerProfile}" />
+          <ItemsControl ItemsSource="{Binding PerProfile}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String"><TextBlock Classes="micro tertiary" Text="{Binding}" /></DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding ModeNote}" />
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</UserControl>

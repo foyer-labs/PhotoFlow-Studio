@@ -1,0 +1,4 @@
+#!/bin/sh
+# SPDX-License-Identifier: Apache-2.0
+# Enabled with: git config core.hooksPath .githooks
+exec "$(git rev-parse --show-toplevel)/scripts/check-images.sh"

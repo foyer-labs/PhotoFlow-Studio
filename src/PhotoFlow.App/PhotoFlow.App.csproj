@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Avalonia MVVM user interface; composition root. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationIcon>Assets\photoflow.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PhotoFlow.Core\PhotoFlow.Core.csproj" />
+    <ProjectReference Include="..\PhotoFlow.Sources\PhotoFlow.Sources.csproj" />
+    <ProjectReference Include="..\PhotoFlow.Imaging\PhotoFlow.Imaging.csproj" />
+    <ProjectReference Include="..\PhotoFlow.Metadata\PhotoFlow.Metadata.csproj" />
+    <ProjectReference Include="..\PhotoFlow.Inference\PhotoFlow.Inference.csproj" />
+    <ProjectReference Include="..\PhotoFlow.Analysis\PhotoFlow.Analysis.csproj" />
+    <ProjectReference Include="..\PhotoFlow.Faces\PhotoFlow.Faces.csproj" />
+    <ProjectReference Include="..\PhotoFlow.Tagging\PhotoFlow.Tagging.csproj" />
+    <ProjectReference Include="..\PhotoFlow.Data\PhotoFlow.Data.csproj" />
+    <!-- Level D captions process (phase 5b, U4): built and copied next to the application, never called in-process. -->
+    <ProjectReference Include="..\PhotoFlow.Vlm\PhotoFlow.Vlm.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Conversion of the level D model on the user's PC (phase 5b, U2-U3): script, pinned requirements, Olive recipe. -->
+    <Content Include="..\..\tools\vlm\**\*" Exclude="..\..\tools\vlm\**\__pycache__\**;..\..\tools\vlm\parity.py" LinkBase="vlm" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- License of PhotoFlow and third-party notices, shipped with the application (spec §11, R19). -->
+    <Content Include="..\..\LICENSE;..\..\NOTICE;..\..\THIRD-PARTY-NOTICES.md" Link="licenses\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Velopack" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+    <PackageReference Include="Serilog.Sinks.File" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+</Project>

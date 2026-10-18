@@ -1,0 +1,18 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- A section of a later phase (F1-6 c1): visible, not active, says when it arrives. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:v="using:PhotoFlow.App.Views"
+             x:Class="PhotoFlow.App.Views.PlaceholderView"
+             x:DataType="vm:PlaceholderPageViewModel">
+  <UserControl.Resources>
+    <v:IconKeyConverter x:Key="IconKey" />
+  </UserControl.Resources>
+  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+    <Path Classes="icon" HorizontalAlignment="Center" Data="{Binding Section.IconKey, Converter={StaticResource IconKey}}"
+          Stroke="{DynamicResource PF.Brush.TextTertiary}" />
+    <TextBlock Classes="subtitle" HorizontalAlignment="Center" Text="{Binding Title}" />
+    <TextBlock x:Name="Message" Classes="body tertiary" HorizontalAlignment="Center" Text="{Binding Message}" />
+  </StackPanel>
+</UserControl>

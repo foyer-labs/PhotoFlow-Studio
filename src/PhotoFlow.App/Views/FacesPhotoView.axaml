@@ -1,0 +1,37 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- A photo with its faces boxed and named (spec §7, 13 Oct 2026); a box can be drawn with the mouse to add a face. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             x:Class="PhotoFlow.App.Views.FacesPhotoView"
+             x:Name="Root">
+  <Viewbox Stretch="Uniform">
+    <Canvas x:Name="Surface" Background="Transparent"
+            Width="{Binding #Root.ImageWidth}" Height="{Binding #Root.ImageHeight}">
+      <Image Source="{Binding #Root.Source}" Width="{Binding #Root.ImageWidth}" Height="{Binding #Root.ImageHeight}" />
+      <ItemsControl ItemsSource="{Binding #Root.Faces}" IsVisible="{Binding #Root.ShowFaces}" IsHitTestVisible="{Binding !#Root.IsDrawing}"
+                    Width="{Binding #Root.ImageWidth}" Height="{Binding #Root.ImageHeight}">
+        <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+        <ItemsControl.Styles>
+          <Style Selector="ContentPresenter" x:DataType="vm:FaceBoxViewModel">
+            <Setter Property="Canvas.Left" Value="{Binding X}" />
+            <Setter Property="Canvas.Top" Value="{Binding Y}" />
+          </Style>
+        </ItemsControl.Styles>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:FaceBoxViewModel">
+            <StackPanel Tag="{Binding}" PointerPressed="OnFacePressed" Background="Transparent" Cursor="Hand" ToolTip.Tip="{Binding Label}">
+              <Border Width="{Binding Width}" Height="{Binding Height}" BorderThickness="{Binding Stroke}" Background="Transparent"
+                      BorderBrush="{DynamicResource PF.Brush.Accent}" Opacity="{Binding BoxOpacity}" />
+              <Border Background="{DynamicResource PF.Brush.Accent}" Padding="{Binding LabelPadding}" HorizontalAlignment="Left" Opacity="{Binding BoxOpacity}">
+                <TextBlock FontSize="{Binding LabelSize}" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" Text="{Binding Label}" />
+              </Border>
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <!-- The box being drawn -->
+      <Border x:Name="Drawing" IsVisible="False" BorderThickness="3" BorderBrush="{DynamicResource PF.Brush.Outcome.Best}" />
+    </Canvas>
+  </Viewbox>
+</UserControl>

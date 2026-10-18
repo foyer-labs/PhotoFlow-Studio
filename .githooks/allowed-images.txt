@@ -1,0 +1,20 @@
+# Exact repository paths of image files allowed outside tests/data/public/.
+# One path per line. Every addition must be visible in review.
+# Only artwork produced for this project belongs here (no photos).
+src/PhotoFlow.App/Assets/photoflow.ico
+
+# Screenshots of the user guide and README (release 0.1.0): the real interface on a demo catalog of pictures
+# drawn by tests/PhotoFlow.Tests/Docs/DocsScreenshots.cs (no photo, no real face).
+docs/guida/img/01-home.png
+docs/guida/img/02-revisione.png
+docs/guida/img/03-consultazione.png
+docs/guida/img/04-filtri.png
+docs/guida/img/05-volti.png
+docs/guida/img/06-persone.png
+docs/guida/img/07-persona.png
+docs/guida/img/08-persona-foto.png
+docs/guida/img/09-duplicati.png
+docs/guida/img/10-vocabolario.png
+docs/guida/img/11-impostazioni-modelli.png
+docs/guida/img/12-impostazioni-catalogo.png
+docs/guida/img/13-import.png

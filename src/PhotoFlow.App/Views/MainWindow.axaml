@@ -1,0 +1,154 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Window shell of board 04: title bar 32 · navigation 184/48 · toolbar 40 · status bar 24. -->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PhotoFlow.App.ViewModels"
+        xmlns:cmd="using:PhotoFlow.App.Commands"
+        xmlns:v="using:PhotoFlow.App.Views"
+        xmlns:l="using:PhotoFlow.App.Localization"
+        x:Class="PhotoFlow.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="{l:Tr App.Title}"
+        Icon="avares://PhotoFlow.App/Assets/photoflow.ico"
+        Width="1440" Height="900" MinWidth="1280" MinHeight="720"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="{StaticResource PF.Size.TitleBar}">
+
+  <Window.Resources>
+    <v:IconKeyConverter x:Key="IconKey" />
+  </Window.Resources>
+
+  <Window.DataTemplates>
+    <DataTemplate DataType="vm:HomeViewModel"><v:HomeView /></DataTemplate>
+    <DataTemplate DataType="vm:ImportWizardViewModel"><v:ImportWizardView /></DataTemplate>
+    <DataTemplate DataType="vm:JobsViewModel"><v:JobsView /></DataTemplate>
+    <DataTemplate DataType="vm:ReviewViewModel"><v:ReviewView /></DataTemplate>
+    <DataTemplate DataType="vm:LibrariesViewModel"><v:LibrariesView /></DataTemplate>
+    <DataTemplate DataType="vm:SettingsViewModel"><v:SettingsView /></DataTemplate>
+    <DataTemplate DataType="vm:CatalogProblemViewModel"><v:CatalogProblemView /></DataTemplate>
+    <DataTemplate DataType="vm:CatalogLocationViewModel"><v:CatalogLocationView /></DataTemplate>
+    <DataTemplate DataType="vm:LabelingViewModel"><v:LabelingView /></DataTemplate>
+    <DataTemplate DataType="vm:NumbersViewModel"><v:NumbersView /></DataTemplate>
+    <DataTemplate DataType="vm:RegenerationViewModel"><v:RegenerationView /></DataTemplate>
+    <DataTemplate DataType="vm:PeopleViewModel"><v:PeopleView /></DataTemplate>
+    <DataTemplate DataType="vm:PersonPageViewModel"><v:PersonPageView /></DataTemplate>
+    <DataTemplate DataType="vm:ProfilesViewModel"><v:ProfilesView /></DataTemplate>
+    <DataTemplate DataType="vm:BrowseViewModel"><v:BrowseView /></DataTemplate>
+    <DataTemplate DataType="vm:DuplicatesViewModel"><v:DuplicatesView /></DataTemplate>
+    <DataTemplate DataType="vm:VocabularyViewModel"><v:VocabularyView /></DataTemplate>
+    <DataTemplate DataType="vm:PlaceholderPageViewModel"><v:PlaceholderView /></DataTemplate>
+  </Window.DataTemplates>
+
+  <Window.Styles>
+    <Style Selector="Border#Navigation">
+      <Setter Property="Width" Value="{StaticResource PF.Size.Navigation}" />
+    </Style>
+    <Style Selector="Border#Navigation.compact">
+      <Setter Property="Width" Value="{StaticResource PF.Size.NavigationCompact}" />
+    </Style>
+    <Style Selector="Border#Navigation.compact TextBlock.navText">
+      <Setter Property="IsVisible" Value="False" />
+    </Style>
+    <Style Selector="Border#Navigation.compact ListBox.navigation ListBoxItem">
+      <Setter Property="Padding" Value="12,0" />
+    </Style>
+  </Window.Styles>
+
+  <Grid RowDefinitions="32,*,24">
+
+    <!-- Title bar (client area extended into the system decorations; caption buttons stay native) -->
+    <Grid x:Name="TitleBar" Grid.Row="0" ColumnDefinitions="Auto,*,Auto,*,140"
+          Background="{DynamicResource PF.Brush.Window}">
+      <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" Margin="12,0" VerticalAlignment="Center"
+                  IsHitTestVisible="False">
+        <TextBlock Classes="label" Text="{l:Tr App.Title}" />
+        <TextBlock Classes="label tertiary" Text="{Binding LibraryName}" />
+      </StackPanel>
+      <TextBox x:Name="SearchBox" Grid.Column="2" Classes="search" Width="420"
+               PlaceholderText="{l:Tr TitleBar.Search}" Text="{Binding GlobalSearchText}">
+        <TextBox.KeyBindings>
+          <KeyBinding Gesture="Enter" Command="{Binding SearchEverywhereCommand}" />
+        </TextBox.KeyBindings>
+        <TextBox.InnerRightContent>
+          <TextBlock Classes="micro tertiary" Margin="8,0" VerticalAlignment="Center" Text="{Binding SearchShortcut}" />
+        </TextBox.InnerRightContent>
+      </TextBox>
+    </Grid>
+
+    <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+
+      <!-- Navigation -->
+      <Border x:Name="Navigation" Grid.Column="0"
+              Classes.compact="{Binding IsNavigationCompact}"
+              Background="{DynamicResource PF.Brush.Window}"
+              BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,1,0">
+        <DockPanel>
+          <Button DockPanel.Dock="Bottom" Classes="ghost" Margin="4,4,4,8" HorizontalAlignment="Left"
+                  Command="{Binding ToggleNavigationCommand}"
+                  ToolTip.Tip="{Binding NavigationToggleTip}">
+            <Path Classes="icon" Data="{Binding NavigationToggleIcon, Converter={StaticResource IconKey}}" />
+          </Button>
+          <ListBox DockPanel.Dock="Bottom" Classes="navigation" Margin="0,8,0,0"
+                   ItemsSource="{Binding SecondarySections}" SelectedItem="{Binding SelectedSecondarySection}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:Section">
+                <Grid ColumnDefinitions="16,*,Auto" ColumnSpacing="12" ToolTip.Tip="{Binding Label}">
+                  <Path Classes="icon" Data="{Binding IconKey, Converter={StaticResource IconKey}}" />
+                  <TextBlock Grid.Column="1" Classes="body navText" Text="{Binding Label}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Grid.Column="2" Classes="micro tertiary navText navShortcut" Text="{Binding ShortcutText}" VerticalAlignment="Center" />
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <ListBox Classes="navigation" Margin="0,8,0,0"
+                   ItemsSource="{Binding MainSections}" SelectedItem="{Binding SelectedMainSection}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:Section">
+                <Grid ColumnDefinitions="16,*,Auto" ColumnSpacing="12" ToolTip.Tip="{Binding Label}">
+                  <Path Classes="icon" Data="{Binding IconKey, Converter={StaticResource IconKey}}" />
+                  <TextBlock Grid.Column="1" Classes="body navText" Text="{Binding Label}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Grid.Column="2" Classes="micro tertiary navText navShortcut" Text="{Binding ShortcutText}" VerticalAlignment="Center" />
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </DockPanel>
+      </Border>
+
+      <!-- Toolbar + page of the selected section -->
+      <Grid Grid.Column="1" RowDefinitions="40,*">
+        <Border Grid.Row="0" Background="{DynamicResource PF.Brush.Window}"
+                BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,0,1">
+          <TextBlock x:Name="PageTitle" Classes="subtitle" Margin="16,0" VerticalAlignment="Center" Text="{Binding PageTitle}" />
+        </Border>
+        <Border Grid.Row="1" Background="{DynamicResource PF.Brush.GridArea}">
+          <ContentControl x:Name="PageHost" Content="{Binding CurrentPage}" />
+        </Border>
+      </Grid>
+    </Grid>
+
+    <!-- Status bar: hints generated from the command table -->
+    <Border Grid.Row="2" Background="{DynamicResource PF.Brush.Window}"
+            BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,1,0,0">
+      <Grid ColumnDefinitions="*,Auto" Margin="12,0">
+        <ItemsControl Grid.Column="0" ItemsSource="{Binding StatusHints}" VerticalAlignment="Center" ClipToBounds="True" Margin="0,0,16,0">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal" Spacing="16" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="cmd:StatusHint">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Classes="micro secondary" Text="{Binding Keys}" />
+                <TextBlock Classes="micro tertiary" Text="{Binding Label}" />
+              </StackPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <TextBlock Grid.Column="1" Classes="micro tertiary" VerticalAlignment="Center" Text="{Binding StatusText}" />
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

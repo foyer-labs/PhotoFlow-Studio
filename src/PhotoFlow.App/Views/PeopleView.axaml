@@ -1,0 +1,133 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- People, boards 4a (groups, selection, rename with suggestions), 4c (empty), 4c2 (grouping), 4c3 (key unavailable). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.PeopleView"
+             x:DataType="vm:PeopleViewModel">
+  <Grid ColumnDefinitions="*,320">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Background="{DynamicResource PF.Brush.GridArea}">
+      <StackPanel Margin="20,16,20,8" Spacing="2">
+        <TextBlock Classes="pageTitle" Text="{l:Tr Nav.People}" />
+        <TextBlock Classes="label tertiary" Text="{Binding SummaryText}" />
+      </StackPanel>
+
+      <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="20,0,20,8">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Button Classes="chip" Classes.active="{Binding IsNewFilter}" Command="{Binding SetFilterCommand}" CommandParameter="New"><TextBlock Classes="label" Text="{Binding NewText}" /></Button>
+          <Button Classes="chip" Classes.active="{Binding IsUnnamedFilter}" Command="{Binding SetFilterCommand}" CommandParameter="Unnamed"><TextBlock Classes="label" Text="{Binding UnnamedText}" /></Button>
+          <Button Classes="chip" Classes.active="{Binding IsNamedFilter}" Command="{Binding SetFilterCommand}" CommandParameter="Named"><TextBlock Classes="label" Text="{Binding NamedText}" /></Button>
+          <Button Classes="chip" Classes.active="{Binding IsIgnoredFilter}" Command="{Binding SetFilterCommand}" CommandParameter="Ignored"><TextBlock Classes="label" Text="{Binding IgnoredText}" /></Button>
+          <TextBlock Classes="label tertiary" VerticalAlignment="Center" Margin="8,0" Text="{l:Tr People.BySize}" />
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- 4c3: key not readable on this account -->
+      <Border Grid.Row="2" Classes="cardError" Margin="20,0,20,8" IsVisible="{Binding IsKeyLocked}">
+        <StackPanel Spacing="8">
+          <TextBlock Classes="subtitle" Text="{l:Tr People.Key.Title}" />
+          <TextBlock Classes="body secondary" TextWrapping="Wrap" Text="{l:Tr People.Key.Body}" />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBox Classes="field" Width="220" PasswordChar="•" Text="{Binding Password}" PlaceholderText="{l:Tr People.Key.Password}">
+              <TextBox.KeyBindings><KeyBinding Gesture="Enter" Command="{Binding UnlockCommand}" /></TextBox.KeyBindings>
+            </TextBox>
+            <Button Classes="primary" Command="{Binding UnlockCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr People.Key.Unlock}" /><Border Classes="key"><TextBlock Text="↵" /></Border></StackPanel>
+            </Button>
+            <Button Classes="secondary" Command="{Binding RecomputeCommand}" IsEnabled="{Binding !IsBusy}"><TextBlock Text="{l:Tr People.Key.Recompute}" /></Button>
+          </StackPanel>
+          <TextBlock Classes="label tertiary" TextWrapping="Wrap" Text="{l:Tr People.Key.Meanwhile}" />
+        </StackPanel>
+      </Border>
+
+      <!-- After importing a catalog exported without fingerprints -->
+      <Border Grid.Row="2" Classes="card" Margin="20,0,20,8" IsVisible="{Binding NeedsFingerprints}">
+        <StackPanel Spacing="8">
+          <TextBlock Classes="body secondary" TextWrapping="Wrap" Text="{l:Tr People.Fingerprints.Missing}" />
+          <Button Classes="secondary" HorizontalAlignment="Left" Command="{Binding RecomputeCommand}" IsEnabled="{Binding !IsBusy}" Content="{l:Tr People.Key.Recompute}" />
+        </StackPanel>
+      </Border>
+
+      <!-- 4c2: grouping in progress -->
+      <Border Grid.Row="3" Classes="card" Margin="20,0,20,8" IsVisible="{Binding IsGrouping}">
+        <StackPanel Spacing="4">
+          <TextBlock Classes="data" Text="{Binding GroupingText}" />
+          <TextBlock Classes="label tertiary" TextWrapping="Wrap" Text="{l:Tr People.GroupingHint}" />
+        </StackPanel>
+      </Border>
+
+      <Panel Grid.Row="4">
+        <!-- 4c: no face yet -->
+        <StackPanel IsVisible="{Binding IsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" Width="460">
+          <TextBlock Classes="subtitle" HorizontalAlignment="Center" Text="{l:Tr People.Empty.Title}" />
+          <TextBlock Classes="body tertiary" TextAlignment="Center" TextWrapping="Wrap" Text="{l:Tr People.Empty.Body}" />
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+            <Button Classes="primary" Command="{Binding AnalyzeLibraryCommand}"><TextBlock Text="{l:Tr People.Empty.Analyze}" /></Button>
+            <Button Classes="secondary" Command="{Binding FaceSettingsCommand}"><TextBlock Text="{l:Tr People.Empty.Settings}" /></Button>
+          </StackPanel>
+        </StackPanel>
+
+        <ScrollViewer IsVisible="{Binding !IsEmpty}" Padding="20,0,12,12">
+          <ItemsControl ItemsSource="{Binding Persons}">
+            <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:PersonCardViewModel">
+                <Border Classes="tile" Classes.focused="{Binding IsFocused}" Classes.selected="{Binding IsSelected}" Width="132" Tag="{Binding}" PointerPressed="OnCardPressed" DoubleTapped="OnCardDoubleTapped">
+                  <StackPanel>
+                    <Panel Height="128" Background="{DynamicResource PF.Brush.Viewer}">
+                      <Image Source="{Binding Cover}" Stretch="UniformToFill" />
+                      <Border Classes="badge" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="4"><TextBlock Text="{Binding CountText}" /></Border>
+                      <Border Classes="badge" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4" IsVisible="{Binding IsSelected}"><TextBlock Text="✓" /></Border>
+                    </Panel>
+                    <StackPanel Margin="8,6" Spacing="1">
+                      <TextBlock Classes="label" Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Classes="micro tertiary" Text="{Binding Years}" />
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Panel>
+    </Grid>
+
+    <!-- Side panel: selection and actions -->
+    <Border Grid.Column="1" Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1,0,0,0" Padding="16">
+      <StackPanel Spacing="12">
+        <TextBlock Classes="overline" Text="{Binding SelectionText}" />
+        <StackPanel Spacing="2" IsVisible="{Binding HasFocus}">
+          <TextBlock Classes="subtitle" Text="{Binding Focused.DisplayName, FallbackValue=''}" TextTrimming="CharacterEllipsis" />
+          <TextBlock Classes="label tertiary" Text="{Binding Focused.Summary.FaceCount, StringFormat='{}{0:N0}', FallbackValue=''}" />
+        </StackPanel>
+
+        <!-- Rename with suggestions (F2) -->
+        <StackPanel Spacing="6" IsVisible="{Binding IsRenaming}">
+          <TextBlock Classes="label secondary" Text="{l:Tr People.Rename}" />
+          <AutoCompleteBox x:Name="RenameBox" ItemsSource="{Binding Names}" Text="{Binding RenameText}" FilterMode="StartsWithOrdinal" MinimumPrefixLength="1" />
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr People.RenameHint}" />
+        </StackPanel>
+
+        <StackPanel Spacing="6">
+          <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding MergeCommand}" IsEnabled="{Binding HasSelection}">
+            <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr People.Command.Merge}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="M" /></Border></Grid>
+          </Button>
+          <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding StartRenameCommand}">
+            <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr People.Command.Rename}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="F2" /></Border></Grid>
+          </Button>
+          <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding IgnoreCommand}">
+            <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr People.IgnoreLong}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="I" /></Border></Grid>
+          </Button>
+          <Button Classes="primary" HorizontalAlignment="Stretch" Command="{Binding OpenCommand}" IsEnabled="{Binding HasFocus}">
+            <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr People.OpenPage}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="↵" /></Border></Grid>
+          </Button>
+        </StackPanel>
+
+        <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr People.ThresholdNote}" />
+        <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr People.XmpNote}" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

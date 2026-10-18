@@ -1,0 +1,130 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Profiles, board 5e: built-in profiles locked, custom ones duplicated and edited (weights, thresholds, P17). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.ProfilesView"
+             x:DataType="vm:ProfilesViewModel">
+  <UserControl.Styles>
+    <Style Selector="NumericUpDown">
+      <Setter Property="Width" Value="120" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+  </UserControl.Styles>
+  <Grid ColumnDefinitions="280,*">
+    <!-- List -->
+    <Border Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,1,0">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom" Margin="12" Spacing="6">
+          <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding DuplicateCommand}">
+            <Grid ColumnDefinitions="*,Auto"><TextBlock Text="{l:Tr Profiles.Command.Duplicate}" /><Border Grid.Column="1" Classes="key"><TextBlock Text="Ctrl D" /></Border></Grid>
+          </Button>
+        </StackPanel>
+        <TextBlock DockPanel.Dock="Top" Classes="overline" Margin="16,16,16,8" Text="{l:Tr Profiles.BuiltIn}" />
+        <ListBox Classes="choices" ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" Margin="8,0">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="vm:ProfileListItem">
+              <StackPanel Spacing="2">
+                <TextBlock Classes="overline" Margin="0,10,0,4" Text="{l:Tr Profiles.Custom}" IsVisible="{Binding IsFirstCustom}" />
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBlock Classes="label" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                  <Border Grid.Column="1" Classes="key" IsVisible="{Binding Profile.IsBuiltIn}"><TextBlock Text="{l:Tr Profiles.Locked}" /></Border>
+                </Grid>
+                <TextBlock Classes="micro tertiary" Text="{Binding Detail}" IsVisible="{Binding !Profile.IsBuiltIn}" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Border>
+
+    <!-- Editor -->
+    <ScrollViewer Grid.Column="1" Background="{DynamicResource PF.Brush.GridArea}">
+      <StackPanel Margin="24,16" Spacing="16" MaxWidth="820" HorizontalAlignment="Left">
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+          <StackPanel Spacing="4">
+            <TextBox x:Name="NameBox" Classes="field" FontSize="20" Text="{Binding Name}" IsReadOnly="{Binding IsLocked}" />
+            <TextBlock Classes="label tertiary" Text="{Binding Usage}" TextWrapping="Wrap" />
+          </StackPanel>
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Top" IsVisible="{Binding IsEditable}">
+            <Button Classes="ghost" Command="{Binding RevertCommand}" IsEnabled="{Binding IsDirty}" Content="{l:Tr Profiles.Revert}" />
+            <Button Classes="primary" Command="{Binding SaveCommand}" IsEnabled="{Binding IsDirty}">
+              <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Profiles.Command.Save}" /><Border Classes="key"><TextBlock Text="Ctrl S" /></Border></StackPanel>
+            </Button>
+          </StackPanel>
+        </Grid>
+
+        <Border Classes="card" IsVisible="{Binding IsLocked}">
+          <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{l:Tr Profiles.LockedHint}" />
+        </Border>
+
+        <!-- Suggestion from the corrections -->
+        <Border Classes="card" IsVisible="{Binding HasSuggestion}">
+          <StackPanel Spacing="8">
+            <TextBlock Classes="body" TextWrapping="Wrap" Text="{Binding SuggestionText}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Button Classes="secondary" Command="{Binding ApplySuggestionCommand}" Content="{l:Tr Profiles.ApplySuggestion}" />
+              <Button Classes="ghost" Command="{Binding IgnoreSuggestionCommand}" Content="{l:Tr Profiles.IgnoreSuggestion}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="32" IsEnabled="{Binding IsEditable}">
+          <!-- Weights -->
+          <StackPanel Spacing="8">
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBlock Classes="overline" Text="{l:Tr Profiles.Weights}" />
+              <TextBlock Grid.Column="1" Classes="label" Classes.error="{Binding !WeightsValid}" Text="{Binding WeightsText}" />
+            </Grid>
+            <Grid ColumnDefinitions="140,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+              <TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.Weight.Sharpness}" />
+              <NumericUpDown Grid.Column="1" Minimum="0" Maximum="100" Increment="5" FormatString="0" Value="{Binding WeightSharpness}" />
+              <TextBlock Grid.Row="1" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.Weight.Eyes}" />
+              <NumericUpDown Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="100" Increment="5" FormatString="0" Value="{Binding WeightEyes}" />
+              <TextBlock Grid.Row="2" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.Weight.Exposure}" />
+              <NumericUpDown Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="100" Increment="5" FormatString="0" Value="{Binding WeightExposure}" />
+              <TextBlock Grid.Row="3" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.Weight.Subject}" />
+              <NumericUpDown Grid.Row="3" Grid.Column="1" Minimum="0" Maximum="100" Increment="5" FormatString="0" Value="{Binding WeightSubject}" />
+              <TextBlock Grid.Row="4" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.Weight.Aesthetic}" />
+              <NumericUpDown Grid.Row="4" Grid.Column="1" Minimum="0" Maximum="100" Increment="5" FormatString="0" Value="{Binding WeightAesthetic}" />
+            </Grid>
+            <TextBlock Classes="micro tertiary" Text="{Binding OriginWeights}" />
+          </StackPanel>
+
+          <!-- Thresholds and analysis -->
+          <StackPanel Grid.Column="1" Spacing="8">
+            <TextBlock Classes="overline" Text="{l:Tr Profiles.Thresholds}" />
+            <Grid ColumnDefinitions="180,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+              <TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.BlurDiscard}" />
+              <NumericUpDown Grid.Column="1" Minimum="0" Maximum="1" Increment="0.01" FormatString="0.00" Value="{Binding BlurDiscard}" />
+              <TextBlock Grid.Row="1" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.BlurReview}" />
+              <NumericUpDown Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="1" Increment="0.01" FormatString="0.00" Value="{Binding BlurReview}" />
+              <TextBlock Grid.Row="2" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.AbsoluteSharpness}" />
+              <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding AbsoluteSharpness}" />
+              <TextBlock Grid.Row="3" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.Exposure}" />
+              <ComboBox Grid.Row="3" Grid.Column="1" MinWidth="160" ItemsSource="{Binding ExposureOptions}" SelectedItem="{Binding Exposure}" />
+              <TextBlock Grid.Row="4" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.Zone}" />
+              <ComboBox Grid.Row="4" Grid.Column="1" MinWidth="160" ItemsSource="{Binding ZoneOptions}" SelectedItem="{Binding Zones}" />
+              <TextBlock Grid.Row="5" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.BurstGap}" />
+              <NumericUpDown Grid.Row="5" Grid.Column="1" Minimum="0.1" Maximum="10" Increment="0.1" FormatString="0.0" Value="{Binding MaxBurstGap}" />
+              <TextBlock Grid.Row="6" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.MinSimilarity}" />
+              <NumericUpDown Grid.Row="6" Grid.Column="1" Minimum="0.5" Maximum="1" Increment="0.01" FormatString="0.00" Value="{Binding MinSimilarity}" />
+              <TextBlock Grid.Row="7" Classes="label" VerticalAlignment="Center" Text="{l:Tr Profiles.TieMargin}" />
+              <NumericUpDown Grid.Row="7" Grid.Column="1" Minimum="0" Maximum="0.2" Increment="0.01" FormatString="0.00" Value="{Binding TieMargin}" />
+              <TextBlock Grid.Row="8" Classes="label" VerticalAlignment="Center" Text="{l:Tr Import.Faces}" />
+              <ComboBox Grid.Row="8" Grid.Column="1" MinWidth="160" ItemsSource="{Binding FaceOptions}" SelectedItem="{Binding Faces}" />
+            </Grid>
+            <TextBlock Classes="micro tertiary" Text="{Binding OriginBlur}" />
+            <TextBlock Classes="micro tertiary" Text="{Binding OriginExposure}" />
+            <TextBlock Classes="micro tertiary" Text="{Binding OriginGrouping}" />
+          </StackPanel>
+        </Grid>
+
+        <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        <TextBlock Classes="micro tertiary" Text="{Binding FileText}" />
+        <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Profiles.ApplyNote}" />
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

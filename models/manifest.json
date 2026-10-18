@@ -1,0 +1,603 @@
+{
+  "$schema": "./manifest.schema.json",
+  "manifestVersion": 1,
+  "verifiedOn": "2026-10-12",
+  "notes": "Model files are never stored in this repository. Each file is downloaded on first use from a URL pinned to a commit or release and verified with SHA-256. Licenses were checked at the cited source on the verification date.",
+  "models": [
+    {
+      "id": "dfine-s-obj2coco",
+      "function": "ObjectDetection",
+      "name": "D-FINE S (Objects365 → COCO)",
+      "version": "onnx-community/dfine_s_obj2coco-ONNX@f69c4ca98cba7ca58aa15b3d4600867808fecf1b",
+      "phase": 1,
+      "defaultFor": "cpu",
+      "adapter": "dfine-hf-v1",
+      "license": {
+        "spdx": "Apache-2.0",
+        "source": "https://huggingface.co/ustc-community/dfine-small-obj2coco",
+        "commercialUse": true,
+        "requiresAcceptance": false,
+        "notes": "The ONNX conversion repository has no license field; it inherits Apache-2.0 from the base checkpoint (ustc-community, authors of D-FINE)."
+      },
+      "files": [
+        {
+          "path": "model.onnx",
+          "url": "https://huggingface.co/onnx-community/dfine_s_obj2coco-ONNX/resolve/f69c4ca98cba7ca58aa15b3d4600867808fecf1b/onnx/model.onnx",
+          "sha256": "b9e2e76610053aeeac3b2f1f685d8f9a1182a93a338f624b6c8cb7fb390cb532",
+          "size": 41535197,
+          "mirrors": []
+        }
+      ],
+      "io": "pixel_values float32 [N,3,640,640] (RGB 0..1, no normalization) -> logits [N,300,80], pred_boxes [N,300,4] cxcywh normalized; opset 16",
+      "notes": "fp32. The fp16 variant is not used: ONNX Runtime CUDA has no fp16 GridSample (note N3). Parity verified against our own export (tools/lab/export_dfine.py)."
+    },
+    {
+      "id": "dfine-m-obj2coco",
+      "function": "ObjectDetection",
+      "name": "D-FINE M (Objects365 → COCO)",
+      "version": "onnx-community/dfine_m_obj2coco-ONNX@a2e1133c83887da7d5a000a025594b9d69fef5c2",
+      "phase": 1,
+      "defaultFor": "gpu",
+      "adapter": "dfine-hf-v1",
+      "license": {
+        "spdx": "Apache-2.0",
+        "source": "https://huggingface.co/ustc-community/dfine-medium-obj2coco",
+        "commercialUse": true,
+        "requiresAcceptance": false,
+        "notes": "The ONNX conversion repository has no license field; it inherits Apache-2.0 from the base checkpoint."
+      },
+      "files": [
+        {
+          "path": "model.onnx",
+          "url": "https://huggingface.co/onnx-community/dfine_m_obj2coco-ONNX/resolve/a2e1133c83887da7d5a000a025594b9d69fef5c2/onnx/model.onnx",
+          "sha256": "347f2faba93248c2e7500c9e604317fb391706c58a04802dd908573376dc1323",
+          "size": 78624257,
+          "mirrors": []
+        }
+      ],
+      "io": "Same contract as dfine-s-obj2coco.",
+      "notes": "fp32."
+    },
+    {
+      "id": "insightface-buffalo-l",
+      "function": "Faces",
+      "name": "InsightFace buffalo_l",
+      "version": "release model-zoo (identical content to v0.7)",
+      "phase": 1,
+      "defaultFor": "any",
+      "adapter": "insightface-buffalo-v1",
+      "license": {
+        "spdx": "LicenseRef-InsightFace-NonCommercial",
+        "source": "https://github.com/deepinsight/insightface/blob/master/README.md",
+        "commercialUse": false,
+        "requiresAcceptance": true,
+        "notes": "Models are for non-commercial research purposes only. Never bundled; downloaded on first use only after explicit acceptance (CLAUDE.md §6, P11)."
+      },
+      "files": [
+        {
+          "path": "buffalo_l.zip",
+          "url": "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_l.zip",
+          "sha256": "80ffe37d8a5940d59a7384c201a2a38d4741f2f3c51eef46ebb28218a7b0ca2f",
+          "size": 288621354,
+          "archive": "zip",
+          "use": [
+            "det_10g.onnx",
+            "2d106det.onnx",
+            "w600k_r50.onnx"
+          ],
+          "mirrors": []
+        }
+      ],
+      "io": "det_10g: SCRFD detection with 5 keypoints; 2d106det: 106 landmarks (eye openness, spec §6); w600k_r50: 512-d face embedding.",
+      "notes": "SHA-256 is the official GitHub release asset digest."
+    },
+    {
+      "id": "opencv-yunet-2023mar",
+      "function": "Faces",
+      "name": "YuNet face detector (OpenCV Zoo)",
+      "version": "opencv/opencv_zoo@47534e27c9851bb1128ccc0102f1145e27f23f98",
+      "phase": 1,
+      "defaultFor": "permissive-alternative",
+      "adapter": "yunet-v1",
+      "license": {
+        "spdx": "MIT",
+        "source": "https://github.com/opencv/opencv_zoo/blob/main/models/face_detection_yunet/LICENSE",
+        "commercialUse": true,
+        "requiresAcceptance": false,
+        "notes": "MIT, not Apache-2.0 as previously listed in spec §15 (corrected 2026-10-12)."
+      },
+      "files": [
+        {
+          "path": "face_detection_yunet_2023mar.onnx",
+          "url": "https://media.githubusercontent.com/media/opencv/opencv_zoo/47534e27c9851bb1128ccc0102f1145e27f23f98/models/face_detection_yunet/face_detection_yunet_2023mar.onnx",
+          "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+          "size": 232589,
+          "mirrors": [
+            "https://huggingface.co/opencv/face_detection_yunet/resolve/3cc26e7f1014a5ee5d74a42acee58bafc9d0a310/face_detection_yunet_2023mar.onnx"
+          ]
+        }
+      ],
+      "io": "input [1,3,640,640] fixed shape (letterbox required, note N4); outputs cls/obj/bbox/kps at strides 8/16/32; 5 keypoints only.",
+      "notes": "With YuNet/SFace eyes are always 'unknown' (decision A5)."
+    },
+    {
+      "id": "opencv-sface-2021dec",
+      "function": "Faces",
+      "name": "SFace face recognizer (OpenCV Zoo)",
+      "version": "opencv/opencv_zoo@47534e27c9851bb1128ccc0102f1145e27f23f98",
+      "phase": 2,
+      "defaultFor": "permissive-alternative",
+      "adapter": "sface-v1",
+      "license": {
+        "spdx": "Apache-2.0",
+        "source": "https://github.com/opencv/opencv_zoo/blob/main/models/face_recognition_sface/LICENSE",
+        "commercialUse": true,
+        "requiresAcceptance": false,
+        "notes": ""
+      },
+      "files": [
+        {
+          "path": "face_recognition_sface_2021dec.onnx",
+          "url": "https://media.githubusercontent.com/media/opencv/opencv_zoo/47534e27c9851bb1128ccc0102f1145e27f23f98/models/face_recognition_sface/face_recognition_sface_2021dec.onnx",
+          "sha256": "0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79",
+          "size": 38696353,
+          "mirrors": [
+            "https://huggingface.co/opencv/face_recognition_sface/resolve/3d7082438a6e4551e840c9b2bb60b71e8da4b524/face_recognition_sface_2021dec.onnx"
+          ]
+        }
+      ],
+      "io": "input 'data' [1,3,112,112] (weights are also listed as graph inputs: feed only 'data'); output fc1 [1,128].",
+      "notes": ""
+    },
+    {
+      "id": "adaface-ir101-webface12m",
+      "function": "FaceRecognition",
+      "name": "AdaFace IR-101 (WebFace12M), person recognition, converted on this PC",
+      "version": "minchul/cvlface_adaface_ir101_webface12m@54f602a",
+      "phase": 2,
+      "adapter": "adaface-ir101-v1",
+      "install": "manual-convert",
+      "output": "adaface_ir101.onnx",
+      "license": {
+        "spdx": "LicenseRef-AdaFace-WebFace-NonCommercial",
+        "source": "https://huggingface.co/minchul/cvlface_adaface_ir101_webface12m",
+        "commercialUse": false,
+        "requiresAcceptance": true,
+        "notes": "AdaFace code: MIT (github.com/mk-minchul/AdaFace). The model card has no license of its own and asks to follow the license of the training dataset (WebFace12M, a subset of WebFace260M, distributed for non-commercial research): treated as non-commercial, accepted explicitly by the user (P22)."
+      },
+      "files": [
+        {
+          "path": "config.json",
+          "url": "https://huggingface.co/minchul/cvlface_adaface_ir101_webface12m/resolve/54f602a0737bd1ee4a4e7e9fd089a485f397fefd/config.json",
+          "sha256": "6311d95b23368f06932e6c04b52431c29857e1fcbf5e1d41a2e05f5e4b946d10",
+          "size": 479,
+          "mirrors": []
+        },
+        {
+          "path": "model.safetensors",
+          "url": "https://huggingface.co/minchul/cvlface_adaface_ir101_webface12m/resolve/54f602a0737bd1ee4a4e7e9fd089a485f397fefd/model.safetensors",
+          "sha256": "2ea535a43877bd3de8091903935c783ce335be66a9f8917fae9a7a18ae4bbf56",
+          "size": 260980552,
+          "mirrors": []
+        }
+      ],
+      "io": "Aligned face 112x112 RGB, (x - 127.5) / 127.5, NCHW float32 -> 512 values, L2-normalized by PhotoFlow (same crop as ArcFace). ONNX exported on this PC by tools/vlm (recipes/adaface_ir101).",
+      "notes": "P22 (15 Oct 2026): optional recognizer, better on small and blurred faces (LFW lab: 16 px faces 1.65% -> 0.80% errors). Thresholds calibrated at the false-match rate of ArcFace: assign 0.42, suggest 0.32."
+    },
+    {
+      "id": "clip-vit-b32",
+      "function": "Embedding",
+      "name": "CLIP ViT-B/32",
+      "version": "Xenova/clip-vit-base-patch32@d15189d7028b43f1d3e65039190477f6af591c2a",
+      "phase": 2,
+      "defaultFor": "any",
+      "adapter": "clip-hf-v1",
+      "license": {
+        "spdx": "MIT",
+        "source": "https://github.com/openai/CLIP/blob/main/LICENSE",
+        "commercialUse": true,
+        "requiresAcceptance": false,
+        "notes": "Note N1: the OpenAI model card (https://huggingface.co/openai/clip-vit-base-patch32) states that any deployed use case is currently out of scope. This is usage guidance, not a license term; to be evaluated in phase 2 (OpenCLIP alternatives)."
+      },
+      "files": [
+        {
+          "path": "vision_model.onnx",
+          "url": "https://huggingface.co/Xenova/clip-vit-base-patch32/resolve/d15189d7028b43f1d3e65039190477f6af591c2a/onnx/vision_model.onnx",
+          "sha256": "fd6e1402a588279d1723c7534d4bcba5bc0b14b47dfab0e46f8c47b8270d7d40",
+          "size": 351685709,
+          "mirrors": []
+        },
+        {
+          "path": "text_model.onnx",
+          "url": "https://huggingface.co/Xenova/clip-vit-base-patch32/resolve/d15189d7028b43f1d3e65039190477f6af591c2a/onnx/text_model.onnx",
+          "sha256": "3f6571f5bad13a97c469c1622e1cfc4d9aef78b79fdbfcff804ca357bfada8cc",
+          "size": 254058553,
+          "mirrors": []
+        },
+        {
+          "path": "tokenizer.json",
+          "url": "https://huggingface.co/Xenova/clip-vit-base-patch32/resolve/d15189d7028b43f1d3e65039190477f6af591c2a/tokenizer.json",
+          "sha256": "f7f3b7af117d467b58374797691a6438d3e6b9e9cef800dfd5dced7f697a90cd",
+          "size": 2224119,
+          "mirrors": []
+        }
+      ],
+      "io": "vision: pixel_values [N,3,224,224] (shortest edge 224 bicubic, center crop, CLIP mean/std) -> image_embeds [N,512]; text: input_ids int64 [N,L] -> text_embeds [N,512].",
+      "notes": "fp32 (decision F2-1, 13 Oct 2026): the dynamically quantized conversion fails parity with the original openai/clip-vit-base-patch32 (image embedding cosine 0.87-0.97 on 40 real photos) and does not accelerate on GPU; fp32 matches it (cosine 1.000000 on CPU and CUDA, text embeddings too). Quantized pair ≈ 153 MB (spec §5)."
+    },
+    {
+      "id": "ramplus-fp32",
+      "function": "Tagger",
+      "name": "RAM++ Swin-L (ONNX, fp32)",
+      "version": "CannotFindObject/RAM_ONNX@6c4ca81fb841e359c043c1e8f92f62bf5c3b8c18",
+      "phase": 3,
+      "defaultFor": "any",
+      "adapter": "ramplus-v1",
+      "license": {
+        "spdx": "Apache-2.0",
+        "source": "https://huggingface.co/CannotFindObject/RAM_ONNX",
+        "commercialUse": true,
+        "requiresAcceptance": false,
+        "notes": "Upstream code xinyu1205/recognize-anything and weights xinyu1205/recognize-anything-plus-model are Apache-2.0. Mirror: imagent/ram-plus-onnx (unchanged copy)."
+      },
+      "files": [
+        {
+          "path": "ram_plus.onnx",
+          "url": "https://huggingface.co/CannotFindObject/RAM_ONNX/resolve/6c4ca81fb841e359c043c1e8f92f62bf5c3b8c18/ram_plus.onnx",
+          "sha256": "4197a2cd19b6623e1286e9feda991e793fed7749ed9cee9793b174fee0eb844f",
+          "size": 1859243322,
+          "mirrors": [
+            "https://huggingface.co/imagent/ram-plus-onnx/resolve/ceffc7a263e5d9cb24cec8216541c7b3c2221162/ram_plus.onnx"
+          ]
+        },
+        {
+          "path": "ram_tag_list.txt",
+          "url": "https://huggingface.co/CannotFindObject/RAM_ONNX/resolve/6c4ca81fb841e359c043c1e8f92f62bf5c3b8c18/ram_tag_list.txt",
+          "sha256": "5d96d2f7225527480ad773aaac76b6e5c08a18adf6eae9ca7d2ab923d5e7bd8b",
+          "size": 41904,
+          "mirrors": [
+            "https://huggingface.co/imagent/ram-plus-onnx/resolve/ceffc7a263e5d9cb24cec8216541c7b3c2221162/ram_tag_list.txt"
+          ]
+        },
+        {
+          "path": "ram_tag_list_threshold.txt",
+          "url": "https://huggingface.co/CannotFindObject/RAM_ONNX/resolve/6c4ca81fb841e359c043c1e8f92f62bf5c3b8c18/ram_tag_list_threshold.txt",
+          "sha256": "b6f81d0de1bc7f9c251af512c413eae976c77dbfbadf700d4e3d90510f4c6447",
+          "size": 22016,
+          "mirrors": [
+            "https://huggingface.co/imagent/ram-plus-onnx/resolve/ceffc7a263e5d9cb24cec8216541c7b3c2221162/ram_tag_list_threshold.txt"
+          ]
+        }
+      ],
+      "io": "input [1,3,384,384] fixed (Pillow bilinear squash resize, ImageNet mean/std) -> output [1,4585] logits (sigmoid, then per-tag thresholds).",
+      "notes": "Decision F3-1 (13 Oct 2026): same tag sets as the original PyTorch RAM++ on 52/52 local photos (tools/lab/verify_ramplus.py); C# adapter parity: identical probabilities on CPU, max 1.7e-6 on CUDA (RamPlusParityTests). The int8 conversion is no longer used (12/52 identical sets)."
+    },
+    {
+      "id": "ppocr-en",
+      "function": "Ocr",
+      "name": "PaddleOCR (RapidOCR ONNX): PP-OCRv4 detection + PP-OCRv3 English recognition",
+      "version": "SWHL/RapidOCR@1cfba2e90fc938db55889873735088de210cc173",
+      "phase": 4,
+      "defaultFor": "any",
+      "adapter": "ppocr-v1",
+      "license": {
+        "spdx": "Apache-2.0",
+        "source": "https://huggingface.co/SWHL/RapidOCR",
+        "commercialUse": true,
+        "requiresAcceptance": false,
+        "notes": "PaddleOCR models (Apache-2.0) converted to ONNX by RapidOCR (Apache-2.0); the recognition dictionary is in the model metadata ('character')."
+      },
+      "files": [
+        {
+          "path": "ch_PP-OCRv4_det_infer.onnx",
+          "url": "https://huggingface.co/SWHL/RapidOCR/resolve/1cfba2e90fc938db55889873735088de210cc173/PP-OCRv4/ch_PP-OCRv4_det_infer.onnx",
+          "sha256": "d2a7720d45a54257208b1e13e36a8479894cb74155a5efe29462512d42f49da9",
+          "size": 4745517,
+          "mirrors": []
+        },
+        {
+          "path": "en_PP-OCRv3_rec_infer.onnx",
+          "url": "https://huggingface.co/SWHL/RapidOCR/resolve/1cfba2e90fc938db55889873735088de210cc173/PP-OCRv3/en_PP-OCRv3_rec_infer.onnx",
+          "sha256": "ef7abd8bd3629ae57ea2c28b425c1bd258a871b93fd2fe7c433946ade9b5d9ea",
+          "size": 8967018,
+          "mirrors": []
+        }
+      ],
+      "io": "det x [1,3,H,W] (multiples of 32, min side 736, (x/255-0.5)/0.5) -> probability map [1,1,H,W]; rec x [1,3,48,W<=320] -> softmax [1,T,97] (blank + 96 characters).",
+      "notes": "Decision F4-1 (13 Oct 2026): C# adapters with antialiased resizing and simple DB post-processing; parity with tools/lab/ocr_refs.py on 25 real photos: identical inputs, maps, boxes and texts (OcrParityTests)."
+    },
+    {
+      "id": "florence2-base-ft",
+      "function": "Caption",
+      "name": "Florence-2 base-ft: our vision encoder export + onnx-community text encoder and decoder",
+      "version": "microsoft/Florence-2-base-ft weights; onnx-community@e88a44e; vision export pf-1",
+      "phase": 5,
+      "defaultFor": "any",
+      "adapter": "florence2-v1",
+      "license": {
+        "spdx": "MIT",
+        "source": "https://huggingface.co/microsoft/Florence-2-base-ft",
+        "commercialUse": true,
+        "requiresAcceptance": false,
+        "notes": "Florence-2 (MIT, Microsoft). Text encoder, decoder and tokenizer from the onnx-community conversion (MIT); the vision encoder is exported by tools/lab/export_florence_vision.py from florence-community/Florence-2-base-ft@0b03b6f (MIT) because the onnx-community one does not match the original model."
+      },
+      "files": [
+        {
+          "path": "vision_encoder_pf.onnx",
+          "url": "https://github.com/foyer-labs/PhotoFlow/releases/download/models-florence2-base-ft-1/vision_encoder_pf.onnx",
+          "sha256": "2c540dbac548e04622710c8dad78e98151f67ace5e55f7512b710b1ceff23669",
+          "size": 366351788,
+          "mirrors": []
+        },
+        {
+          "path": "embed_tokens.onnx",
+          "url": "https://huggingface.co/onnx-community/Florence-2-base-ft/resolve/e88a44eaf3791a35eae0c5a47b3dbcd36e67eb6f/onnx/embed_tokens.onnx",
+          "sha256": "90cae3deb6406938c676a35b5246db02b478c9cc8cf93508361be80c05babf95",
+          "size": 157560044,
+          "mirrors": []
+        },
+        {
+          "path": "encoder_model.onnx",
+          "url": "https://huggingface.co/onnx-community/Florence-2-base-ft/resolve/e88a44eaf3791a35eae0c5a47b3dbcd36e67eb6f/onnx/encoder_model.onnx",
+          "sha256": "cb0bccc232c64290397f5e1235eb3e1fa6ccf8c5afed9216480ee4eed80737fc",
+          "size": 173380723,
+          "mirrors": []
+        },
+        {
+          "path": "decoder_model_merged.onnx",
+          "url": "https://huggingface.co/onnx-community/Florence-2-base-ft/resolve/e88a44eaf3791a35eae0c5a47b3dbcd36e67eb6f/onnx/decoder_model_merged.onnx",
+          "sha256": "5207affad8815294233b8679ee9ecb614906f819a1890d95a01b9ca68c392a79",
+          "size": 388421753,
+          "mirrors": []
+        },
+        {
+          "path": "tokenizer.json",
+          "url": "https://huggingface.co/onnx-community/Florence-2-base-ft/resolve/e88a44eaf3791a35eae0c5a47b3dbcd36e67eb6f/tokenizer.json",
+          "sha256": "d69dcdb2323e124ac4f800cb9863ddccea0d7bb11e16125e8df3bd60f2f8aeac",
+          "size": 2297961,
+          "mirrors": []
+        }
+      ],
+      "io": "vision pixel_values [1,3,768,768] (bicubic, ImageNet mean/std) -> image_features [1,577,768]; embed_tokens input_ids -> [B,L,768]; encoder (attention_mask, inputs_embeds [1,577+13,768]) -> last_hidden_state; decoder_model_merged with past_key_values.* and use_cache_branch -> logits [B,1,51289].",
+      "notes": "Decision F5-1 (13 Oct 2026): task <DETAILED_CAPTION>, beam search 3 as transformers' generate; parity with the original PyTorch model (tools/lab/florence_refs.py) on 24 real photos: identical token ids and captions on CPU and CUDA (CaptionParityTests). The vision encoder file is published as a GitHub release asset of this repository (models-florence2-base-ft-1)."
+    },
+    {
+      "id": "qwen3.5-9b",
+      "function": "Vlm",
+      "name": "Qwen3.5-9B (level D, Italian captions), converted on this PC",
+      "version": "Qwen/Qwen3.5-9B@c202236/int4",
+      "phase": 5,
+      "defaultFor": "gpu",
+      "adapter": "qwen3.5-genai",
+      "install": "manual-convert",
+      "license": {
+        "spdx": "Apache-2.0",
+        "source": "https://huggingface.co/Qwen/Qwen3.5-9B",
+        "commercialUse": true,
+        "requiresAcceptance": false,
+        "notes": "Original weights downloaded from Hugging Face (decision U2) and verified with these SHA-256; converted on the PC by tools/vlm (Microsoft Olive recipe for Qwen3.5, MIT; ONNX Runtime GenAI Model Builder, int4). Natively multimodal (image-text-to-text, early fusion): there is no separate -VL model."
+      },
+      "files": [
+        {
+          "path": "LICENSE",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/LICENSE",
+          "sha256": "bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a",
+          "size": 11544,
+          "mirrors": []
+        },
+        {
+          "path": "chat_template.jinja",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/chat_template.jinja",
+          "sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+          "size": 7756,
+          "mirrors": []
+        },
+        {
+          "path": "config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/config.json",
+          "sha256": "d0883072e01861ed0b2d47be3c16c36a8e81c224c7ffaa310c6558fb3f932b05",
+          "size": 3126,
+          "mirrors": []
+        },
+        {
+          "path": "merges.txt",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/merges.txt",
+          "sha256": "a9d356d7bdf1ef4949e3e748e95b8e10ad9d4e2e838eddc38a0a7b6b94d1db8d",
+          "size": 3353259,
+          "mirrors": []
+        },
+        {
+          "path": "model.safetensors-00001-of-00004.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/model.safetensors-00001-of-00004.safetensors",
+          "sha256": "db6f444b43d318c92f360a13a25561a6a65b10c0631b8ed305a426dbaa6c380e",
+          "size": 5276436216,
+          "mirrors": []
+        },
+        {
+          "path": "model.safetensors-00002-of-00004.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/model.safetensors-00002-of-00004.safetensors",
+          "sha256": "31c7d7e2dd5d207840b31cc59083c8f4c4718959149e0358c0364052bb9a0330",
+          "size": 5335161512,
+          "mirrors": []
+        },
+        {
+          "path": "model.safetensors-00003-of-00004.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/model.safetensors-00003-of-00004.safetensors",
+          "sha256": "7ec36ba3a4176a44c3c0876ad80c56a2f70c84bf008d82e9501df642f17dadec",
+          "size": 5368717440,
+          "mirrors": []
+        },
+        {
+          "path": "model.safetensors-00004-of-00004.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/model.safetensors-00004-of-00004.safetensors",
+          "sha256": "b62b0c4cd7e44edee103ee8f4fe225f246d5e768e07bfd5f25b63a8aa1fdd0c6",
+          "size": 3325995712,
+          "mirrors": []
+        },
+        {
+          "path": "model.safetensors.index.json",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/model.safetensors.index.json",
+          "sha256": "26d3539b516be613f39563617cb9d33b3f83d401298125be392c80cefb8f7fe5",
+          "size": 79657,
+          "mirrors": []
+        },
+        {
+          "path": "preprocessor_config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/preprocessor_config.json",
+          "sha256": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516",
+          "size": 390,
+          "mirrors": []
+        },
+        {
+          "path": "tokenizer.json",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/tokenizer.json",
+          "sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+          "size": 12807982,
+          "mirrors": []
+        },
+        {
+          "path": "tokenizer_config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/tokenizer_config.json",
+          "sha256": "316230d6a809701f4db5ea8f8fc862bc3a6f3229c937c174e674ff3ca0a64ac8",
+          "size": 16710,
+          "mirrors": []
+        },
+        {
+          "path": "video_preprocessor_config.json",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/video_preprocessor_config.json",
+          "sha256": "7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13",
+          "size": 385,
+          "mirrors": []
+        },
+        {
+          "path": "vocab.json",
+          "url": "https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/vocab.json",
+          "sha256": "ce99b4cb2983d118806ce0a8b777a35b093e2000a503ebde25853284c9dfa003",
+          "size": 6722759,
+          "mirrors": []
+        }
+      ],
+      "io": "ONNX Runtime GenAI model (vision.onnx, embedding.onnx, text.onnx, genai_config.json, processor_config.json) run by PhotoFlow.Vlm; greedy decoding, Italian prompt, thinking off (empty think block).",
+      "notes": "U1 revised on 15 Oct 2026 (docs/spec.md §5): replaces Qwen2.5-VL-7B for new installations. Hybrid architecture (Gated DeltaNet and full attention); image patches of 16 px merged 2x2 (32 px per image token), at most about one megapixel."
+    },
+    {
+      "id": "qwen2.5-vl-7b",
+      "function": "Vlm",
+      "name": "Qwen2.5-VL-7B-Instruct (level D, Italian captions), converted on this PC",
+      "version": "Qwen/Qwen2.5-VL-7B-Instruct@cc59489/int4",
+      "phase": 5,
+      "defaultFor": null,
+      "adapter": "qwen2.5-vl-genai",
+      "install": "manual-convert",
+      "license": {
+        "spdx": "Apache-2.0",
+        "source": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct",
+        "commercialUse": true,
+        "requiresAcceptance": false,
+        "notes": "Original weights downloaded by the user (decision U2) and verified with these SHA-256; converted on the PC by tools/vlm (Microsoft Olive recipe, MIT; ONNX Runtime GenAI Model Builder, int4). The 3B model is excluded: 'qwen-research' license, non-commercial."
+      },
+      "files": [
+        {
+          "path": "chat_template.json",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/chat_template.json",
+          "sha256": "ad60d90252ed0b0705ba14e2d0ad0fec0beac1ea955642b54059b36052d8bc96",
+          "size": 1050,
+          "mirrors": []
+        },
+        {
+          "path": "config.json",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/config.json",
+          "sha256": "77d9ec7321cc572e3579e2c84799c9cadaded63c49ce93b101733349fc330c43",
+          "size": 1374,
+          "mirrors": []
+        },
+        {
+          "path": "generation_config.json",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/generation_config.json",
+          "sha256": "0a3aea82869fe29f20dc95ccf3e2bcff380eca1f5ad6447a4a4b37110b08e43e",
+          "size": 216,
+          "mirrors": []
+        },
+        {
+          "path": "merges.txt",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/merges.txt",
+          "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+          "size": 1671839,
+          "mirrors": []
+        },
+        {
+          "path": "model-00001-of-00005.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/model-00001-of-00005.safetensors",
+          "sha256": "e97b877e47fde53a6c6e77aafb36e58e91ee9d95c4a3eeac6f1b5c0e6a1c986e",
+          "size": 3900233256,
+          "mirrors": []
+        },
+        {
+          "path": "model-00002-of-00005.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/model-00002-of-00005.safetensors",
+          "sha256": "a9a300a43b4724eee2abe7c18ceb26768d0ab011eb0cad19d9bfd2476a24d024",
+          "size": 3864726320,
+          "mirrors": []
+        },
+        {
+          "path": "model-00003-of-00005.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/model-00003-of-00005.safetensors",
+          "sha256": "111223d173e00bbee81cba1216fad28668df3476706b7fd26f4d5b50f8b3a507",
+          "size": 3864726424,
+          "mirrors": []
+        },
+        {
+          "path": "model-00004-of-00005.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/model-00004-of-00005.safetensors",
+          "sha256": "ef47f634fa57d46ee134edcc09f34085a47da1e16c12a2abe0d67118be6d72ed",
+          "size": 3864733680,
+          "mirrors": []
+        },
+        {
+          "path": "model-00005-of-00005.safetensors",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/model-00005-of-00005.safetensors",
+          "sha256": "0c859795ad3a627a9b95bcb762e059d5b768a4a36fdd4affeff269d93fdecc67",
+          "size": 1089994880,
+          "mirrors": []
+        },
+        {
+          "path": "model.safetensors.index.json",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/model.safetensors.index.json",
+          "sha256": "73b333b0b16e5286ddba615d2caebcd495cf7e616f52eb217a81781393d79de9",
+          "size": 57619,
+          "mirrors": []
+        },
+        {
+          "path": "preprocessor_config.json",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/preprocessor_config.json",
+          "sha256": "f2058c716eef96ccaed1cc1e2d0c08306b62586d535b28d9d08e691b2fab7ca0",
+          "size": 350,
+          "mirrors": []
+        },
+        {
+          "path": "tokenizer.json",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer.json",
+          "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+          "size": 7031645,
+          "mirrors": []
+        },
+        {
+          "path": "tokenizer_config.json",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer_config.json",
+          "sha256": "4abd3520120e266da84c0864fee064d1fb10806f02225911a47253dd38dc5f56",
+          "size": 5702,
+          "mirrors": []
+        },
+        {
+          "path": "vocab.json",
+          "url": "https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct/resolve/cc594898137f460bfe9f0759e9844b3ce807cfb5/vocab.json",
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+          "size": 2776833,
+          "mirrors": []
+        }
+      ],
+      "io": "ONNX Runtime GenAI model (vision.onnx, embedding.onnx, text.onnx, genai_config.json, processor_config.json) run by PhotoFlow.Vlm; greedy decoding, Italian prompt.",
+      "notes": "Phase 5b, decisions U1-U5 and D5b-1..D5b-8 (docs/plans/fase-5b.md). Exception to CLAUDE.md §3: ONNX Runtime GenAI in a separate process, approximate verification against PyTorch. Since 15 Oct 2026 the previous model: kept in use where already converted, until the user chooses qwen3.5-9b."
+    }
+  ]
+}

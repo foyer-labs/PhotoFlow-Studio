@@ -1,0 +1,26 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- First start: where the catalog will be saved, before it is created (spec §9). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.CatalogLocationView"
+             x:DataType="vm:CatalogLocationViewModel">
+  <Border Classes="card" Padding="24" Width="600" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <StackPanel Spacing="12">
+      <TextBlock Classes="subtitle" Text="{Binding Title}" />
+      <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{l:Tr CatalogLocation.Body}" />
+      <TextBlock Classes="overline" Text="{l:Tr CatalogLocation.Folder}" />
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+        <TextBlock Classes="data" VerticalAlignment="Center" TextWrapping="Wrap" Text="{Binding Folder}" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+          <Button Classes="ghost" IsVisible="{Binding !IsDefault}" IsEnabled="{Binding !IsBusy}" Command="{Binding UseDefaultCommand}" Content="{l:Tr CatalogLocation.UseDefault}" />
+          <Button Classes="secondary" IsEnabled="{Binding !IsBusy}" Command="{Binding ChooseFolderCommand}" Content="{l:Tr CatalogLocation.Choose}" />
+        </StackPanel>
+      </Grid>
+      <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr CatalogLocation.Note}" />
+      <Button Classes="primary" HorizontalAlignment="Left" IsEnabled="{Binding !IsBusy}" Command="{Binding ConfirmCommand}" Content="{l:Tr CatalogLocation.Confirm}" />
+      <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    </StackPanel>
+  </Border>
+</UserControl>

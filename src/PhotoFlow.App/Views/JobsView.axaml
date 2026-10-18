@@ -1,0 +1,135 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Jobs, boards 3g (running, stages, errors, log), 3h (no job), 3i (paused for an unavailable destination). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.JobsView"
+             x:DataType="vm:JobsViewModel">
+  <Panel>
+    <!-- 3h -->
+    <StackPanel IsVisible="{Binding IsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+      <TextBlock Classes="subtitle" HorizontalAlignment="Center" Text="{l:Tr Jobs.Empty.Title}" />
+      <TextBlock Classes="body tertiary" HorizontalAlignment="Center" Text="{l:Tr Jobs.Empty.Body}" />
+    </StackPanel>
+
+    <Grid ColumnDefinitions="300,*" IsVisible="{Binding !IsEmpty}">
+      <!-- Job list -->
+      <Border BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="0,0,1,0" Background="{DynamicResource PF.Brush.Window}">
+        <ScrollViewer>
+          <StackPanel Margin="12" Spacing="16">
+            <StackPanel IsVisible="{Binding Running.Count, Converter={x:Static vm:Converters.Positive}}">
+              <TextBlock Classes="overline" Text="{l:Tr Jobs.Running}" />
+              <ListBox Classes="jobs" ItemsSource="{Binding Running}" SelectedItem="{Binding Selected}">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:JobListItemViewModel">
+                    <StackPanel Spacing="4" Margin="0,6">
+                      <Grid ColumnDefinitions="*,Auto"><TextBlock Classes="label" Text="{Binding Name}" TextTrimming="CharacterEllipsis" /><TextBlock Grid.Column="1" Classes="micro tertiary" Text="{Binding Remaining}" /></Grid>
+                      <TextBlock Classes="micro tertiary" Text="{Binding Detail}" />
+                      <ProgressBar Classes="thin" Minimum="0" Maximum="1" Value="{Binding Progress}" />
+                    </StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </StackPanel>
+            <StackPanel IsVisible="{Binding Queued.Count, Converter={x:Static vm:Converters.Positive}}">
+              <TextBlock Classes="overline" Text="{l:Tr Jobs.Queued}" />
+              <ListBox Classes="jobs" ItemsSource="{Binding Queued}" SelectedItem="{Binding Selected}">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:JobListItemViewModel">
+                    <StackPanel Spacing="2" Margin="0,6"><TextBlock Classes="label" Text="{Binding Name}" /><TextBlock Classes="micro tertiary" Text="{Binding Detail}" /></StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </StackPanel>
+            <StackPanel IsVisible="{Binding Completed.Count, Converter={x:Static vm:Converters.Positive}}">
+              <TextBlock Classes="overline" Text="{l:Tr Jobs.Completed}" />
+              <ListBox Classes="jobs" ItemsSource="{Binding Completed}" SelectedItem="{Binding Selected}">
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:JobListItemViewModel">
+                    <StackPanel Spacing="2" Margin="0,6"><TextBlock Classes="label" Text="{Binding Name}" /><TextBlock Classes="micro tertiary" Text="{Binding Detail}" /></StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+
+      <!-- Selected job -->
+      <ScrollViewer Grid.Column="1" IsVisible="{Binding HasSelection}">
+        <StackPanel Margin="24" Spacing="20">
+          <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Spacing="4">
+              <TextBlock Classes="sectionTitle" Text="{Binding SelectedName}" />
+              <TextBlock Classes="label tertiary" Text="{Binding SelectedDetail}" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+              <Button x:Name="PauseButton" Classes="secondary" Command="{Binding PauseCommand}" IsVisible="{Binding CanPause}">
+                <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Jobs.Pause}" /><Border Classes="key"><TextBlock Text="Space" /></Border></StackPanel>
+              </Button>
+              <Button x:Name="ResumeButton" Classes="secondary" Command="{Binding ResumeCommand}" IsVisible="{Binding CanResume}">
+                <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Jobs.Resume}" /><Border Classes="key"><TextBlock Text="Space" /></Border></StackPanel>
+              </Button>
+              <Button Classes="primary" Command="{Binding OpenReviewCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Home.OpenReview}" /><Border Classes="key" BorderBrush="{DynamicResource PF.Brush.PrimaryActionText}"><TextBlock Text="Ctrl 3" Foreground="{DynamicResource PF.Brush.PrimaryActionText}" /></Border></StackPanel>
+              </Button>
+            </StackPanel>
+          </Grid>
+
+          <!-- 3i: paused -->
+          <Border Classes="card cardError" Padding="16" IsVisible="{Binding PauseMessage, Converter={x:Static ObjectConverters.IsNotNull}}">
+            <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding PauseMessage}" />
+          </Border>
+
+          <!-- Stages -->
+          <ItemsControl ItemsSource="{Binding Stages}">
+            <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="9" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:StageViewModel">
+                <StackPanel Spacing="6" Margin="0,0,8,0" Opacity="{Binding IsActive, Converter={x:Static vm:Converters.ActiveOpacity}}">
+                  <TextBlock Classes="micro tertiary" Text="{Binding Label}" />
+                  <ProgressBar Classes="thin" Minimum="0" Maximum="1" Value="{Binding Value}" />
+                  <TextBlock Classes="data" Text="{Binding Count}" />
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <StackPanel Orientation="Horizontal" Spacing="24">
+            <TextBlock Classes="data" Text="{Binding Remaining}" />
+            <TextBlock Classes="data tertiary" Text="{Binding Elapsed}" />
+          </StackPanel>
+
+          <!-- Errors: the job goes on -->
+          <StackPanel IsVisible="{Binding Errors.Count, Converter={x:Static vm:Converters.Positive}}">
+            <TextBlock Classes="overline" Text="{Binding ErrorsHeader}" />
+            <Border Classes="card">
+              <ItemsControl ItemsSource="{Binding Errors}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:JobErrorViewModel">
+                    <Grid ColumnDefinitions="180,*" Margin="16,8">
+                      <TextBlock Classes="data" Text="{Binding File}" />
+                      <TextBlock Grid.Column="1" Classes="label secondary" TextWrapping="Wrap" Text="{Binding Message}" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Border>
+          </StackPanel>
+
+          <!-- Log of this session -->
+          <StackPanel>
+            <TextBlock Classes="overline" Text="{l:Tr Jobs.Log}" />
+            <Border Classes="card" Padding="12" MinHeight="80">
+              <ItemsControl ItemsSource="{Binding Log}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="x:String"><SelectableTextBlock Classes="data" Text="{Binding}" /></DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Border>
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </Panel>
+</UserControl>
