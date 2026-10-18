@@ -24,13 +24,15 @@ class _Defaults(dict):
         return "{" + key + "}"
 
 
-def render_name(template: str, meta: ImageMeta, method: str) -> str:
+def render_name(template: str, meta: ImageMeta, method: str, extra: dict[str, str] | None = None) -> str:
+    """``extra``: altri segnaposto dati da chi esporta (PhotoFlow Studio: {evento}, {stelle}, {seq})."""
     values = _Defaults(
         nome=meta.source.stem,
         metodo=method,
         iso=str(int(meta.iso)) if meta.iso else "",
         data=meta.date,
     )
+    values.update({k: str(v) for k, v in (extra or {}).items() if k not in values})
     try:
         name = template.format_map(values)
     except (ValueError, IndexError, AttributeError, KeyError, TypeError):  # es. «{nome.x}», «{0}»
@@ -39,11 +41,11 @@ def render_name(template: str, meta: ImageMeta, method: str) -> str:
     return name or meta.source.stem
 
 
-def output_path(meta: ImageMeta, out: OutputSettings, method: str) -> Path:
+def output_path(meta: ImageMeta, out: OutputSettings, method: str, extra: dict[str, str] | None = None) -> Path:
     folder = Path(out.folder) if out.folder else Path(".")
     if not folder.is_absolute():
         folder = meta.source.parent / folder
-    return folder / (render_name(out.name_template, meta, method) + OUTPUT_EXTENSIONS[out.format])
+    return folder / (render_name(out.name_template, meta, method, extra) + OUTPUT_EXTENSIONS[out.format])
 
 
 def unique_path(path: Path) -> Path:

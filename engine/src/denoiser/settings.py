@@ -102,6 +102,12 @@ class OutputSettings:
     overwrite: bool = False
     #: Copia tutti i metadati dell'originale (EXIF, XMP, GPS…) con ExifTool.
     copy_metadata: bool = True
+    #: Lato lungo massimo in pixel per TIFF, PNG e JPEG (0 = piena risoluzione; il DNG non si riduce).
+    max_side: int = 0
+    #: Toglie la posizione GPS dai metadati copiati (es. per il web).
+    strip_gps: bool = False
+    #: Nei DNG scrive toni e curva come istruzioni di Camera Raw (False = «solo pulizia»).
+    camera_raw: bool = True
 
 
 @dataclass
@@ -148,7 +154,7 @@ _RANGES: dict[str, tuple[float, float]] = {
     "hot_pixel_threshold": (0.0, 100.0), "exposure_ev": (-10.0, 10.0), "jpeg_quality": (1, 100),
     "temperature": (2000.0, 15000.0), "tint": (-150.0, 150.0),
     "contrast": (-100.0, 100.0), "brightness": (-100.0, 100.0), "highlights": (-100.0, 100.0),
-    "shadows": (-100.0, 100.0), "saturation": (-100.0, 100.0),
+    "shadows": (-100.0, 100.0), "saturation": (-100.0, 100.0), "max_side": (0, 30000),
 }
 
 #: Numero massimo di punti della curva dei toni.

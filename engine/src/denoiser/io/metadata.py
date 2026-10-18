@@ -61,14 +61,17 @@ def read_tag(path: Path, tag: str, exiftool: Path | None = None) -> str | None:
     return value or None
 
 
-def copy_metadata(source: Path, target: Path, exiftool: Path | None = None) -> str | None:
-    """Copia i metadati di ``source`` in ``target``. Restituisce un messaggio d'errore o None."""
+def copy_metadata(source: Path, target: Path, exiftool: Path | None = None, strip_gps: bool = False) -> str | None:
+    """Copia i metadati di ``source`` in ``target`` (con ``strip_gps`` senza la posizione).
+    Restituisce un messaggio d'errore o None."""
     exiftool = exiftool or find_exiftool()
     if exiftool is None:
         return "ExifTool non trovato: copiati solo i metadati essenziali"
     args = ["-charset", "filename=utf8", "-overwrite_original", "-m", "-q", "-q",
             "-TagsFromFile", str(source), "-all:all"]
     args += [f"--{tag}" for tag in _EXCLUDED]
+    if strip_gps:
+        args += ["--GPS:all", "--XMP-exif:GPS*"]
     args += [f"-Software=Denoiser {__version__}", str(target)]
     # Gli argomenti arrivano da stdin in UTF-8 («-@ -»): funziona con lettere accentate nei nomi dei
     # file e nel nome utente su Windows, senza file temporanei.

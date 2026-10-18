@@ -103,7 +103,7 @@ def export_image(
         if settings.output.copy_metadata and image.meta.source.is_file():
             if progress is not None:
                 progress(1.0, "Copia dei metadati")
-            problem = copy_metadata(image.meta.source, written)
+            problem = copy_metadata(image.meta.source, written, strip_gps=settings.output.strip_gps)
             if problem and notes is not None:
                 notes.append(problem)
         if progress is not None:
@@ -123,6 +123,12 @@ def _write_output(
     if out.format == "dng":
         return _export_dng(image, analysis, settings, destination, description, progress)
     pixels = render(image, analysis, settings, progress=progress)
+    if out.max_side and max(pixels.shape[:2]) > out.max_side:
+        import cv2
+
+        h, w = pixels.shape[:2]
+        scale = out.max_side / max(h, w)
+        pixels = cv2.resize(pixels, (max(1, round(w * scale)), max(1, round(h * scale))), interpolation=cv2.INTER_AREA)
     return save_image(
         pixels,
         destination,
@@ -150,7 +156,7 @@ def _export_dng(
     exposure = settings.tone.exposure_ev
     # Il RAW resta da sviluppare: toni e curva diventano istruzioni per Camera Raw, il bilanciamento
     # l'AsShotNeutral (o, nel DNG lineare, una correzione già applicata ai colori).
-    xmp = camera_raw_xmp(settings.tone)
+    xmp = camera_raw_xmp(settings.tone) if settings.output.camera_raw else None
     color = analysis.color
     if uses_sensor_stage(image, settings):
         # Livello 3: si salvano i dati del sensore ripuliti, il fotoritocco farà il resto.
@@ -208,8 +214,9 @@ def export_one(
     use_converter: bool = True,
     progress: ProgressFn | None = None,
     taken: frozenset[Path] = frozenset(),
+    name_values: dict[str, str] | None = None,
 ) -> tuple[str, Path | None, list[str]]:
-    """Esporta una foto di un'esportazione multipla. Restituisce (esito, file salvato, note); esito
+    """Esporta una foto di un'esportazione multipla.  ``name_values``: segnaposto in più per il nome. Restituisce (esito, file salvato, note); esito
     "ok" o "saltata".
 
     ``policy``: vedi :data:`EXISTING_POLICIES`. ``taken``: file già prodotti nella stessa esportazione
@@ -217,7 +224,7 @@ def export_one(
     foto, si usa un nome nuovo. Nemmeno l'originale viene mai sovrascritto, qualunque sia ``policy``.
     """
     image = load_image(path, settings.develop, use_converter, converter)
-    destination = output_path(image.meta, settings.output, settings.denoise.algorithm)
+    destination = output_path(image.meta, settings.output, settings.denoise.algorithm, name_values)
     if destination in taken or is_source(destination, image.meta.source):
         destination = unique_path(destination)
     elif destination.exists():
