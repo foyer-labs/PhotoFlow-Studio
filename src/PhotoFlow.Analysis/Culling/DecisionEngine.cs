@@ -13,7 +13,8 @@ namespace PhotoFlow.Analysis.Culling;
 /// </summary>
 public sealed class DecisionEngine : IDecisionEngine
 {
-    public const string EngineVersion = "decision-v1";
+    /// <summary>v2 (15 Oct 2026): exposure of the whole photo (many blown highlights, very dark) also gives "to review".</summary>
+    public const string EngineVersion = "decision-v2";
 
     /// <summary>Tolerant exposure (motorsport) accepts this many times the clipping of the normal mode.</summary>
     public const double TolerantExposureFactor = 1.5;
@@ -69,18 +70,32 @@ public sealed class DecisionEngine : IDecisionEngine
             review.Add(Reasons.EyesClosedOthers);
         }
 
-        // Exposure counts in the subject zone (spec §6): without a subject, dark or bright areas are often intended.
-        if (profile.Exposure != ExposureMode.Off && signals.Zone != SharpnessZoneKind.Tiles && discard.Count == 0)
+        if (profile.Exposure != ExposureMode.Off && discard.Count == 0)
         {
             var factor = profile.Exposure == ExposureMode.Tolerant ? TolerantExposureFactor : 1.0;
-            if (signals.ZoneHighlights > t.HighlightsReview * factor)
+
+            // In the subject zone (spec §6): without a subject, dark or bright areas are often intended.
+            var zoneHighlights = signals.Zone != SharpnessZoneKind.Tiles && signals.ZoneHighlights > t.HighlightsReview * factor;
+            if (zoneHighlights)
             {
                 review.Add(Reasons.Highlights);
             }
 
-            if (signals.ZoneShadows > t.ShadowsReview * factor)
+            if (signals.Zone != SharpnessZoneKind.Tiles && signals.ZoneShadows > t.ShadowsReview * factor)
             {
                 review.Add(Reasons.Shadows);
+            }
+
+            // On the whole photo too (15 Oct 2026): many blown highlights or a very dark photo are to review even when
+            // the subject zone — a small AF area — is well exposed.
+            if (!zoneHighlights && signals.FrameHighlights > t.FrameHighlightsReview * factor)
+            {
+                review.Add(Reasons.FrameHighlights);
+            }
+
+            if (signals.FrameBrightness < t.FrameBrightnessReview / factor)
+            {
+                review.Add(Reasons.FrameDark);
             }
         }
 
@@ -101,5 +116,7 @@ public sealed class DecisionEngine : IDecisionEngine
         public const string EyesClosedOthers = "eyes.closed.others";
         public const string Highlights = "exposure.highlights";
         public const string Shadows = "exposure.shadows";
+        public const string FrameHighlights = "exposure.frame.highlights";
+        public const string FrameDark = "exposure.frame.dark";
     }
 }

@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Globalization;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
+using PhotoFlow.App.Localization;
 using PhotoFlow.App.Services;
 using PhotoFlow.App.ViewModels;
 using PhotoFlow.App.Views;
@@ -108,6 +111,58 @@ public sealed class ReviewKeyboardTests : IDisposable
         Assert.False(review.IsDetailsOpen);
         Press(window, PhysicalKey.Tab);
         Assert.True(review.IsDetailsOpen);
+
+        // P21: Space opens the photo large; there T and D fix tags and caption, a click on a face says who it is,
+        // Maiusc N starts a face by hand, ← → go on with the photo still large, Esc goes back to the grid.
+        var photo = first;
+        review.SelectCommand.Execute(photo);
+        await WaitAsync(() => review.SelectedSignals.Any(s => s.Label == Strings.Get("Signal.Brightness"))); // exposure of the whole photo too
+        await host.Catalog.Analysis.ReplaceAutomaticFacesAsync(photo.AnalyzedAssetId,
+            [new Face(0, photo.AnalyzedAssetId, new PhotoFlow.Core.Analysis.BoundingBox(0.3f, 0.2f, 0.6f, 0.7f), null, 0.9, EyeState.Open, EyeState.Open, null, null, null, null, "t")],
+            CancellationToken.None);
+        await review.Editor.LoadAsync(photo.AnalyzedAssetId); // the face arrived after the photo was selected
+        Press(window, PhysicalKey.Space);
+        Assert.True(review.IsLargePhoto);
+        await WaitAsync(() => review.LargeImage is not null);
+        await WaitAsync(() => review.Editor.FaceBoxes.Count == 1);
+        Press(window, PhysicalKey.T);
+        Assert.True(review.Editor.IsTagging);
+        review.Editor.TagText = "Monza 2026";
+        await review.Editor.ApplyTagCommand.ExecuteAsync(null);
+        Assert.Contains(review.Editor.Tags, t => t.Label == "Monza 2026" && t.IsManual);
+        Press(window, PhysicalKey.D);
+        Assert.True(review.Editor.IsEditingCaption);
+        review.Editor.CaptionText = "La partenza";
+        Press(window, PhysicalKey.Enter);
+        await WaitAsync(() => review.Editor.CaptionLine == "La partenza");
+        Assert.Equal(CaptionOrigin.Manual, (await host.Catalog.Captions.GetAsync(photo.AnalyzedAssetId, CancellationToken.None))!.Origin);
+
+        Dispatcher.UIThread.RunJobs();
+        var large = window.GetVisualDescendants().OfType<FacesPhotoView>().Single(v => v.Name == "Photo");
+        var surface = large.GetVisualDescendants().OfType<Canvas>().First(c => c.Name == "Surface");
+        var face = review.Editor.FaceBoxes.Single();
+        var center = surface.TranslatePoint(new Avalonia.Point(face.X + (face.Width / 2), face.Y + (face.Height / 2)), window)!.Value;
+        window.MouseDown(center, MouseButton.Left);
+        window.MouseUp(center, MouseButton.Left);
+        await WaitAsync(() => review.Editor.IdentifyingFace is not null && review.Editor.FacePeople.Count > 0);
+        review.Editor.FacePerson = review.Editor.FacePeople[0]; // + Nuova persona…
+        review.Editor.NewFacePersonName = "Giulia";
+        Save(window, "2i-large-photo");
+        await review.Editor.SaveFaceCommand.ExecuteAsync(null);
+        await WaitAsync(() => review.SelectedPeople.Any(p => p.Name == "Giulia") && review.Editor.FaceBoxes.Single().Name == "Giulia");
+        Focus(window);
+
+        Press(window, PhysicalKey.N, RawInputModifiers.Shift);
+        await WaitAsync(() => review.Editor.IsDrawingFace);
+        Press(window, PhysicalKey.Escape);
+        Assert.False(review.Editor.IsDrawingFace);
+        Assert.True(review.IsLargePhoto);
+        Press(window, PhysicalKey.ArrowRight);
+        Assert.NotEqual(photo, review.Selected);
+        Assert.True(review.IsLargePhoto);
+        Press(window, PhysicalKey.Escape);
+        Assert.False(review.IsLargePhoto);
+        Assert.True(review.IsGrid);
 
         // Confirmation and writing (2g, 2h): Ctrl+Enter twice.
         Press(window, PhysicalKey.Enter, RawInputModifiers.Control);

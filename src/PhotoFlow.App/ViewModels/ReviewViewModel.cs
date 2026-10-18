@@ -38,6 +38,9 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
     public static readonly int[] CellSizes = [120, 168, 240];
     public const int CellGap = 4;
 
+    /// <summary>Long side of the large photo (P21): enough for a full-screen view on a 2560 px monitor.</summary>
+    public const int LargePhotoSide = 2560;
+
     private static readonly CommandTable Table = new(
     [
         new("Review.Move", new KeyGesture(Key.Left), "Review.Command.Navigate", StatusGroupKey: "Review.Command.Navigate", Parameter: "-1,0"),
@@ -75,6 +78,11 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
         new("Review.MoveDiscards", new KeyGesture(Key.M, KeyModifiers.Control | KeyModifiers.Shift), "Review.Command.MoveDiscards"),
         new("Review.Undo", new KeyGesture(Key.Z, KeyModifiers.Control), "Review.Command.Undo", StatusGroupKey: "Review.Command.Undo"),
         new("Review.Confirm", new KeyGesture(Key.Enter, KeyModifiers.Control), "Review.Confirm", StatusGroupKey: "Review.Confirm"),
+        new("Review.LargePhoto", new KeyGesture(Key.Space), "Review.Command.LargePhoto", StatusGroupKey: "Review.Command.LargePhoto"),
+        new("Review.Tag", new KeyGesture(Key.T), "Browse.Command.Tag", StatusGroupKey: "Browse.Command.Tag"),
+        new("Review.Caption", new KeyGesture(Key.D), "Browse.Command.Caption"),
+        new("Review.Faces", new KeyGesture(Key.V), "Browse.Command.Faces"),
+        new("Review.AddFace", new KeyGesture(Key.N, KeyModifiers.Shift), "Browse.Command.AddFace"),
         new("Review.Escape", new KeyGesture(Key.Escape), "Common.Cancel"),
     ]);
 
@@ -93,8 +101,23 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
         _host = host;
         _navigator = navigator;
         Filters = [new(null) { IsActive = true }, .. new[] { CullingOutcome.Discard, CullingOutcome.ToReview, CullingOutcome.Best, CullingOutcome.Similar, CullingOutcome.Kept }.Select(o => new OutcomeFilterViewModel(o))];
+        Editor = new PhotoEditorViewModel(host);
+        Editor.Changed += async (_, _) => await ShowPeopleAsync(Selected);
+        Editor.LargePhotoRequested += (_, _) => OpenLargePhoto();
         _host.Jobs.StatusChanged += OnJobStatus;
     }
+
+    /// <summary>Tags, caption and faces of the selected photo, fixed during the review (P21).</summary>
+    public PhotoEditorViewModel Editor { get; }
+
+    /// <summary>The selected photo shown large (Space or double click), with its faces.</summary>
+    [ObservableProperty]
+    private bool _isLargePhoto;
+
+    [ObservableProperty]
+    private Bitmap? _largeImage;
+
+    private int _largeVersion;
 
     public override string Title => Strings.Get("Nav.Review");
 
@@ -123,6 +146,11 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
         "Review.MoveDiscards" => RequestMoveDiscardsCommand,
         "Review.Undo" => UndoCommand,
         "Review.Confirm" => ConfirmOrWriteCommand,
+        "Review.LargePhoto" => ToggleLargePhotoCommand,
+        "Review.Tag" => Editor.StartTagCommand,
+        "Review.Caption" => Editor.StartCaptionCommand,
+        "Review.Faces" => Editor.ToggleFacesCommand,
+        "Review.AddFace" => Editor.StartAddFaceCommand,
         "Review.Escape" => EscapeCommand,
         _ => base.ResolveCommand(id),
     };
@@ -300,6 +328,7 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
     {
         var catalog = _host.Catalog;
         PrudentMode = _host.Settings.PrudentMode;
+        await Editor.LoadTagSuggestionsAsync();
         JobId ??= (await catalog.Jobs.ListRecentAsync(10, CancellationToken.None)).FirstOrDefault(j => j.State == JobState.Completed || j.Type == JobType.Import)?.Id;
         OnPropertyChanged(nameof(NoJob));
         if (JobId is not { } jobId || await catalog.Jobs.GetAsync(jobId, CancellationToken.None) is not { } job)
@@ -430,12 +459,16 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
         }
 
         _ = ShowDetailsAsync(newValue);
+        _ = Editor.LoadAsync(newValue?.AnalyzedAssetId);
+        if (IsLargePhoto)
+        {
+            _ = LoadLargeImageAsync(newValue);
+        }
     }
 
     private async Task ShowDetailsAsync(ReviewItemViewModel? value)
     {
         SelectedSignals.Clear();
-        SelectedPeople.Clear();
         SelectedPreview = null;
         if (value is null)
         {
@@ -449,8 +482,21 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
             var t = profile.Thresholds;
             SelectedSignals.Add(new(Strings.Get("Signal.Sharpness." + s.Zone), s.ZoneSharpness, t.BlurReview, s.ZoneSharpness.ToString("0.00", CultureInfo.CurrentCulture)));
             SelectedSignals.Add(new(Strings.Get("Signal.SharpnessFrame"), s.FrameSharpness, t.BlurDiscard, s.FrameSharpness.ToString("0.00", CultureInfo.CurrentCulture)));
-            SelectedSignals.Add(new(Strings.Get("Signal.Highlights"), s.ZoneHighlights, t.HighlightsReview, s.ZoneHighlights.ToString("P0", CultureInfo.CurrentCulture)));
-            SelectedSignals.Add(new(Strings.Get("Signal.Shadows"), s.ZoneShadows, t.ShadowsReview, s.ZoneShadows.ToString("P0", CultureInfo.CurrentCulture)));
+            // Exposure: the zone the decision uses (named, as for sharpness), and the whole photo next to it — a small
+            // AF area can be well exposed in a photo full of blown highlights (Z5 II, 15 Oct 2026).
+            SelectedSignals.Add(new(Strings.Get("Signal.Highlights." + s.Zone), s.ZoneHighlights, t.HighlightsReview, s.ZoneHighlights.ToString("P0", CultureInfo.CurrentCulture)));
+            if (s.Zone != SharpnessZoneKind.Tiles)
+            {
+                SelectedSignals.Add(new(Strings.Get("Signal.Highlights.Frame"), s.FrameHighlights, null, s.FrameHighlights.ToString("P0", CultureInfo.CurrentCulture)));
+            }
+
+            SelectedSignals.Add(new(Strings.Get("Signal.Shadows." + s.Zone), s.ZoneShadows, t.ShadowsReview, s.ZoneShadows.ToString("P0", CultureInfo.CurrentCulture)));
+            if (s.Zone != SharpnessZoneKind.Tiles)
+            {
+                SelectedSignals.Add(new(Strings.Get("Signal.Shadows.Frame"), s.FrameShadows, null, s.FrameShadows.ToString("P0", CultureInfo.CurrentCulture)));
+            }
+
+            SelectedSignals.Add(new(Strings.Get("Signal.Brightness"), s.FrameBrightness, null, s.FrameBrightness.ToString("P0", CultureInfo.CurrentCulture)));
             if (s.MainFaceLeftEyeRatio is { } left && s.MainFaceRightEyeRatio is { } right)
             {
                 var eyes = Math.Min(left, right);
@@ -459,21 +505,10 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
             }
         }
 
-        foreach (var face in await _host.Catalog.Analysis.GetFacesAsync(value.AnalyzedAssetId, CancellationToken.None))
+        await ShowPeopleAsync(value);
+        if (Selected != value)
         {
-            if (Selected != value)
-            {
-                return;
-            }
-
-            if (face.PersonId is { } person)
-            {
-                SelectedPeople.Add(new(await PersonNameAsync(person), false, string.Empty));
-            }
-            else if (face.SuggestedPersonId is { } suggested)
-            {
-                SelectedPeople.Add(new(await PersonNameAsync(suggested), true, (face.Similarity ?? 0).ToString("0.00", CultureInfo.CurrentCulture)));
-            }
+            return;
         }
 
         var path = value.ThumbnailPath;
@@ -484,6 +519,119 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
             {
                 SelectedPreview = bitmap;
             }
+        }
+    }
+
+    /// <summary>The people of the panel: those assigned, and those only suggested with their similarity.</summary>
+    private async Task ShowPeopleAsync(ReviewItemViewModel? value)
+    {
+        SelectedPeople.Clear();
+        if (value is null)
+        {
+            return;
+        }
+
+        var faces = await _host.Catalog.Analysis.GetFacesAsync(value.AnalyzedAssetId, CancellationToken.None);
+        var chips = new List<PersonChipViewModel>();
+        foreach (var face in faces)
+        {
+            if (face.PersonId is { } person)
+            {
+                chips.Add(new(await PersonNameAsync(person), false, string.Empty));
+            }
+            else if (face.SuggestedPersonId is { } suggested)
+            {
+                chips.Add(new(await PersonNameAsync(suggested), true, (face.Similarity ?? 0).ToString("0.00", CultureInfo.CurrentCulture)));
+            }
+        }
+
+        if (Selected == value)
+        {
+            SelectedPeople.Clear();
+            foreach (var chip in chips)
+            {
+                SelectedPeople.Add(chip);
+            }
+        }
+    }
+
+    // --- Large photo (P21) ---
+
+    /// <summary>Space or double click: the selected photo large, with its faces; again (or Esc) back to the grid.</summary>
+    [RelayCommand]
+    private void ToggleLargePhoto()
+    {
+        if (IsLargePhoto)
+        {
+            CloseLargePhoto();
+        }
+        else
+        {
+            OpenLargePhoto();
+        }
+    }
+
+    private void OpenLargePhoto()
+    {
+        if (Selected is null || IsLargePhoto)
+        {
+            return;
+        }
+
+        IsLargePhoto = true;
+        _ = LoadLargeImageAsync(Selected);
+    }
+
+    private void CloseLargePhoto()
+    {
+        Editor.CancelAddFaceCommand.Execute(null);
+        IsLargePhoto = false;
+        LargeImage = null;
+        if (Selected is { } selected && Rows.OfType<ReviewRowViewModel>().FirstOrDefault(r => r.Items.Contains(selected)) is { } row)
+        {
+            RowFocusRequested?.Invoke(this, row);
+        }
+    }
+
+    /// <summary>The photo as large as the analysis sees it (the embedded preview of a RAW), the thumbnail meanwhile.</summary>
+    private async Task LoadLargeImageAsync(ReviewItemViewModel? item)
+    {
+        var version = ++_largeVersion;
+        if (item is null)
+        {
+            LargeImage = null;
+            return;
+        }
+
+        if (item.ThumbnailPath is { } thumbnail && await Task.Run(() => LoadBitmap(thumbnail)) is { } quick && version == _largeVersion)
+        {
+            Show(quick);
+        }
+
+        var path = await AssetFiles.LocateAsync(_host.Catalog, _host.FileSystem, item.AnalyzedAssetId, CancellationToken.None);
+        if (path is null)
+        {
+            return;
+        }
+
+        try
+        {
+            var preview = await _host.Previews.GetPreviewAsync(path, LargePhotoSide, CancellationToken.None);
+            var bitmap = await Task.Run(() => UiBitmaps.FromImage(preview.Image));
+            if (version == _largeVersion)
+            {
+                Show(bitmap);
+            }
+        }
+        catch (Exception e) when (e is IOException or InvalidOperationException)
+        {
+            // The thumbnail stays.
+        }
+
+        void Show(Bitmap bitmap)
+        {
+            LargeImage = bitmap;
+            Editor.ImageSize = new Size(bitmap.PixelSize.Width, bitmap.PixelSize.Height);
         }
     }
 
@@ -658,6 +806,14 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
         else if (IsConfirming)
         {
             IsConfirming = false;
+        }
+        else if (Editor.Escape())
+        {
+            // a field or the face being added closed
+        }
+        else if (IsLargePhoto)
+        {
+            CloseLargePhoto();
         }
         else if (IsCompare)
         {
@@ -956,6 +1112,11 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
 
     private void OpenCompare(IReadOnlyList<ReviewItemViewModel> photos)
     {
+        if (IsLargePhoto)
+        {
+            CloseLargePhoto();
+        }
+
         CompareItems.Clear();
         foreach (var (photo, index) in photos.Take(4).Select((p, i) => (p, i)))
         {
@@ -997,6 +1158,11 @@ public sealed partial class ReviewViewModel : PageViewModel, IDisposable
     [RelayCommand]
     private void ShowGrid()
     {
+        if (IsLargePhoto)
+        {
+            CloseLargePhoto();
+        }
+
         Mode = ReviewMode.Grid;
         CompareItems.Clear();
         foreach (var item in _all.Where(i => i.IsCompared))

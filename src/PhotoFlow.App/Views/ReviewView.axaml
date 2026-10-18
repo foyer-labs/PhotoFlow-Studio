@@ -4,6 +4,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:v="using:PhotoFlow.App.Views"
              xmlns:l="using:PhotoFlow.App.Localization"
              x:Class="PhotoFlow.App.Views.ReviewView"
              x:DataType="vm:ReviewViewModel">
@@ -94,6 +95,9 @@
             <StackPanel Orientation="Horizontal" Spacing="4">
               <Button Classes="chip" Classes.active="{Binding IsGrid}" Command="{Binding ShowGridCommand}">
                 <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Review.Mode.Grid}" /><TextBlock Classes="micro tertiary" Text="G" /></StackPanel>
+              </Button>
+              <Button Classes="chip" Classes.active="{Binding IsLargePhoto}" Command="{Binding ToggleLargePhotoCommand}">
+                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Review.Mode.LargePhoto}" /><TextBlock Classes="micro tertiary" Text="{l:Tr Review.Key.Space}" /></StackPanel>
               </Button>
               <Button Classes="chip" Classes.active="{Binding IsCompare}" Command="{Binding CompareCommand}">
                 <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Review.Mode.Compare}" /><TextBlock Classes="micro tertiary" Text="C" /></StackPanel>
@@ -257,6 +261,18 @@
           </ItemsControl>
           <TextBlock Grid.Row="1" Classes="micro tertiary" Margin="16,6" Text="{l:Tr Review.Compare.Hint}" />
         </Grid>
+
+        <!-- P21: the photo large (Space, double click), with its faces; tags and caption in the panel -->
+        <Panel Grid.Row="4" IsVisible="{Binding IsLargePhoto}">
+          <v:LargePhotoView DataContext="{Binding Editor}" AddFaceKey="{l:Tr Review.Key.AddFace}" FacesHint="{l:Tr Review.ClickFaceHint}"
+                            Source="{Binding $parent[UserControl].((vm:ReviewViewModel)DataContext).LargeImage}"
+                            CloseCommand="{Binding $parent[UserControl].((vm:ReviewViewModel)DataContext).ToggleLargePhotoCommand}" />
+          <StackPanel Orientation="Horizontal" Spacing="12" Margin="16,18" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <TextBlock Classes="label" Text="{Binding Selected.Name, FallbackValue=''}" />
+            <TextBlock Classes="label tertiary" Text="{Binding Selected.OutcomeLabel, FallbackValue=''}" />
+            <TextBlock Classes="label" Text="{Binding Selected.StarsText, FallbackValue=''}" />
+          </StackPanel>
+        </Panel>
       </Grid>
 
       <!-- Details panel (Tab) -->
@@ -308,6 +324,9 @@
               </ItemsControl.ItemTemplate>
             </ItemsControl>
             <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Review.People.Note}" IsVisible="{Binding SelectedPeople.Count, Converter={x:Static vm:Converters.Positive}}" />
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Review.People.Hint}" />
+            <v:PhotoEditorPanel DataContext="{Binding Editor}" />
+            <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding Editor.Message}" IsVisible="{Binding Editor.Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
             <TextBlock Classes="overline" Text="{l:Tr Review.Signals}" />
             <ItemsControl ItemsSource="{Binding SelectedSignals}">
               <ItemsControl.ItemTemplate>

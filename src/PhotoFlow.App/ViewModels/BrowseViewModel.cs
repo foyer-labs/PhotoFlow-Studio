@@ -224,6 +224,9 @@ public sealed partial class BrowseViewModel : PageViewModel
     {
         _host = host;
         Facets = new BrowseFacetsViewModel(host, SearchAsync);
+        Editor = new PhotoEditorViewModel(host);
+        Editor.Changed += async (_, _) => await Facets.LoadAsync(CancellationToken.None); // tag and people counts
+        Editor.LargePhotoRequested += (_, _) => IsLargePreview = true;
         var any = Strings.Get("Browse.Filter.Any");
         YearOptions = [new OptionItem<int?>(null, any), .. Enumerable.Range(1990, DateTime.Today.Year - 1989).Reverse().Select(y => new OptionItem<int?>(y, y.ToString(CultureInfo.InvariantCulture)))];
         RatingOptions = [new OptionItem<int?>(null, any), .. Enumerable.Range(1, 5).Select(r => new OptionItem<int?>(r, Strings.Format("Browse.Filter.RatingValue", r)))];
@@ -243,25 +246,20 @@ public sealed partial class BrowseViewModel : PageViewModel
         "Browse.Photoshop" => OpenInPhotoshopCommand,
         "Browse.Default" => OpenDefaultCommand,
         "Browse.Explorer" => ShowInExplorerCommand,
-        "Browse.Tag" => StartTagCommand,
-        "Browse.Caption" => StartCaptionCommand,
+        "Browse.Tag" => Editor.StartTagCommand,
+        "Browse.Caption" => Editor.StartCaptionCommand,
         "Browse.Similar" => FindSimilarCommand,
         "Browse.Stars" => SetStarsCommand,
         "Browse.Preview" => TogglePreviewCommand,
         "Browse.Facets" => Facets.ToggleCommand,
-        "Browse.Faces" => ToggleFacesCommand,
-        "Browse.AddFace" => StartAddFaceCommand,
+        "Browse.Faces" => Editor.ToggleFacesCommand,
+        "Browse.AddFace" => Editor.StartAddFaceCommand,
         "Browse.Escape" => EscapeCommand,
         _ => base.ResolveCommand(id),
     };
 
     /// <summary>Asks the view to put the keyboard focus in the search field (Ctrl K).</summary>
     public event EventHandler? FocusSearchRequested;
-
-    /// <summary>Asks the view to focus the tag field (T).</summary>
-    public event EventHandler? FocusTagRequested;
-
-    public event EventHandler? FocusCaptionRequested;
 
     // --- Query ---
 
@@ -360,14 +358,8 @@ public sealed partial class BrowseViewModel : PageViewModel
     [ObservableProperty]
     private Bitmap? _detailImage;
 
-    [ObservableProperty]
-    private Size _detailImageSize;
-
-    public ObservableCollection<FaceBoxViewModel> FaceBoxes { get; } = [];
-
-    public ObservableCollection<DetailTagViewModel> DetailTags { get; } = [];
-
-    public ObservableCollection<string> TagSuggestions { get; } = [];
+    /// <summary>Tags, caption and faces of the selected photo (shared with Revisione, P21).</summary>
+    public PhotoEditorViewModel Editor { get; }
 
     [ObservableProperty]
     private string _detailName = string.Empty;
@@ -388,47 +380,17 @@ public sealed partial class BrowseViewModel : PageViewModel
     private string _detailRating = string.Empty;
 
     [ObservableProperty]
-    private string _detailPeople = string.Empty;
-
-    [ObservableProperty]
-    private string? _tagText;
-
-    /// <summary>Caption of the photo (spec §8), "—" when there is none.</summary>
-    [ObservableProperty]
-    private string _detailCaption = string.Empty;
-
-    /// <summary>The caption in the other languages (Florence-2 in English under the Italian one, U5), or empty.</summary>
-    [ObservableProperty]
-    private string _detailCaptionOther = string.Empty;
-
-    /// <summary>Where the caption comes from: the model, or the user.</summary>
-    [ObservableProperty]
-    private string _detailCaptionOrigin = string.Empty;
-
-    /// <summary>The caption being edited (D), or null.</summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsEditingCaption))]
-    private string? _captionText;
-
-    public bool IsEditingCaption => CaptionText is not null;
-
-    private Caption? _caption;
-
-    public bool IsTagging => TagText is not null;
-
-    [ObservableProperty]
     private bool _isLargePreview;
 
     [ObservableProperty]
     private string? _message;
-
-    partial void OnTagTextChanged(string? value) => OnPropertyChanged(nameof(IsTagging));
 
     partial void OnColumnsChanged(int value) => BuildRows();
 
     public override async Task ActivateAsync()
     {
         await LoadSuggestionsAsync();
+        await Editor.LoadTagSuggestionsAsync();
         await Facets.LoadAsync(CancellationToken.None);
         CameraOptions.Clear();
         CameraOptions.Add(new OptionItem<string?>(null, Strings.Get("Browse.Filter.Any")));
@@ -455,7 +417,6 @@ public sealed partial class BrowseViewModel : PageViewModel
     private async Task LoadSuggestionsAsync()
     {
         Suggestions.Clear();
-        TagSuggestions.Clear();
         foreach (var person in await _host.Catalog.People.ListPersonsAsync(CancellationToken.None))
         {
             if (person.Person.Name is { } name && !person.Person.Ignored)
@@ -474,7 +435,6 @@ public sealed partial class BrowseViewModel : PageViewModel
             var isEvent = tag.Key.StartsWith(Tagging.Vocabulary.TaggingStage.EventPrefix, StringComparison.Ordinal);
             var label = tag.Italian is { } it && (tag.Reviewed || isEvent) ? it : tag.English;
             Suggestions.Add(new SearchSuggestion(isEvent ? SuggestionKind.Event : SuggestionKind.Tag, tag.Id, label, Strings.Format("Browse.PhotosCount", tag.PhotoCount)));
-            TagSuggestions.Add(label);
         }
     }
 
@@ -743,14 +703,12 @@ public sealed partial class BrowseViewModel : PageViewModel
             newValue.IsSelected = true;
         }
 
-        TagText = null;
         _ = LoadDetailAsync(newValue);
     }
 
     private async Task LoadDetailAsync(BrowseItemViewModel? item)
     {
-        FaceBoxes.Clear();
-        DetailTags.Clear();
+        _ = Editor.LoadAsync(item?.AssetId);
         if (item is null)
         {
             DetailImage = null;
@@ -783,34 +741,6 @@ public sealed partial class BrowseViewModel : PageViewModel
 
         var tags = await catalog.Tags.GetForAssetAsync(item.AssetId, CancellationToken.None);
         DetailEvent = tags.Where(t => t.Tag.Key.StartsWith(Tagging.Vocabulary.TaggingStage.EventPrefix, StringComparison.Ordinal)).Select(t => t.Tag.Italian ?? t.Tag.English).FirstOrDefault() ?? "—";
-        foreach (var tag in tags.Where(t => t.Assignment.State == AssetTagState.Active && !t.Tag.Blacklisted && !t.Tag.Key.StartsWith(Tagging.Vocabulary.TaggingStage.EventPrefix, StringComparison.Ordinal)))
-        {
-            DetailTags.Add(new DetailTagViewModel(tag.Tag.Id, tag.Tag.Reviewed && tag.Tag.Italian is { } it ? it : tag.Tag.English, tag.Assignment.Source == TagSource.Manual));
-        }
-
-        var captions = await catalog.Captions.GetAllAsync(item.AssetId, CancellationToken.None);
-        if (captions.Count == 0 && await catalog.Assets.GetTwinAsync(item.AssetId, CancellationToken.None) is { } twin)
-        {
-            captions = await catalog.Captions.GetAllAsync(twin, CancellationToken.None);
-        }
-
-        _caption = captions.FirstOrDefault();
-        DetailCaptionOther = string.Join("\n", captions.Skip(1).Where(c => c.Text.Length > 0)
-            .Select(c => $"{c.Language.ToUpperInvariant()} · {c.Text}"));
-
-        DetailCaption = _caption is { Text.Length: > 0 } caption ? caption.Text : "—";
-        DetailCaptionOrigin = _caption switch
-        {
-            null => string.Empty,
-            { Origin: CaptionOrigin.Manual } => Strings.Get("Browse.Caption.Yours"),
-            { ModelVersion: { } model } => Strings.Format("Browse.Caption.Automatic", model.Split('@')[0]),
-            _ => string.Empty,
-        };
-        CaptionText = null;
-
-        var persons = (await catalog.People.ListPersonsAsync(CancellationToken.None)).ToDictionary(p => p.Person.Id, p => p.Person);
-        var faces = await catalog.Analysis.GetFacesAsync(item.AssetId, CancellationToken.None);
-        DetailPeople = FaceBoxViewModel.People(faces, persons);
 
         var thumbnail = new[] { asset.FullHash, asset.QuickHash }.OfType<string>().Select(_host.Thumbnails.PathFor).FirstOrDefault(File.Exists);
         var image = thumbnail is null ? null : await Task.Run(() => UiBitmaps.FromFile(thumbnail, 1024));
@@ -820,11 +750,7 @@ public sealed partial class BrowseViewModel : PageViewModel
         }
 
         DetailImage = image;
-        DetailImageSize = image is null ? default : new Size(image.PixelSize.Width, image.PixelSize.Height);
-        foreach (var box in FaceBoxViewModel.From(faces, persons, DetailImageSize.Width, DetailImageSize.Height))
-        {
-            FaceBoxes.Add(box);
-        }
+        Editor.ImageSize = image is null ? default : new Size(image.PixelSize.Width, image.PixelSize.Height);
     }
 
     // --- Actions ---
@@ -839,41 +765,7 @@ public sealed partial class BrowseViewModel : PageViewModel
 
         var decision = await _host.Catalog.Decisions.GetAsync(item.AssetId, CancellationToken.None);
         await _host.Catalog.Decisions.SetUserAsync(item.AssetId, decision?.UserOutcome, stars == 0 ? null : stars, decision?.Label, CancellationToken.None);
-        await WriteXmpAsync(item.AssetId);
-        await LoadDetailAsync(item);
-    }
-
-    [RelayCommand]
-    private void StartTag()
-    {
-        if (Selected is not null)
-        {
-            TagText = string.Empty;
-            FocusTagRequested?.Invoke(this, EventArgs.Empty);
-        }
-    }
-
-    /// <summary>Enter in the tag field: a manual tag (an existing label is reused, otherwise a new manual tag).</summary>
-    [RelayCommand]
-    private async Task ApplyTagAsync()
-    {
-        if (Selected is not { } item || string.IsNullOrWhiteSpace(TagText))
-        {
-            TagText = null;
-            return;
-        }
-
-        var text = TagText.Trim();
-        TagText = null;
-        var existing = (await _host.Catalog.Tags.ListAsync(CancellationToken.None))
-            .FirstOrDefault(t => string.Equals(t.Italian, text, StringComparison.CurrentCultureIgnoreCase) || string.Equals(t.English, text, StringComparison.CurrentCultureIgnoreCase));
-        await _host.Catalog.Tags.AddManualAsync(item.AssetId, existing?.Key ?? text, CancellationToken.None);
-        if (existing is null && await _host.Catalog.Tags.FindAsync(text, CancellationToken.None) is { } created)
-        {
-            await _host.Catalog.Tags.UpdateAsync(created.Id, text, reviewed: true, null, blacklisted: false, CancellationToken.None);
-        }
-
-        await WriteXmpAsync(item.AssetId);
+        Message = await PhotoEditorViewModel.RewriteXmpAsync(_host, item.AssetId) ? null : Strings.Get("Browse.XmpFailed");
         await LoadDetailAsync(item);
     }
 
@@ -888,60 +780,6 @@ public sealed partial class BrowseViewModel : PageViewModel
         {
             Navigator.ShowPage(new RegenerationViewModel(_host, Navigator, assetIds: [.. _hits.Select(h => h.AssetId)]));
         }
-    }
-
-    /// <summary>D: edit the caption of the photo.</summary>
-    [RelayCommand]
-    private void StartCaption()
-    {
-        if (Selected is not null)
-        {
-            CaptionText = _caption?.Text ?? string.Empty;
-            FocusCaptionRequested?.Invoke(this, EventArgs.Empty);
-        }
-    }
-
-    /// <summary>Enter in the caption field: the user's caption, never replaced by an analysis (I5); empty clears it for good.</summary>
-    [RelayCommand]
-    private async Task SaveCaptionAsync()
-    {
-        if (Selected is not { } item || CaptionText is not { } text)
-        {
-            return;
-        }
-
-        CaptionText = null;
-        var language = _caption?.Language ?? (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "it" ? "it" : "en");
-        await _host.Catalog.Captions.SetManualAsync(_caption?.AssetId ?? item.AssetId, language, text.Trim(), CancellationToken.None);
-        await WriteXmpAsync(item.AssetId);
-        await LoadDetailAsync(item);
-    }
-
-    [RelayCommand]
-    private void CancelCaption() => CaptionText = null;
-
-    /// <summary>✕ on a tag: removed from the photo and suppressed, so no analysis adds it again (I5).</summary>
-    [RelayCommand]
-    private async Task RemoveTagAsync(DetailTagViewModel? tag)
-    {
-        if (Selected is { } item && tag is not null)
-        {
-            await _host.Catalog.Tags.SuppressAsync(item.AssetId, tag.TagId, CancellationToken.None);
-            await WriteXmpAsync(item.AssetId);
-            await LoadDetailAsync(item);
-        }
-    }
-
-    private async Task WriteXmpAsync(long assetId)
-    {
-        if ((await _host.Catalog.XmpSync.GetAsync(assetId, CancellationToken.None))?.LastWrittenAt is null)
-        {
-            return; // never confirmed: the XMP is written at the confirmation of its review
-        }
-
-        await _host.Catalog.XmpSync.MarkPendingAsync(assetId, null, CancellationToken.None);
-        var summary = await Task.Run(() => _host.CreatePublisher().WriteAsync([assetId], _host.Settings.PrudentMode, null, CancellationToken.None));
-        Message = summary.Failed.Count > 0 ? Strings.Get("Browse.XmpFailed") : null;
     }
 
     [RelayCommand]
@@ -1008,169 +846,14 @@ public sealed partial class BrowseViewModel : PageViewModel
         IsLargePreview = Selected is not null && !IsLargePreview;
         if (!IsLargePreview)
         {
-            CancelAddFace();
+            Editor.CancelAddFaceCommand.Execute(null);
         }
-    }
-
-    // --- Faces on the photo (spec §7, 13 Oct 2026) ---
-
-    /// <summary>The faces are boxed and named on the photo (V).</summary>
-    [ObservableProperty]
-    private bool _showFaces = true;
-
-    /// <summary>N: a box is being drawn on the large preview to add a face.</summary>
-    [ObservableProperty]
-    private bool _isDrawingFace;
-
-    /// <summary>The face drawn, waiting for its person.</summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsChoosingFacePerson))]
-    private BoundingBox? _drawnFace;
-
-    public bool IsChoosingFacePerson => DrawnFace is not null || IdentifyingFace is not null;
-
-    /// <summary>A face of the photo clicked to say who it is ("?" or another person).</summary>
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsChoosingFacePerson), nameof(CanSaveFace), nameof(FacePrompt))]
-    private FaceBoxViewModel? _identifyingFace;
-
-    /// <summary>What the picker asks: draw a face, or who the clicked face is.</summary>
-    public string FacePrompt => IdentifyingFace is { } face
-        ? Strings.Format("Browse.IdentifyFace", face.Name ?? "?")
-        : Strings.Get("Browse.DrawFace");
-
-    public ObservableCollection<PersonChoice> FacePeople { get; } = [];
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNewFacePerson), nameof(CanSaveFace))]
-    private PersonChoice? _facePerson;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanSaveFace))]
-    private string? _newFacePersonName;
-
-    public bool IsNewFacePerson => FacePerson is { Id: null };
-
-    public bool CanSaveFace => (DrawnFace is not null || IdentifyingFace is not null)
-        && (FacePerson is { Id: not null } || (IsNewFacePerson && !string.IsNullOrWhiteSpace(NewFacePersonName)));
-
-    [RelayCommand]
-    private void ToggleFaces() => ShowFaces = !ShowFaces;
-
-    /// <summary>N: opens the large preview if needed and lets a box be drawn on the face to add.</summary>
-    [RelayCommand]
-    private async Task StartAddFaceAsync()
-    {
-        if (Selected is null)
-        {
-            return;
-        }
-
-        IsLargePreview = true;
-        ShowFaces = true;
-        await LoadFacePeopleAsync();
-        IsDrawingFace = true;
-    }
-
-    /// <summary>A click on a face of the photo: who is it? (a "?" face, or one to correct).</summary>
-    public async Task IdentifyFaceAsync(FaceBoxViewModel face)
-    {
-        ArgumentNullException.ThrowIfNull(face);
-        if (Selected is null || face.FaceId == 0)
-        {
-            return;
-        }
-
-        await LoadFacePeopleAsync();
-        FacePerson = face.PersonId is { } current ? FacePeople.FirstOrDefault(p => p.Id == current) : null;
-        IdentifyingFace = face;
-        IsDrawingFace = true; // the same panel; no box is drawn while a face is being identified
-    }
-
-    private async Task LoadFacePeopleAsync()
-    {
-        DrawnFace = null;
-        IdentifyingFace = null;
-        FacePeople.Clear();
-        FacePeople.Add(new PersonChoice(null, Strings.Get("People.NewPerson")));
-        foreach (var person in (await _host.Catalog.People.ListPersonsAsync(CancellationToken.None))
-                     .Where(p => p.Person.Name is not null && !p.Person.Ignored).OrderBy(p => p.Person.Name, StringComparer.CurrentCulture))
-        {
-            FacePeople.Add(new PersonChoice(person.Person.Id, Strings.Format("People.ChoiceLabel", person.Person.Name!, person.FaceCount)));
-        }
-
-        FacePerson = null;
-        NewFacePersonName = null;
-    }
-
-    /// <summary>The box drawn on the photo: now the person.</summary>
-    public void FaceDrawnOnPhoto(BoundingBox box)
-    {
-        if (IsDrawingFace && IdentifyingFace is null)
-        {
-            DrawnFace = box;
-        }
-    }
-
-    /// <summary>Saves the drawn face for the chosen person (a new one with the name typed); the user's face (I5).</summary>
-    [RelayCommand]
-    private async Task SaveFaceAsync()
-    {
-        if (!CanSaveFace || Selected is not { } item)
-        {
-            return;
-        }
-
-        var person = FacePerson!.Id ?? await _host.Catalog.People.CreatePersonAsync(NewFacePersonName!.Trim(), CancellationToken.None);
-        if (IdentifyingFace is { } face)
-        {
-            // The user says who it is (I5: a manual assignment); both people get their samples again, so the
-            // fingerprint of this face helps recognizing the person in the other photos.
-            await _host.Catalog.People.AssignManualAsync([face.FaceId], person, CancellationToken.None);
-            await PeopleEngine.RefreshPrototypesAsync(_host.Catalog, person, CancellationToken.None);
-            if (face.PersonId is { } previous && previous != person)
-            {
-                await PeopleEngine.RefreshPrototypesAsync(_host.Catalog, previous, CancellationToken.None);
-            }
-
-            Message = Strings.Get("Browse.FaceIdentified");
-        }
-        else if (DrawnFace is { } box)
-        {
-            await _host.Catalog.Analysis.AddManualFaceAsync(item.AssetId, box, person, CancellationToken.None);
-            Message = Strings.Get("Browse.FaceAdded");
-        }
-
-        CancelAddFace();
-        await WriteXmpAsync(item.AssetId);
-        await LoadDetailAsync(item);
-        await Facets.LoadAsync(CancellationToken.None);
-    }
-
-    [RelayCommand]
-    private void CancelAddFace()
-    {
-        IsDrawingFace = false;
-        DrawnFace = null;
-        IdentifyingFace = null;
     }
 
     [RelayCommand]
     private void Escape()
     {
-        if (TagText is not null)
-        {
-            TagText = null;
-        }
-        else if (CaptionText is not null)
-        {
-            CaptionText = null;
-        }
-        else if (IsDrawingFace)
-        {
-            CancelAddFace();
-        }
-        else if (IsLargePreview)
+        if (!Editor.Escape() && IsLargePreview)
         {
             IsLargePreview = false;
         }

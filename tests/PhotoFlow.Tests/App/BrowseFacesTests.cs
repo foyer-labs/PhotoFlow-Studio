@@ -59,15 +59,15 @@ public sealed class BrowseFacesTests : IDisposable
         window.Show();
         shell.ShowSection(SectionCatalog.Browse);
         var browse = Assert.IsType<BrowseViewModel>(shell.CurrentPage);
-        await WaitAsync(() => browse.FaceBoxes.Count == 2 && browse.DetailImage is not null);
-        Assert.Equal(["Ripa", "?"], browse.FaceBoxes.Select(f => f.Label));
-        Assert.Equal("Ripa · " + Strings.Format("Faces.UnknownOne", 1), browse.DetailPeople);
+        await WaitAsync(() => browse.Editor.FaceBoxes.Count == 2 && browse.DetailImage is not null);
+        Assert.Equal(["Ripa", "?"], browse.Editor.FaceBoxes.Select(f => f.Label));
+        Assert.Equal("Ripa · " + Strings.Format("Faces.UnknownOne", 1), browse.Editor.People);
 
         // N: the large preview, then a box dragged on the right of the photo.
-        await browse.StartAddFaceCommand.ExecuteAsync(null);
-        Assert.True(browse.IsLargePreview && browse.IsDrawingFace);
+        await browse.Editor.StartAddFaceCommand.ExecuteAsync(null);
+        Assert.True(browse.IsLargePreview && browse.Editor.IsDrawingFace);
         Dispatcher.UIThread.RunJobs();
-        var photo = window.GetVisualDescendants().OfType<FacesPhotoView>().Single(v => v.Name == "LargePhoto");
+        var photo = window.GetVisualDescendants().OfType<FacesPhotoView>().Single(v => v.Name == "Photo");
         var surface = photo.GetVisualDescendants().OfType<Canvas>().First(c => c.Name == "Surface");
         Point At(double x, double y) => surface.TranslatePoint(new Point(x * photo.ImageWidth, y * photo.ImageHeight), window)!.Value;
         window.MouseDown(At(0.7, 0.2), MouseButton.Left);
@@ -75,21 +75,21 @@ public sealed class BrowseFacesTests : IDisposable
         window.MouseMove(At(0.85, 0.45));
         window.MouseUp(At(0.85, 0.45), MouseButton.Left);
         Dispatcher.UIThread.RunJobs();
-        Assert.True(browse.IsChoosingFacePerson);
-        var drawn = browse.DrawnFace!.Value;
+        Assert.True(browse.Editor.IsChoosingFacePerson);
+        var drawn = browse.Editor.DrawnFace!.Value;
         Assert.InRange(drawn.X1, 0.69, 0.71);
         Assert.InRange(drawn.Y2, 0.44, 0.46);
 
         // The person: a new one.
-        Assert.Contains(browse.FacePeople, p => p.Id == ripa);
-        browse.FacePerson = browse.FacePeople[0];
-        Assert.False(browse.CanSaveFace);
-        browse.NewFacePersonName = "Luca";
+        Assert.Contains(browse.Editor.FacePeople, p => p.Id == ripa);
+        browse.Editor.FacePerson = browse.Editor.FacePeople[0];
+        Assert.False(browse.Editor.CanSaveFace);
+        browse.Editor.NewFacePersonName = "Luca";
         Save(window, "faces-1-draw");
-        await browse.SaveFaceCommand.ExecuteAsync(null);
-        await WaitAsync(() => browse.FaceBoxes.Count == 3);
-        Assert.False(browse.IsDrawingFace);
-        Assert.Equal("Ripa, Luca · " + Strings.Format("Faces.UnknownOne", 1), browse.DetailPeople);
+        await browse.Editor.SaveFaceCommand.ExecuteAsync(null);
+        await WaitAsync(() => browse.Editor.FaceBoxes.Count == 3);
+        Assert.False(browse.Editor.IsDrawingFace);
+        Assert.Equal("Ripa, Luca · " + Strings.Format("Faces.UnknownOne", 1), browse.Editor.People);
         var added = (await catalog.Analysis.GetFacesAsync(asset, ct)).Single(f => f.ModelVersion == FaceDefaults.ManualModelVersion);
         Assert.Equal(AssignmentOrigin.Manual, added.AssignmentOrigin);
         Save(window, "faces-2-saved");
@@ -97,24 +97,24 @@ public sealed class BrowseFacesTests : IDisposable
         // A click on the "?" face: who is it? Ripa, from the list.
         browse.IsLargePreview = true;
         Dispatcher.UIThread.RunJobs();
-        var unknown = browse.FaceBoxes.Single(f => f.Name is null);
+        var unknown = browse.Editor.FaceBoxes.Single(f => f.Name is null);
         var center = surface.TranslatePoint(new Point(unknown.X + (unknown.Width / 2), unknown.Y + (unknown.Height / 2)), window)!.Value;
         window.MouseDown(center, MouseButton.Left);
         window.MouseUp(center, MouseButton.Left);
-        await WaitAsync(() => browse.IdentifyingFace is not null && browse.FacePeople.Count > 0);
-        Assert.Equal(unknown.FaceId, browse.IdentifyingFace!.FaceId);
-        Assert.False(browse.CanSaveFace); // a person first
-        browse.FacePerson = browse.FacePeople.Single(p => p.Id == ripa);
+        await WaitAsync(() => browse.Editor.IdentifyingFace is not null && browse.Editor.FacePeople.Count > 0);
+        Assert.Equal(unknown.FaceId, browse.Editor.IdentifyingFace!.FaceId);
+        Assert.False(browse.Editor.CanSaveFace); // a person first
+        browse.Editor.FacePerson = browse.Editor.FacePeople.Single(p => p.Id == ripa);
         Save(window, "faces-3-identify");
-        await browse.SaveFaceCommand.ExecuteAsync(null);
-        await WaitAsync(() => browse.FaceBoxes.All(f => f.Name is not null));
-        Assert.Equal("Ripa, Luca", browse.DetailPeople);
+        await browse.Editor.SaveFaceCommand.ExecuteAsync(null);
+        await WaitAsync(() => browse.Editor.FaceBoxes.All(f => f.Name is not null));
+        Assert.Equal("Ripa, Luca", browse.Editor.People);
         var identified = (await catalog.Analysis.GetFacesAsync(asset, ct)).Single(f => f.Id == unknown.FaceId);
         Assert.Equal((ripa, AssignmentOrigin.Manual), (identified.PersonId!.Value, identified.AssignmentOrigin!.Value));
 
         // V hides the boxes.
-        browse.ToggleFacesCommand.Execute(null);
-        Assert.False(browse.ShowFaces);
+        browse.Editor.ToggleFacesCommand.Execute(null);
+        Assert.False(browse.Editor.ShowFaces);
     }
 
     public void Dispose() => _temp.Dispose();

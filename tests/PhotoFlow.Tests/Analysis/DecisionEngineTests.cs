@@ -79,6 +79,29 @@ public sealed class DecisionEngineTests
     }
 
     [Fact]
+    public void Many_blown_highlights_or_a_very_dark_photo_are_to_review_even_with_a_well_exposed_af_area()
+    {
+        // Z5 II NEFs of 15 Oct 2026: DSC_0049 with 25 % of the photo blown, DSC_0050 with brightness 0.17, both with a
+        // small, well exposed AF area.
+        var af = Sharp() with { Zone = SharpnessZoneKind.AfArea };
+        var bright = Engine.Decide(af with { FrameHighlights = 0.25 }, Profile());
+        Assert.Equal(CullingOutcome.ToReview, bright.Outcome);
+        Assert.Equal([DecisionEngine.Reasons.FrameHighlights], bright.Reasons);
+        var dark = Engine.Decide(af with { FrameBrightness = 0.174, FrameShadows = 0.14 }, Profile());
+        Assert.Equal(CullingOutcome.ToReview, dark.Outcome);
+        Assert.Equal([DecisionEngine.Reasons.FrameDark], dark.Reasons);
+
+        // Also without a subject zone; a zone already clipped is not counted twice.
+        Assert.Equal(CullingOutcome.ToReview, Engine.Decide(Sharp() with { Zone = SharpnessZoneKind.Tiles, FrameBrightness = 0.17 }, Profile()).Outcome);
+        Assert.Equal([DecisionEngine.Reasons.Highlights], Engine.Decide(af with { ZoneHighlights = 0.3, FrameHighlights = 0.3 }, Profile()).Reasons);
+
+        // Tolerant (motorsport): up to 22.5 % blown and down to 13 % brightness; Off (night): never.
+        Assert.Equal(CullingOutcome.Kept, Engine.Decide(af with { FrameHighlights = 0.2, FrameBrightness = 0.15 }, Profile(exposure: ExposureMode.Tolerant)).Outcome);
+        Assert.Equal(CullingOutcome.Kept, Engine.Decide(af with { FrameHighlights = 0.6, FrameBrightness = 0.05 }, Profile(exposure: ExposureMode.Off)).Outcome);
+        Assert.Equal(CullingOutcome.Kept, Engine.Decide(af with { FrameHighlights = 0.14, FrameBrightness = 0.21 }, Profile()).Outcome);
+    }
+
+    [Fact]
     public void Archive_profile_proposes_nothing()
     {
         Assert.Equal(CullingOutcome.Kept, Engine.Decide(Sharp() with { ZoneSharpness = 0, FrameSharpness = 0 }, Profile(culling: false)).Outcome);

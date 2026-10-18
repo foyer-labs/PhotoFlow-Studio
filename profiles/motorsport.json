@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "id": "motorsport",
-  "version": 1,
+  "version": 2,
   "name": "Motorsport",
   "cullingEnabled": true,
   "sharpnessZones": [
@@ -31,7 +31,9 @@
     "eyesDiscardFaceSize": 150,
     "highlightsReview": 0.25,
     "shadowsReview": 0.4,
-    "blankFrame": 0.95
+    "blankFrame": 0.95,
+    "frameHighlightsReview": 0.15,
+    "frameBrightnessReview": 0.2
   },
   "grouping": {
     "maxBurstGapSeconds": 2.0,

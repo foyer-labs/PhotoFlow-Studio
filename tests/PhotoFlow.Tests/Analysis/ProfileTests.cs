@@ -49,6 +49,20 @@ public sealed class ProfileTests
         Assert.Throws<InvalidDataException>(() => BuiltInProfiles.Parse(json.Replace("\"sharpness\": 35", "\"sharpness\": 36", StringComparison.Ordinal), false));
         Assert.Throws<InvalidDataException>(() => BuiltInProfiles.Parse(json.Replace("\"schema\": 1", "\"schema\": 2", StringComparison.Ordinal), false));
         Assert.ThrowsAny<Exception>(() => BuiltInProfiles.Parse(json.Replace("\"ocr\"", "\"ocrx\"", StringComparison.Ordinal), false));
+        Assert.Throws<InvalidDataException>(() => BuiltInProfiles.Parse(json.Replace("\"frameBrightnessReview\": 0.2", "\"frameBrightnessReview\": 1.2", StringComparison.Ordinal), false));
+    }
+
+    [Fact]
+    public void A_profile_saved_before_the_whole_photo_thresholds_gets_their_initial_values()
+    {
+        var json = System.Text.RegularExpressions.Regex.Replace(
+            File.ReadAllText(Path.Combine(RepositoryRoot(), "profiles", "events.json")), @",\s*""frameHighlightsReview"": 0\.15,\s*""frameBrightnessReview"": 0\.2", string.Empty);
+        Assert.DoesNotContain("frameHighlightsReview", json, StringComparison.Ordinal);
+
+        var thresholds = BuiltInProfiles.Parse(json, isBuiltIn: false).Thresholds;
+
+        Assert.Equal((CullingThresholds.DefaultFrameHighlightsReview, CullingThresholds.DefaultFrameBrightnessReview),
+            (thresholds.FrameHighlightsReview, thresholds.FrameBrightnessReview));
     }
 
     private static string RepositoryRoot()

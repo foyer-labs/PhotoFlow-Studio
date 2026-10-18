@@ -59,6 +59,11 @@ public static class BuiltInProfiles
             throw new InvalidDataException($"Profile '{document.Id}': the blur thresholds must be within 0..1, discard below review.");
         }
 
+        if (t.FrameHighlightsReview is <= 0 or > 1 || t.FrameBrightnessReview is < 0 or >= 1)
+        {
+            throw new InvalidDataException($"Profile '{document.Id}': the exposure thresholds of the whole photo must be within 0..1.");
+        }
+
         if (string.IsNullOrWhiteSpace(document.Id) || string.IsNullOrWhiteSpace(document.Name) || document.Version < 1)
         {
             throw new InvalidDataException("Profile without id, name or version.");

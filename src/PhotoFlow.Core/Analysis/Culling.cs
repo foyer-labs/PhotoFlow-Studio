@@ -91,6 +91,8 @@ public enum ExposureMode
 /// <param name="HighlightsReview">Fraction of clipped highlights in the zone above which the photo is to review.</param>
 /// <param name="ShadowsReview">Fraction of crushed shadows in the zone above which the photo is to review.</param>
 /// <param name="BlankFrame">Fraction of the whole frame clipped (or crushed) above which the frame is blank: discard.</param>
+/// <param name="FrameHighlightsReview">Fraction of the whole frame clipped above which the photo is to review, whatever the zone.</param>
+/// <param name="FrameBrightnessReview">Mean brightness of the whole frame (0-1) below which the photo is to review (underexposed).</param>
 public sealed record CullingThresholds(
     double BlurDiscard,
     double BlurReview,
@@ -100,7 +102,15 @@ public sealed record CullingThresholds(
     double EyesDiscardFaceSize,
     double HighlightsReview,
     double ShadowsReview,
-    double BlankFrame);
+    double BlankFrame,
+    double FrameHighlightsReview = CullingThresholds.DefaultFrameHighlightsReview,
+    double FrameBrightnessReview = CullingThresholds.DefaultFrameBrightnessReview)
+{
+    /// <summary>Initial values (spec §6, 15 Oct 2026), also for profiles saved before they existed.</summary>
+    public const double DefaultFrameHighlightsReview = 0.15;
+
+    public const double DefaultFrameBrightnessReview = 0.20;
+}
 
 /// <summary>
 /// Measurements of one photo for culling, flat so that they can be stored (<c>AnalyzerResults</c>) and decided again

@@ -306,7 +306,7 @@ Fase 2 (13 ott 2026, `SequenceGrouper`): i raggruppamenti si calcolano per fotoc
 | Segnale | Misura | Affidabilità |
 | --- | --- | --- |
 | Nitidezza | Assoluta: 1 − *blur effect* (Crété-Roffet 2007) multi-scala (1×, ½, ¼) sulla zona del profilo e sull'intero fotogramma; relativa nella raffica: varianza del Laplaciano sulla zona, dopo leggera sfocatura anti-rumore | Alta per il mosso grave |
-| Esposizione | % alte luci/ombre perse nella zona del soggetto; soglie tolleranti (l'anteprima JPEG è più severa del RAW). Senza soggetto (zona = intero fotogramma) solo il fotogramma vuoto (≥ 95% bruciato o nero) | Media |
+| Esposizione | % alte luci/ombre perse nella zona del soggetto; soglie tolleranti (l'anteprima JPEG è più severa del RAW). Senza soggetto (zona = intero fotogramma) solo il fotogramma vuoto (≥ 95% bruciato o nero). **Anche sulla foto intera** (richiesta dell'utente, 15 ott 2026): "da rivedere" con molte alte luci bruciate (`frameHighlightsReview`, iniziale 15% del fotogramma con un canale ≥ 250) o foto molto scura (`frameBrightnessReview`, luminosità media iniziale < 20%), anche se la zona del soggetto è esposta bene; modalità tollerante ×1,5 (alte luci) e ÷1,5 (luminosità), spenta con esposizione Off (Notturna/Aurora). Soglie iniziali da tarare sul set etichettato (§14) | Media |
 | Occhi | Apertura (rapporto altezza/larghezza dei contorni 33-42 e 87-96) dagli 106 landmark, per volti rilevanti (≥ 40% del volto più grande); sconosciuto con occhiali da sole, volto piccolo, di profilo o rivolto verso il basso (gli occhi aperti sembrano chiusi). Con YuNet/SFace (solo 5 landmark): sempre sconosciuto | Alta su volti grandi (solo buffalo\_l) |
 | Soggetto | Presenza, dimensione, posizione (D-FINE) | Alta per auto e persone |
 | Estetica | Predittore LAION | Bassa: solo spareggi |
@@ -437,6 +437,7 @@ Scrittura (fase 2): solo le persone con nome e non ignorate, solo per foto confe
 
 **Volti nella foto e volti aggiunti a mano** (13 ott 2026, su richiesta dell'utente):
 
+- **Dove.** Le stesse azioni sui volti valgono nella foto grande della Revisione (P21), dove il volto a mano si aggiunge con Maiusc N.
 - **Vedere chi c'è.** L'anteprima grande della Consultazione e la foto aperta dalla pagina di una persona mostrano un riquadro per ogni volto, con il nome sopra ("?" per un volto non riconosciuto), e l'elenco "Persone nella foto". In Persone il volto della pagina è evidenziato. Il tasto V mostra o nasconde i riquadri.
 - **Dire chi è un volto.** Nell'anteprima grande un clic su un riquadro (un "?" o un nome sbagliato) apre la stessa scelta della persona. L'assegnazione diventa manuale (I5). Le due persone, la nuova e l'eventuale precedente, rifanno i campioni: l'impronta del volto aiuta a riconoscere la persona nelle altre foto.
 - **Aggiungere un volto a mano.** Serve quando il rilevamento non ha trovato un volto. Nell'anteprima grande della Consultazione si preme N e si trascina un riquadro sul volto. Poi si sceglie la persona da un elenco: quelle con nome, in ordine alfabetico, oppure "+ Nuova persona…".
@@ -777,7 +778,7 @@ Palette (con colori semantici per gli esiti: scarto, da rivedere, migliore, simi
 | 1 | Home | Librerie, job attivi, avviso "scheda rilevata", azioni rapide | Punto di partenza, poco testo |
 | 2 | Import (procedura guidata) | Sorgente → evento, profilo (o automatico + riserva), destinazioni, volti, politica XMP → avvio | 3 passi, impostazioni ricordate |
 | 3 | Job | Avanzamento per fase, stima tempo, pausa/ripresa, priorità, log | Più job in parallelo |
-| 4 | Revisione | Griglia per raffiche, filtri per esito, confronto 2-4 affiancati con zoom sincronizzato, cambio profilo per gruppo, vista "Numeri", conferma e scrittura XMP | Schermata principale: velocità da tastiera |
+| 4 | Revisione | Griglia per raffiche, filtri per esito, foto grande con volti, confronto 2-4 affiancati con zoom sincronizzato, tag, didascalia e persone modificabili (P21), cambio profilo per gruppo, vista "Numeri", conferma e scrittura XMP | Schermata principale: velocità da tastiera |
 | 5 | Persone | Gruppi ordinati per dimensione; rinomina, unisci, separa, ignora; pagina persona | Volti ritagliati, selezione multipla |
 | 6 | Consultazione | Ricerca libera + filtri (tag, persona, data, evento, EXIF, rating, esito), pannello delle faccette con conteggi (tag in gruppi AND/OR, eventi, persone), griglia, pannello dettagli con tag modificabili e volti evidenziati, "Apri in Photoshop", "Apri con app predefinita", "Mostra in Esplora risorse" | Ricerca in linguaggio naturale nello stesso campo |
 | 7 | Duplicati | Gruppi esatti e quasi-duplicati, scelta di quale tenere | Confronto affiancato |
@@ -941,7 +942,7 @@ Testi elastici: pulsanti e chip crescono col testo (minimo 72 px); le barre stru
 | Contesto | Tasti |
 | --- | --- |
 | Globali | Ctrl 1-7 sezioni · Ctrl K cerca · Ctrl I importa cartella · Ctrl , impostazioni · Ctrl Z annulla |
-| Revisione | G/C/N/L viste · ← → ↑ ↓ · P tieni · X scarta · 1-5 stelle · Z 100% · F adatta · S sincronizza · Tab pannello · Maiusc R rianalizza gruppo · Ctrl R riprova XMP · Ctrl ↵ conferma e scrivi |
+| Revisione | G/C/N/L viste · Spazio foto grande · ← → ↑ ↓ · P tieni · X scarta · 1-5 stelle · Z 100% · F adatta · S sincronizza · Tab pannello · T tag · D didascalia · V volti · Maiusc N aggiungi volto · Maiusc R rianalizza gruppo · Ctrl R riprova XMP · Ctrl ↵ conferma e scrivi |
 | Numeri | 0-9 digita numero · ↵ conferma e avanti · Canc nessun numero |
 | Etichettatura | 1 buona · 2 mossa · 3 occhi chiusi · 4 esposizione · 5 altro · Spazio salta |
 | Persone | F2 rinomina · M unisci · I ignora · S separa · Canc "non è lei/lui" |
@@ -1199,6 +1200,7 @@ Decisioni emerse in Design (confermate), funzioni rinviate a dopo la stabilizzaz
 | P18 | Impostazioni | Cambio lingua applicato al riavvio della finestra (non a caldo) | Semplifica la localizzazione |
 | P19 | Catalogo | Estensione del file catalogo `.pfdb` |  |
 | P20 | Import | Variabili del template percorsi: `{yyyy}` `{MM}` `{evento}` `{seq}` `{camera}` `{nomeoriginale}` `{ext}`; caratteri non validi sostituiti con "-" |  |
+| P21 | Revisione | Richiesta dell'utente (15 ott 2026): in Revisione si sistemano anche tag, didascalia e volti, come in Consultazione e con lo stesso comportamento. **Foto grande** con Spazio o doppio clic (frecce per scorrere, Esc / Spazio / doppio clic per tornare alla griglia), con i riquadri dei volti: V li mostra o nasconde, clic su un volto per dire chi è, Maiusc N per aggiungere un volto (N resta la vista Numeri). Il pannello dettagli (Tab), aperto anche sulla foto grande, mostra e modifica tag (T aggiunge, ✕ toglie), didascalia (D) e persone nella foto | Stesso componente della Consultazione; le modifiche prima della conferma finiscono negli XMP alla conferma (Ctrl ↵), dopo vengono riscritte subito |
 | P22 | Persone | Richiesta dell'utente (15 ott 2026): modello di riconoscimento scelto a parte (ArcFace, SFace, AdaFace IR-101 opzionale); rigenerazione dei volti su tutto il catalogo; opzione esplicita per ripartire da zero con le persone (persone, nomi, assegnazioni anche manuali, volti disegnati a mano, in tutto il catalogo, dopo conferma con i conteggi) — §7 | L'azzeramento è un'azione dell'utente, non una sovrascrittura automatica (I5) |
 
 ### Backlog post-stabilità
@@ -1242,6 +1244,8 @@ Decisioni emerse in Design (confermate), funzioni rinviate a dopo la stabilizzaz
 | Qwen3.5-4B come alternativa per GPU da 8 GB (stessa ricetta; punteggi vicini al 9B secondo la scheda): permetterebbe di abbassare P16 | Passaggio a Qwen3.5-9B, 15 ott 2026 |
 | Area AF dai punti usati (`AFPointsUsed`) quando la Z5 II non registra le coordinate (area automatica): serve la griglia dei punti AF del modello | NEF Z5 II, 14 ott 2026 |
 | `FocusResult` di Nikon ("Out of Focus") come segnale in più per il culling | NEF Z5 II, 14 ott 2026 |
+| Esposizione misurata su una zona più rappresentativa del soggetto: il riquadro AF della Z5 II è ~0,4% della foto (DSC_0049: 0% di alte luci nel riquadro, 25% sulla foto intera). Proposta: zona minima intorno all'AF (25% del lato corto) o area del soggetto rilevato; cambia l'output dell'analizzatore (nuova versione, rianalisi). Dal 15 ott 2026 il pannello della Revisione mostra già zona e foto intera | Utente, 15 ott 2026 |
+| ~~Segnale "sottoesposta / sovraesposta" dalla foto intera~~ fatto il 15 ott 2026 (§6, `frameHighlightsReview`, `frameBrightnessReview`); resta la taratura delle soglie sul set etichettato (§14) | Utente, 15 ott 2026 |
 
 ### Verifiche tecniche
 

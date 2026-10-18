@@ -68,7 +68,7 @@ public sealed partial class ReviewView : UserControl
 
     private void OnRowFocusRequested(object? sender, ReviewRow row) => RowsList.ScrollIntoView(row);
 
-    /// <summary>Click selects; Shift+click adds or removes the photo from the comparison (2b).</summary>
+    /// <summary>Click selects; Shift+click adds or removes the photo from the comparison (2b); a double click opens it large (P21).</summary>
     private void OnCellPressed(object? sender, PointerPressedEventArgs e)
     {
         if (sender is not Control { Tag: ReviewItemViewModel item } || _viewModel is null)
@@ -83,6 +83,10 @@ public sealed partial class ReviewView : UserControl
         else
         {
             _viewModel.SelectCommand.Execute(item);
+            if (e.ClickCount == 2)
+            {
+                _viewModel.ToggleLargePhotoCommand.Execute(null);
+            }
         }
 
         Focus();

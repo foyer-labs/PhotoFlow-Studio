@@ -1,0 +1,52 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- The photo large, with its faces (spec §7, P21): the same in Consultazione and Revisione. DataContext: the photo editor. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:v="using:PhotoFlow.App.Views"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.LargePhotoView"
+             x:DataType="vm:PhotoEditorViewModel"
+             x:Name="Root">
+  <Border Background="{DynamicResource PF.Brush.Viewer}" PointerPressed="OnPressed">
+    <Grid RowDefinitions="Auto,*,Auto">
+      <Button Classes="secondary" HorizontalAlignment="Right" Margin="12" Command="{Binding #Root.CloseCommand}">
+        <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="✕" /><TextBlock Text="{l:Tr Browse.Preview.Close}" /><Border Classes="key"><TextBlock Text="Esc" /></Border></StackPanel>
+      </Button>
+      <v:FacesPhotoView x:Name="Photo" Grid.Row="1" Margin="16,0" Source="{Binding #Root.Source}" ImageWidth="{Binding ImageSize.Width}" ImageHeight="{Binding ImageSize.Height}"
+                        Faces="{Binding FaceBoxes}" ShowFaces="{Binding ShowFaces}" IsDrawing="{Binding IsDrawingFace}" FaceDrawn="OnFaceDrawn" FaceClicked="OnFaceClicked" />
+      <StackPanel Grid.Row="2" Margin="16,8,16,12" Spacing="8">
+        <!-- Who is on the photo; V shows the boxes; a face can be added -->
+        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+          <StackPanel VerticalAlignment="Center" Spacing="2">
+            <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding People}" />
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" IsVisible="{Binding ShowFaces}" Text="{Binding #Root.FacesHint}" />
+          </StackPanel>
+          <CheckBox Grid.Column="1" IsChecked="{Binding ShowFaces}">
+            <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Browse.ShowFaces}" /><Border Classes="key"><TextBlock Text="V" /></Border></StackPanel>
+          </CheckBox>
+          <Button Grid.Column="2" Classes="secondary" IsVisible="{Binding !IsDrawingFace}" Command="{Binding StartAddFaceCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Browse.Command.AddFace}" /><Border Classes="key"><TextBlock Text="{Binding #Root.AddFaceKey}" /></Border></StackPanel>
+          </Button>
+        </Grid>
+        <Border Classes="card" IsVisible="{Binding IsDrawingFace}">
+          <StackPanel Spacing="8">
+            <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding FacePrompt}" />
+            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsChoosingFacePerson}">
+              <ComboBox x:Name="FacePersonBox" MinWidth="240" ItemsSource="{Binding FacePeople}" SelectedItem="{Binding FacePerson}" PlaceholderText="{l:Tr People.ChoosePerson}" MaxDropDownHeight="360">
+                <ComboBox.ItemTemplate><DataTemplate x:DataType="vm:PersonChoice"><TextBlock Text="{Binding Label}" /></DataTemplate></ComboBox.ItemTemplate>
+              </ComboBox>
+              <TextBox Classes="field" MinWidth="200" IsVisible="{Binding IsNewFacePerson}" Text="{Binding NewFacePersonName}" PlaceholderText="{l:Tr People.NewPersonName}">
+                <TextBox.KeyBindings><KeyBinding Gesture="Enter" Command="{Binding SaveFaceCommand}" /></TextBox.KeyBindings>
+              </TextBox>
+              <Button Classes="primary" IsEnabled="{Binding CanSaveFace}" Command="{Binding SaveFaceCommand}" Content="{l:Tr Browse.SaveFace}" />
+            </StackPanel>
+            <Button Classes="ghost" HorizontalAlignment="Left" Command="{Binding CancelAddFaceCommand}" Content="{l:Tr Common.Cancel}" />
+          </StackPanel>
+        </Border>
+        <TextBlock Classes="label" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Message}" IsVisible="{Binding Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        <TextBlock Classes="micro secondary" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="{l:Tr Browse.Preview.Hint}" />
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>

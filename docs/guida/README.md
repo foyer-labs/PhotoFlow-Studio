@@ -220,9 +220,23 @@ I RAW non vengono modificati e nessun file viene spostato.
 | `1`-`5` | Stelle (`0` le toglie) |
 | `C` | Confronta |
 | `Z` | Zoom 100% |
+| `Spazio` | Foto grande, con volti, tag e didascalia |
 | `Ctrl +` / `Ctrl −` | Miniature più grandi / più piccole |
 | `Ctrl Z` | Annulla |
 | `Ctrl Invio` | Conferma e scrivi XMP |
+
+### Guardare la foto grande e sistemare tag e persone
+
+Per giudicare una foto non basta la miniatura.
+
+1. Premi `Spazio` (o fai doppio clic sulla miniatura): la foto si apre grande. Con `←` `→` passi alle altre foto senza chiuderla.
+2. Ogni volto ha un riquadro con il nome, o **«?»** se è sconosciuto. Fai **clic sul volto** e scegli chi è, oppure **«+ Nuova persona…»**.
+3. Un volto non è stato trovato? Premi `Maiusc N`, trascina un riquadro sul volto e scegli la persona.
+4. Nel pannello a destra (`Tab`) premi `T` per aggiungere un tag, ✕ per toglierlo, `D` per scrivere la didascalia.
+5. `Esc`, `Spazio` o doppio clic: torni alla griglia.
+
+> 💡 **Consiglio**
+> È il momento giusto per sistemare tag e volti: lo fai mentre scegli le foto, e alla conferma (`Ctrl Invio`) finisce tutto negli XMP. Le tue correzioni non vengono mai sovrascritte dalle analisi.
 
 ### Spostare gli scarti
 
@@ -608,6 +622,10 @@ La barra di stato in basso mostra sempre i tasti della schermata. Ecco l'elenco 
 | `C` | Confronta |
 | `Z` | Zoom 100% |
 | `G` / `N` / `L` | Griglia / Numeri / Etichettatura |
+| `Spazio` | Foto grande (`Esc` per tornare) |
+| `T` / `D` | Aggiungi un tag / didascalia |
+| `V` | Mostra/nascondi i riquadri dei volti |
+| `Maiusc N` | Aggiungi un volto |
 | `Ctrl Z` | Annulla |
 | `Ctrl Invio` | Conferma e scrivi XMP |
 

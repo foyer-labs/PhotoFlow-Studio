@@ -274,46 +274,11 @@
         </ListBox>
 
         <!-- Space: larger preview -->
-        <Border IsVisible="{Binding IsLargePreview}" Background="{DynamicResource PF.Brush.Viewer}" PointerPressed="OnLargePreviewPressed">
-          <Grid RowDefinitions="Auto,*,Auto">
-            <Button Classes="secondary" HorizontalAlignment="Right" Margin="12" Command="{Binding TogglePreviewCommand}">
-              <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="✕" /><TextBlock Text="{l:Tr Browse.Preview.Close}" /><Border Classes="key"><TextBlock Text="Esc" /></Border></StackPanel>
-            </Button>
-            <v:FacesPhotoView x:Name="LargePhoto" Grid.Row="1" Margin="16,0" Source="{Binding DetailImage}" ImageWidth="{Binding DetailImageSize.Width}" ImageHeight="{Binding DetailImageSize.Height}"
-                              Faces="{Binding FaceBoxes}" ShowFaces="{Binding ShowFaces}" IsDrawing="{Binding IsDrawingFace}" FaceDrawn="OnFaceDrawn" FaceClicked="OnFaceClicked" />
-            <StackPanel Grid.Row="2" Margin="16,8,16,12" Spacing="8">
-              <!-- Who is on the photo; V shows the boxes, N adds a face -->
-              <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
-                <StackPanel VerticalAlignment="Center" Spacing="2">
-                  <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding DetailPeople}" />
-                  <TextBlock Classes="micro tertiary" TextWrapping="Wrap" IsVisible="{Binding ShowFaces}" Text="{l:Tr Browse.ClickFaceHint}" />
-                </StackPanel>
-                <CheckBox Grid.Column="1" IsChecked="{Binding ShowFaces}">
-                  <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Browse.ShowFaces}" /><Border Classes="key"><TextBlock Text="V" /></Border></StackPanel>
-                </CheckBox>
-                <Button Grid.Column="2" Classes="secondary" IsVisible="{Binding !IsDrawingFace}" Command="{Binding StartAddFaceCommand}">
-                  <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Browse.Command.AddFace}" /><Border Classes="key"><TextBlock Text="N" /></Border></StackPanel>
-                </Button>
-              </Grid>
-              <Border Classes="card" IsVisible="{Binding IsDrawingFace}">
-                <StackPanel Spacing="8">
-                  <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding FacePrompt}" />
-                  <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding IsChoosingFacePerson}">
-                    <ComboBox x:Name="FacePersonBox" MinWidth="240" ItemsSource="{Binding FacePeople}" SelectedItem="{Binding FacePerson}" PlaceholderText="{l:Tr People.ChoosePerson}" MaxDropDownHeight="360">
-                      <ComboBox.ItemTemplate><DataTemplate x:DataType="vm:PersonChoice"><TextBlock Text="{Binding Label}" /></DataTemplate></ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <TextBox Classes="field" MinWidth="200" IsVisible="{Binding IsNewFacePerson}" Text="{Binding NewFacePersonName}" PlaceholderText="{l:Tr People.NewPersonName}">
-                      <TextBox.KeyBindings><KeyBinding Gesture="Enter" Command="{Binding SaveFaceCommand}" /></TextBox.KeyBindings>
-                    </TextBox>
-                    <Button Classes="primary" IsEnabled="{Binding CanSaveFace}" Command="{Binding SaveFaceCommand}" Content="{l:Tr Browse.SaveFace}" />
-                  </StackPanel>
-                  <Button Classes="ghost" HorizontalAlignment="Left" Command="{Binding CancelAddFaceCommand}" Content="{l:Tr Common.Cancel}" />
-                </StackPanel>
-              </Border>
-              <TextBlock Classes="micro secondary" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="{l:Tr Browse.Preview.Hint}" />
-            </StackPanel>
-          </Grid>
-        </Border>
+        <Panel IsVisible="{Binding IsLargePreview}">
+          <v:LargePhotoView DataContext="{Binding Editor}" FacesHint="{l:Tr Browse.ClickFaceHint}"
+                            Source="{Binding $parent[UserControl].((vm:BrowseViewModel)DataContext).DetailImage}"
+                            CloseCommand="{Binding $parent[UserControl].((vm:BrowseViewModel)DataContext).TogglePreviewCommand}" />
+        </Panel>
       </Panel>
 
       <Button Grid.Row="5" Classes="ghost" HorizontalAlignment="Center" Margin="0,4,0,8" IsVisible="{Binding HasMore}" Command="{Binding ShowMoreCommand}" Content="{l:Tr Browse.ShowMore}" />
@@ -323,8 +288,8 @@
     <Border Grid.Column="2" Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1,0,0,0">
       <ScrollViewer>
         <StackPanel Margin="16" Spacing="10" IsVisible="{Binding HasSelection}">
-          <v:FacesPhotoView MaxHeight="260" Source="{Binding DetailImage}" ImageWidth="{Binding DetailImageSize.Width}" ImageHeight="{Binding DetailImageSize.Height}"
-                            Faces="{Binding FaceBoxes}" ShowFaces="{Binding ShowFaces}" />
+          <v:FacesPhotoView MaxHeight="260" Source="{Binding DetailImage}" ImageWidth="{Binding Editor.ImageSize.Width}" ImageHeight="{Binding Editor.ImageSize.Height}"
+                            Faces="{Binding Editor.FaceBoxes}" ShowFaces="{Binding Editor.ShowFaces}" />
 
           <TextBlock Classes="data" Text="{Binding DetailName}" TextTrimming="CharacterEllipsis" />
           <TextBlock Classes="micro tertiary" Text="{Binding DetailPath}" TextTrimming="CharacterEllipsis" />
@@ -338,51 +303,11 @@
             <TextBlock Grid.Row="3" Classes="label tertiary" Text="{l:Tr Browse.Detail.Rating}" />
             <TextBlock Grid.Row="3" Grid.Column="1" Classes="label" Text="{Binding DetailRating}" />
             <TextBlock Grid.Row="4" Classes="label tertiary" Text="{l:Tr Browse.Detail.People}" />
-            <TextBlock Grid.Row="4" Grid.Column="1" Classes="label" TextWrapping="Wrap" Text="{Binding DetailPeople}" />
+            <TextBlock Grid.Row="4" Grid.Column="1" Classes="label" TextWrapping="Wrap" Text="{Binding Editor.People}" />
           </Grid>
 
-          <TextBlock Classes="overline" Text="{l:Tr Browse.Detail.Caption}" />
-          <StackPanel Spacing="4" IsVisible="{Binding !IsEditingCaption}">
-            <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding DetailCaption}" />
-            <TextBlock Classes="micro secondary" TextWrapping="Wrap" Text="{Binding DetailCaptionOther}" IsVisible="{Binding DetailCaptionOther, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
-            <StackPanel Orientation="Horizontal" Spacing="8">
-              <TextBlock Classes="micro tertiary" VerticalAlignment="Center" Text="{Binding DetailCaptionOrigin}" />
-              <Button Classes="ghost" Command="{Binding StartCaptionCommand}">
-                <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Browse.Caption.Edit}" /><Border Classes="key"><TextBlock Text="D" /></Border></StackPanel>
-              </Button>
-            </StackPanel>
-          </StackPanel>
-          <TextBox x:Name="CaptionBox" Classes="field" IsVisible="{Binding IsEditingCaption}" Text="{Binding CaptionText}" TextWrapping="Wrap" PlaceholderText="{l:Tr Browse.Caption.Placeholder}">
-            <TextBox.KeyBindings>
-              <KeyBinding Gesture="Enter" Command="{Binding SaveCaptionCommand}" />
-              <KeyBinding Gesture="Escape" Command="{Binding CancelCaptionCommand}" />
-            </TextBox.KeyBindings>
-          </TextBox>
-
-          <TextBlock Classes="overline" Text="{l:Tr Browse.Detail.Tags}" />
-          <ItemsControl ItemsSource="{Binding DetailTags}">
-            <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-              <DataTemplate x:DataType="vm:DetailTagViewModel">
-                <Border Classes="token" Margin="0,0,6,6">
-                  <StackPanel Orientation="Horizontal" Spacing="4">
-                    <TextBlock Classes="label" VerticalAlignment="Center" Text="{Binding Label}" />
-                    <Button Classes="remove" Command="{Binding $parent[UserControl].((vm:BrowseViewModel)DataContext).RemoveTagCommand}" CommandParameter="{Binding}">
-                      <TextBlock Classes="micro" Text="✕" />
-                    </Button>
-                  </StackPanel>
-                </Border>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-          <AutoCompleteBox x:Name="TagBox" IsVisible="{Binding IsTagging}" ItemsSource="{Binding TagSuggestions}" Text="{Binding TagText}" FilterMode="StartsWith" MinimumPrefixLength="1">
-            <AutoCompleteBox.KeyBindings>
-              <KeyBinding Gesture="Enter" Command="{Binding ApplyTagCommand}" />
-            </AutoCompleteBox.KeyBindings>
-          </AutoCompleteBox>
-          <Button Classes="ghost" HorizontalAlignment="Left" Command="{Binding StartTagCommand}" IsVisible="{Binding !IsTagging}">
-            <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Browse.AddTag}" /><Border Classes="key"><TextBlock Text="T" /></Border></StackPanel>
-          </Button>
+          <v:PhotoEditorPanel DataContext="{Binding Editor}" />
+          <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding Editor.Message}" IsVisible="{Binding Editor.Message, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
 
           <StackPanel Spacing="6">
             <Button Classes="primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding OpenInPhotoshopCommand}">

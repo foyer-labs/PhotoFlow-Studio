@@ -202,7 +202,7 @@ public sealed class DocsScreenshots : IDisposable
         await WaitAsync(() => Task.FromResult(browse.Rows.Sum(r => r.Items.Count) > 10 && browse.Facets.Tags.Count > 0), 30);
         var group = byFile[DemoCatalog.GroupPhoto];
         browse.Selected = browse.Rows.SelectMany(r => r.Items).First(i => i.AssetId == group);
-        await WaitAsync(() => Task.FromResult(browse.FaceBoxes.Count >= 3), 30);
+        await WaitAsync(() => Task.FromResult(browse.Editor.FaceBoxes.Count >= 3), 30);
         await Shot("03-consultazione");
 
         await browse.Facets.TogglePersonCommand.ExecuteAsync(browse.Facets.Persons.First(p => p.Label == "Giulia"));
@@ -215,7 +215,7 @@ public sealed class DocsScreenshots : IDisposable
 
         await WaitAsync(() => Task.FromResult(browse.Rows.SelectMany(r => r.Items).Any(i => i.AssetId == group)), 30);
         browse.Selected = browse.Rows.SelectMany(r => r.Items).First(i => i.AssetId == group);
-        await WaitAsync(() => Task.FromResult(browse.FaceBoxes.Count >= 3), 30);
+        await WaitAsync(() => Task.FromResult(browse.Editor.FaceBoxes.Count >= 3), 30);
         browse.TogglePreviewCommand.Execute(null);
         await Shot("05-volti");
         browse.TogglePreviewCommand.Execute(null);

@@ -1,0 +1,53 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Caption (D) and tags (T, ✕) of a photo in a details panel (spec §8, P21): the same in Consultazione and Revisione. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:PhotoFlow.App.ViewModels"
+             xmlns:l="using:PhotoFlow.App.Localization"
+             x:Class="PhotoFlow.App.Views.PhotoEditorPanel"
+             x:DataType="vm:PhotoEditorViewModel">
+  <StackPanel Spacing="10">
+    <TextBlock Classes="overline" Text="{l:Tr Browse.Detail.Caption}" />
+    <StackPanel Spacing="4" IsVisible="{Binding !IsEditingCaption}">
+      <TextBlock Classes="label" TextWrapping="Wrap" Text="{Binding CaptionLine}" />
+      <TextBlock Classes="micro secondary" TextWrapping="Wrap" Text="{Binding OtherCaptions}" IsVisible="{Binding OtherCaptions, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <TextBlock Classes="micro tertiary" VerticalAlignment="Center" Text="{Binding CaptionSource}" />
+        <Button Classes="ghost" Command="{Binding StartCaptionCommand}">
+          <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Browse.Caption.Edit}" /><Border Classes="key"><TextBlock Text="D" /></Border></StackPanel>
+        </Button>
+      </StackPanel>
+    </StackPanel>
+    <TextBox x:Name="CaptionBox" Classes="field" IsVisible="{Binding IsEditingCaption}" Text="{Binding CaptionText}" TextWrapping="Wrap" PlaceholderText="{l:Tr Browse.Caption.Placeholder}">
+      <TextBox.KeyBindings>
+        <KeyBinding Gesture="Enter" Command="{Binding SaveCaptionCommand}" />
+        <KeyBinding Gesture="Escape" Command="{Binding CancelCaptionCommand}" />
+      </TextBox.KeyBindings>
+    </TextBox>
+
+    <TextBlock Classes="overline" Text="{l:Tr Browse.Detail.Tags}" />
+    <ItemsControl ItemsSource="{Binding Tags}">
+      <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="vm:DetailTagViewModel">
+          <Border Classes="token" Margin="0,0,6,6">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <TextBlock Classes="label" VerticalAlignment="Center" Text="{Binding Label}" />
+              <Button Classes="remove" Command="{Binding $parent[UserControl].((vm:PhotoEditorViewModel)DataContext).RemoveTagCommand}" CommandParameter="{Binding}">
+                <TextBlock Classes="micro" Text="✕" />
+              </Button>
+            </StackPanel>
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+    <AutoCompleteBox x:Name="TagBox" IsVisible="{Binding IsTagging}" ItemsSource="{Binding TagSuggestions}" Text="{Binding TagText}" FilterMode="StartsWith" MinimumPrefixLength="1">
+      <AutoCompleteBox.KeyBindings>
+        <KeyBinding Gesture="Enter" Command="{Binding ApplyTagCommand}" />
+      </AutoCompleteBox.KeyBindings>
+    </AutoCompleteBox>
+    <Button Classes="ghost" HorizontalAlignment="Left" Command="{Binding StartTagCommand}" IsVisible="{Binding !IsTagging}">
+      <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Browse.AddTag}" /><Border Classes="key"><TextBlock Text="T" /></Border></StackPanel>
+    </Button>
+  </StackPanel>
+</UserControl>

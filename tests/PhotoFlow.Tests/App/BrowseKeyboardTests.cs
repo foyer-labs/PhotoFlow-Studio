@@ -71,25 +71,25 @@ public sealed class BrowseKeyboardTests : IDisposable
 
         // T: a manual tag typed in the field, Enter applies it.
         Press(window, PhysicalKey.T);
-        Assert.True(browse.IsTagging);
-        browse.TagText = "vacanze";
-        browse.ApplyTagCommand.Execute(null);
-        await WaitAsync(() => browse.DetailTags.Any(t => t.Label == "vacanze" && t.IsManual));
+        Assert.True(browse.Editor.IsTagging);
+        browse.Editor.TagText = "vacanze";
+        browse.Editor.ApplyTagCommand.Execute(null);
+        await WaitAsync(() => browse.Editor.Tags.Any(t => t.Label == "vacanze" && t.IsManual));
 
         // ✕ on "beach": suppressed, never added again by an analysis.
-        var beach = browse.DetailTags.Single(t => t.Label == "beach");
-        browse.RemoveTagCommand.Execute(beach);
-        await WaitAsync(() => browse.DetailTags.All(t => t.Label != "beach"));
+        var beach = browse.Editor.Tags.Single(t => t.Label == "beach");
+        browse.Editor.RemoveTagCommand.Execute(beach);
+        await WaitAsync(() => browse.Editor.Tags.All(t => t.Label != "beach"));
         Assert.Equal(AssetTagState.Suppressed, (await catalog.Tags.GetForAssetAsync(ids[1], ct)).Single(t => t.Tag.Key == "beach").Assignment.State);
 
         // D: the caption is edited in its field; Enter saves it as the user's, and the keys go back to the page.
-        Assert.Equal("A beach with umbrellas.", browse.DetailCaption);
+        Assert.Equal("A beach with umbrellas.", browse.Editor.CaptionLine);
         Press(window, PhysicalKey.D);
-        Assert.True(browse.IsEditingCaption);
-        Assert.Equal("A beach with umbrellas.", browse.CaptionText);
-        browse.CaptionText = "Ferragosto a Rimini, la spiaggia all'alba.";
+        Assert.True(browse.Editor.IsEditingCaption);
+        Assert.Equal("A beach with umbrellas.", browse.Editor.CaptionText);
+        browse.Editor.CaptionText = "Ferragosto a Rimini, la spiaggia all'alba.";
         Press(window, PhysicalKey.Enter);
-        await WaitAsync(() => browse.DetailCaption.StartsWith("Ferragosto a Rimini", StringComparison.Ordinal));
+        await WaitAsync(() => browse.Editor.CaptionLine.StartsWith("Ferragosto a Rimini", StringComparison.Ordinal));
         Assert.Equal(CaptionOrigin.Manual, (await catalog.Captions.GetAsync(ids[1], ct))!.Origin);
         Assert.False(await catalog.Captions.SetAutomaticAsync(ids[1], "en", "A beach.", "florence2-base-ft@2", ct));
         Press(window, PhysicalKey.Digit4);

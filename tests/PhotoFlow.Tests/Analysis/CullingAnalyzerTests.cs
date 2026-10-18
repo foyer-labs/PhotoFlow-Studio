@@ -102,7 +102,7 @@ public sealed class CullingPhotoProcessorTests : IDisposable
         Assert.Equal(CullingAnalyzer.AnalyzerId, result.Analysis.AnalyzerId);
         Assert.Equal(SharpnessZoneKind.Tiles, CullingScores.FromScores(result.Analysis.Scores).Zone);
         Assert.Empty(result.Faces);
-        Assert.StartsWith("decision-v1+culling-v1+events@1", result.DecisionVersion, StringComparison.Ordinal);
+        Assert.StartsWith($"{DecisionEngine.EngineVersion}+{CullingAnalyzer.AnalyzerId}+events@{BuiltInProfiles.Get("events").Version}", result.DecisionVersion, StringComparison.Ordinal);
     }
 
     [Fact]

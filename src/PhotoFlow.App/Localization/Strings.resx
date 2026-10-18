@@ -1035,4 +1035,25 @@
   <data name="Regeneration.Reset.ConfirmFirst" xml:space="preserve"><value>Confirm the reset of the people first, or clear the choice.</value></data>
   <data name="Regeneration.Reset.Preview" xml:space="preserve"><value>Reset of the people:</value></data>
   <data name="Regeneration.Reset.Done" xml:space="preserve"><value>People reset: {0} people, {1} manual assignments and {2} drawn faces deleted.</value></data>
+  <data name="Review.Command.LargePhoto" xml:space="preserve"><value>large photo</value></data>
+  <data name="Review.Mode.LargePhoto" xml:space="preserve"><value>Large photo</value></data>
+  <data name="Review.Key.Space" xml:space="preserve"><value>Space</value></data>
+  <data name="Review.Key.AddFace" xml:space="preserve"><value>Shift N</value></data>
+  <data name="Review.ClickFaceHint" xml:space="preserve"><value>Click a face to say who it is · Shift N to add a face that was not found</value></data>
+  <data name="Review.People.Hint" xml:space="preserve"><value>Space: the photo large, to see the faces and say who they are.</value></data>
+  <data name="Signal.Highlights.AfArea" xml:space="preserve"><value>Highlights (AF)</value></data>
+  <data name="Signal.Shadows.AfArea" xml:space="preserve"><value>Shadows (AF)</value></data>
+  <data name="Signal.Highlights.Eyes" xml:space="preserve"><value>Highlights (eyes)</value></data>
+  <data name="Signal.Shadows.Eyes" xml:space="preserve"><value>Shadows (eyes)</value></data>
+  <data name="Signal.Highlights.Faces" xml:space="preserve"><value>Highlights (faces)</value></data>
+  <data name="Signal.Shadows.Faces" xml:space="preserve"><value>Shadows (faces)</value></data>
+  <data name="Signal.Highlights.Subject" xml:space="preserve"><value>Highlights (subject)</value></data>
+  <data name="Signal.Shadows.Subject" xml:space="preserve"><value>Shadows (subject)</value></data>
+  <data name="Signal.Highlights.Tiles" xml:space="preserve"><value>Highlights</value></data>
+  <data name="Signal.Shadows.Tiles" xml:space="preserve"><value>Shadows</value></data>
+  <data name="Signal.Highlights.Frame" xml:space="preserve"><value>Highlights (photo)</value></data>
+  <data name="Signal.Shadows.Frame" xml:space="preserve"><value>Shadows (photo)</value></data>
+  <data name="Signal.Brightness" xml:space="preserve"><value>Brightness</value></data>
+  <data name="Reason.exposure.frame.highlights" xml:space="preserve"><value>many blown highlights in the photo</value></data>
+  <data name="Reason.exposure.frame.dark" xml:space="preserve"><value>very dark photo (underexposed)</value></data>
 </root>

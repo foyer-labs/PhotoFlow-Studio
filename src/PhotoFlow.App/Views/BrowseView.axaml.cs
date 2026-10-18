@@ -19,33 +19,17 @@ public sealed partial class BrowseView : UserControl
         RowsList.SizeChanged += (_, e) => UpdateColumns(e.NewSize.Width);
         QueryBox.AddHandler(KeyDownEvent, OnQueryKeyDown, RoutingStrategies.Tunnel);
         QueryBox.SelectionChanged += OnSuggestionChosen;
-
-        // The keys go back to the page when the caption or tag field closes (Enter, Esc).
-        foreach (var field in new Control[] { CaptionBox, TagBox })
-        {
-            field.PropertyChanged += (_, e) =>
-            {
-                if (e.Property == IsVisibleProperty && e.NewValue is false)
-                {
-                    Focus();
-                }
-            };
-        }
         DataContextChanged += (_, _) =>
         {
             if (_viewModel is not null)
             {
                 _viewModel.FocusSearchRequested -= OnFocusSearch;
-                _viewModel.FocusTagRequested -= OnFocusTag;
-                _viewModel.FocusCaptionRequested -= OnFocusCaption;
             }
 
             _viewModel = DataContext as BrowseViewModel;
             if (_viewModel is not null)
             {
                 _viewModel.FocusSearchRequested += OnFocusSearch;
-                _viewModel.FocusTagRequested += OnFocusTag;
-                _viewModel.FocusCaptionRequested += OnFocusCaption;
                 UpdateColumns(RowsList.Bounds.Width);
             }
         };
@@ -95,14 +79,6 @@ public sealed partial class BrowseView : UserControl
 
     private void OnFocusSearch(object? sender, EventArgs e) => Dispatcher.UIThread.Post(() => QueryBox.Focus());
 
-    private void OnFocusTag(object? sender, EventArgs e) => Dispatcher.UIThread.Post(() => TagBox.Focus());
-
-    private void OnFocusCaption(object? sender, EventArgs e) => Dispatcher.UIThread.Post(() =>
-    {
-        CaptionBox.Focus();
-        CaptionBox.CaretIndex = CaptionBox.Text?.Length ?? 0;
-    });
-
     /// <summary>A tag of the facets: the mode of the switch, the other one with Ctrl.</summary>
     private async void OnFacetTagPressed(object? sender, PointerPressedEventArgs e)
     {
@@ -110,39 +86,6 @@ public sealed partial class BrowseView : UserControl
         {
             e.Handled = true;
             await browse.Facets.ClickTagAsync(item, e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta));
-        }
-    }
-
-    /// <summary>A face clicked on the large preview: who is it?</summary>
-    private async void OnFaceClicked(object? sender, FaceBoxViewModel face)
-    {
-        if (_viewModel is { IsLargePreview: true })
-        {
-            await _viewModel.IdentifyFaceAsync(face);
-            FacePersonBox.Focus();
-            FacePersonBox.IsDropDownOpen = true;
-        }
-    }
-
-    /// <summary>A box drawn on the large preview: the face to add, then its person.</summary>
-    private void OnFaceDrawn(object? sender, PhotoFlow.Core.Analysis.BoundingBox box)
-    {
-        _viewModel?.FaceDrawnOnPhoto(box);
-        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-        {
-            FacePersonBox.Focus();
-            FacePersonBox.IsDropDownOpen = true;
-        });
-    }
-
-    /// <summary>A double click on the large preview goes back to the grid, as one on a thumbnail opened it (not while drawing a face).</summary>
-    private void OnLargePreviewPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (e.ClickCount == 2 && _viewModel is { IsLargePreview: true, IsDrawingFace: false })
-        {
-            e.Handled = true;
-            _viewModel.TogglePreviewCommand.Execute(null);
-            Focus();
         }
     }
 
