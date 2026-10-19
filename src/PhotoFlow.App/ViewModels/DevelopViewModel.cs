@@ -93,6 +93,10 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         new("Develop.Photo", new KeyGesture(Key.PageUp), "Develop.Command.Photo", Parameter: "-1"),
         new("Develop.Photo", new KeyGesture(Key.PageDown), "Develop.Command.Photo", Parameter: "1"),
         new("Develop.Zoom", new KeyGesture(Key.Space), "Develop.Command.Zoom", StatusGroupKey: "Develop.Command.Zoom"),
+        new("Develop.ZoomStep", new KeyGesture(Key.OemPlus, KeyModifiers.Control), "Develop.Command.ZoomStep", StatusGroupKey: "Develop.Command.ZoomStep", Parameter: "1"),
+        new("Develop.ZoomStep", new KeyGesture(Key.Add, KeyModifiers.Control), "Develop.Command.ZoomStep", Parameter: "1"),
+        new("Develop.ZoomStep", new KeyGesture(Key.OemMinus, KeyModifiers.Control), "Develop.Command.ZoomStep", Parameter: "-1"),
+        new("Develop.ZoomStep", new KeyGesture(Key.Subtract, KeyModifiers.Control), "Develop.Command.ZoomStep", Parameter: "-1"),
         new("Develop.Compare", new KeyGesture(Key.Y), "Develop.Command.Compare", StatusGroupKey: "Develop.Command.Compare"),
         new("Develop.Noise", new KeyGesture(Key.R), "Develop.Command.Noise", StatusGroupKey: "Develop.Command.Noise"),
         new("Develop.Pick", new KeyGesture(Key.W), "Develop.Command.Pick", StatusGroupKey: "Develop.Command.Pick"),
@@ -129,7 +133,6 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     private CancellationTokenSource? _fullCts;
     private CancellationTokenSource? _histogramCts;
     private CancellationTokenSource? _saveCts;
-    private Point _centre;
 
     /// <summary>Size of the output (after rotation, straightening and crop) at full resolution, as the engine reports it.</summary>
     private (int Width, int Height) _frame;
@@ -218,8 +221,21 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     [ObservableProperty]
     private Rect _region;
 
+    /// <summary>Zoom of the photo (decision S25): physical screen pixels per photo pixel; 0 = fitted to the viewer.</summary>
     [ObservableProperty]
-    private bool _actualSize;
+    [NotifyPropertyChangedFor(nameof(ActualSize), nameof(ZoomSlider), nameof(ZoomText))]
+    private double _zoom;
+
+    /// <summary>The photo point (frame coordinates) at the centre of the viewer when zoomed.</summary>
+    [ObservableProperty]
+    private Point _centre;
+
+    /// <summary>The whole frame (after rotation and crop) at full resolution.</summary>
+    [ObservableProperty]
+    private Size _frameSize;
+
+    /// <summary>Zoomed in (the 100% chip is lit, Esc goes back to fit).</summary>
+    public bool ActualSize => Zoom > 0;
 
     [ObservableProperty]
     private CompareMode _compareMode = CompareMode.Split;
@@ -243,7 +259,69 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     private int[][]? _histogram;
 
     /// <summary>Viewport of the viewer in physical pixels (set by the view).</summary>
-    public PixelSize Viewport { get; set; } = new(1600, 1000);
+    public PixelSize Viewport
+    {
+        get => _viewport;
+        set
+        {
+            if (_viewport == value)
+            {
+                return;
+            }
+
+            _viewport = value;
+            OnPropertyChanged(nameof(ZoomSlider));
+            OnPropertyChanged(nameof(ZoomText));
+        }
+    }
+
+    private PixelSize _viewport = new(1600, 1000);
+
+    /// <summary>The fitted bitmaps, kept while zoomed in: zooming out shows them again without computing.</summary>
+    private (Bitmap? Before, Bitmap? After, Bitmap? Difference, Rect Region, string Label, string Json)? _fitted;
+
+    private CancellationTokenSource? _viewCts;
+
+    private Size FrameDips => new(Frame.Width, Frame.Height);
+
+    /// <summary>The zoom that shows the whole photo.</summary>
+    public double FitZoom => DevelopViewer.FitZoom(Viewport, FrameDips);
+
+    private double EffectiveZoom => Zoom > 0 ? Zoom : FitZoom;
+
+    /// <summary>Resolution of the fitted preview against the photo: below it the preview is enough.</summary>
+    private double PreviewScale => Math.Min(1.0, PreviewSide / (double)Math.Max(1, Math.Max(Frame.Width, Frame.Height)));
+
+    /// <summary>The visible part must be computed by the engine (the fitted preview is not sharp enough).</summary>
+    private bool NeedsRegion => Zoom > 0 && Zoom > PreviewScale * 1.02;
+
+    /// <summary>The zoom slider, 0 (fit) to 1000 (800%) on a logarithmic scale.</summary>
+    public double ZoomSlider
+    {
+        get
+        {
+            var fit = FitZoom;
+            return Zoom <= 0 || fit >= DevelopViewer.MaxZoom ? 0 : Math.Clamp(1000 * Math.Log(Zoom / fit) / Math.Log(DevelopViewer.MaxZoom / fit), 0, 1000);
+        }
+        set
+        {
+            var fit = FitZoom;
+            var zoom = value <= 1 || fit >= DevelopViewer.MaxZoom ? 0 : fit * Math.Pow(DevelopViewer.MaxZoom / fit, value / 1000);
+            if (Math.Abs(zoom - 1) < 0.04)
+            {
+                zoom = 1; // 100% is where the noise is judged: the slider snaps to it
+            }
+
+            if (Math.Abs(zoom - Zoom) > 1e-4)
+            {
+                SetView(zoom, null);
+            }
+        }
+    }
+
+    public string ZoomText => Zoom <= 0 ? Strings.Format("Develop.Zoom.Fit", Percent(FitZoom)) : Percent(Zoom);
+
+    private static string Percent(double zoom) => (zoom * 100).ToString(zoom < 0.1 ? "0.#" : "0", CultureInfo.CurrentCulture) + "%";
 
     // Panel: light
     [ObservableProperty] private double _exposure;
@@ -579,10 +657,13 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
             LoadPanel();
             OnPropertyChanged(nameof(HasPhoto));
             OnPropertyChanged(nameof(IsRaw));
-            ActualSize = false;
+            _viewCts?.Cancel();
+            Zoom = 0;
             _frame = default;
+            _fitted = null;
+            FrameSize = new Size(photo.Width, photo.Height);
             IsCropping = false;
-            _centre = new Point(photo.Width / 2.0, photo.Height / 2.0);
+            Centre = new Point(photo.Width / 2.0, photo.Height / 2.0);
             OnPropertyChanged(nameof(SyncGroupText));
             OnPropertyChanged(nameof(ApplyUndevelopedText));
             ScheduleHistogram();
@@ -931,7 +1012,8 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         if (IsCropping)
         {
             IsPicking = false;
-            ActualSize = false;
+            _viewCts?.Cancel();
+            Zoom = 0;
         }
 
         ScheduleHistogram();
@@ -1149,18 +1231,21 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         var settings = EngineSettings();
         try
         {
-            if (ActualSize)
+            if (NeedsRegion)
             {
-                // 100%: the visible region, with the noise reduction (fast on a region).
+                // Zoomed in: the visible region, with the noise reduction (fast on a region); below 100% the engine
+                // reduces it to the pixels of the screen.
                 var (fw, fh) = Frame;
-                var w = Math.Min(Viewport.Width, fw);
-                var h = Math.Min(Viewport.Height, fh);
-                var x = (int)Math.Clamp(_centre.X - w / 2.0, 0, fw - w);
-                var y = (int)Math.Clamp(_centre.Y - h / 2.0, 0, fh - h);
+                var zoom = Zoom;
+                var w = Math.Clamp((int)Math.Ceiling(Viewport.Width / zoom), 1, fw);
+                var h = Math.Clamp((int)Math.Ceiling(Viewport.Height / zoom), 1, fh);
+                var x = (int)Math.Clamp(Centre.X - w / 2.0, 0, fw - w);
+                var y = (int)Math.Clamp(Centre.Y - h / 2.0, 0, fh - h);
+                var maxSide = zoom < 1 ? Math.Max(1, (int)Math.Ceiling(Math.Max(w, h) * zoom)) : 0;
                 IsComputing = NoiseEnabled;
                 OnPropertyChanged(nameof(NoiseBadge));
                 var progress = new Progress<DevelopProgress>(p => { NoiseProgress = p.Fraction; OnPropertyChanged(nameof(NoiseBadge)); });
-                var render = await _host.DevelopEngine.RenderAsync(path, settings, (x, y, w, h), 0, NoiseEnabled, progress, cts.Token);
+                var render = await _host.DevelopEngine.RenderAsync(path, settings, (x, y, w, h), maxSide, NoiseEnabled, progress, cts.Token);
                 if (!cts.IsCancellationRequested)
                 {
                     Show(render, render.AfterFile is not null);
@@ -1173,7 +1258,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
             var key = Active is { } active ? PreviewCache.Key(active.AssetId, settings, PreviewSide) : null;
             if (full && NoiseEnabled && key is not null && _cache.TryGet(key) is { } prepared)
             {
-                Show(prepared, true, cached: true);
+                Show(prepared, true, cached: true, json: settings.ToJsonString());
                 return;
             }
 
@@ -1185,7 +1270,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
                 return;
             }
 
-            Show(quick, false);
+            Show(quick, false, json: settings.ToJsonString());
             if (NoiseEnabled && full)
             {
                 await RenderFullAsync(path, settings, key);
@@ -1224,9 +1309,9 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
             var render = await _host.DevelopEngine.RenderFullAsync(path, settings, PreviewSide, progress, cts.Token);
             // Kept: going back to this photo (or exporting it soon after) does not compute it again (M8).
             var stored = key is null ? null : _cache.Store(key, render);
-            if (!cts.IsCancellationRequested && !ActualSize)
+            if (!cts.IsCancellationRequested && !NeedsRegion)
             {
-                Show(stored ?? render, true, cached: stored is not null);
+                Show(stored ?? render, true, cached: stored is not null, json: settings.ToJsonString());
             }
         }
         catch (OperationCanceledException)
@@ -1247,7 +1332,8 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         }
     }
 
-    private void Show(DevelopRender render, bool withAfter, bool cached = false)
+    /// <param name="json">The settings of a render of the whole photo: kept to show it again when zooming out.</param>
+    private void Show(DevelopRender render, bool withAfter, bool cached = false, string? json = null)
     {
         var before = Load(render.BeforeFile, !cached);
         var after = withAfter && render.AfterFile is { } a ? Load(a, !cached) : null;
@@ -1255,10 +1341,10 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         if (render.Frame.Width > 0 && render.Frame != _frame)
         {
             _frame = render.Frame;
-            if (!ActualSize)
-            {
-                _centre = new Point(_frame.Width / 2.0, _frame.Height / 2.0);
-            }
+            FrameSize = new Size(_frame.Width, _frame.Height);
+            Centre = DevelopViewer.ClampCentre(Zoom > 0 ? Centre : new Point(_frame.Width / 2.0, _frame.Height / 2.0), Zoom, Viewport, FrameDips);
+            OnPropertyChanged(nameof(ZoomSlider));
+            OnPropertyChanged(nameof(ZoomText));
         }
 
         Region = new Rect(render.Region.X, render.Region.Y, render.Region.Width, render.Region.Height);
@@ -1268,6 +1354,10 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         AfterLabel = !NoiseEnabled ? Strings.Get("Develop.Label.Developed")
             : withAfter ? Strings.Format("Develop.Label.After", render.Reduction is { } r ? "−" + r.ToString(CultureInfo.CurrentCulture) + "%" : string.Empty)
             : Strings.Get("Develop.Label.Computing");
+        if (json is not null)
+        {
+            _fitted = (Before, After, Difference, Region, AfterLabel, json);
+        }
     }
 
     private Bitmap? Load(string file, bool delete = true)
@@ -1359,6 +1449,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     {
         "Develop.Photo" => StepCommand,
         "Develop.Zoom" => ToggleZoomCommand,
+        "Develop.ZoomStep" => ZoomStepCommand,
         "Develop.Compare" => CycleCompareCommand,
         "Develop.Noise" => ToggleNoiseCommand,
         "Develop.Pick" => PickCommand,
@@ -1674,26 +1765,83 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     [RelayCommand]
     private void ToggleZoom() => ZoomAt(null);
 
+    /// <summary>Space and double click: fit, or 100% on <paramref name="point"/> (the centre when null).</summary>
     public void ZoomAt(Point? point)
     {
-        if (_photo is null)
+        if (Zoom > 0)
+        {
+            SetView(0, null, immediate: true);
+        }
+        else
+        {
+            SetView(1, point, immediate: true);
+        }
+    }
+
+    public void PanTo(Point centre) => SetView(Zoom, centre, immediate: true);
+
+    /// <summary>Ctrl + and Ctrl −: the next level of the wheel, on the centre of the view.</summary>
+    [RelayCommand]
+    private void ZoomStep(string? direction) =>
+        SetView(DevelopViewer.StepZoom(EffectiveZoom, FitZoom, direction == "-1" ? -1 : 1), null);
+
+    /// <summary>
+    /// Shows the photo at <paramref name="zoom"/> (0 = fit) around <paramref name="centre"/> (null: the current one).
+    /// The viewer follows at once with the bitmaps it has; the sharper region is asked when the wheel or the slider
+    /// stop for a moment.
+    /// </summary>
+    public void SetView(double zoom, Point? centre, bool immediate = false)
+    {
+        if (_photo is null || IsCropping)
         {
             return;
         }
 
-        if (point is { } p && !ActualSize)
-        {
-            _centre = p;
-        }
-
-        ActualSize = !ActualSize;
-        _ = RefreshAsync(full: !ActualSize);
+        zoom = zoom <= FitZoom * 1.001 ? 0 : Math.Min(zoom, DevelopViewer.MaxZoom);
+        Centre = DevelopViewer.ClampCentre(centre ?? Centre, zoom, Viewport, FrameDips);
+        Zoom = zoom;
+        _ = UpdateViewAsync(immediate);
     }
 
-    public void PanTo(Point centre)
+    private async Task UpdateViewAsync(bool immediate)
     {
-        _centre = centre;
-        _ = RefreshAsync(full: false);
+        _viewCts?.Cancel();
+        var cts = _viewCts = new CancellationTokenSource();
+        try
+        {
+            if (!immediate)
+            {
+                await Task.Delay(150, cts.Token);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+
+        if (NeedsRegion)
+        {
+            await RefreshAsync(full: false);
+            return;
+        }
+
+        if (Region.Width >= Frame.Width - 1 && Region.Height >= Frame.Height - 1 && Before is not null)
+        {
+            return; // the whole photo is on screen: the viewer scales it
+        }
+
+        if (_fitted is { } fitted && fitted.Json == EngineSettings().ToJsonString())
+        {
+            _renderCts?.Cancel();
+            Region = fitted.Region;
+            Before = fitted.Before;
+            After = fitted.After;
+            Difference = fitted.Difference;
+            AfterLabel = fitted.Label;
+            return;
+        }
+
+        await RefreshAsync(full: true);
     }
 
     [RelayCommand]

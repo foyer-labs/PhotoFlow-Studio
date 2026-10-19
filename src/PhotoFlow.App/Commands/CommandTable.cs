@@ -97,6 +97,8 @@ public sealed class CommandTable
     {
         >= Key.D0 and <= Key.D9 => ((int)(key - Key.D0)).ToString(System.Globalization.CultureInfo.InvariantCulture),
         Key.OemComma => ",",
+        Key.OemPlus or Key.Add => "+",
+        Key.OemMinus or Key.Subtract => "−",
         Key.Return => "↵",
         Key.Escape => "Esc",
         Key.Space => Strings.Get("Key.Space"),

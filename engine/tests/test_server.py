@@ -52,6 +52,11 @@ def test_apre_e_crea_le_anteprime(engine, raw):
     assert after.shape == before.shape == (48, 64, 3)
     assert Path(region["difference"]).is_file()
     assert region["reduction"] > 20  # la foto di prova è molto rumorosa
+    # Zoom sotto il 100% (PhotoFlow Studio S25): la zona ridotta ai pixel dello schermo, prima e dopo uguali.
+    small = engine.cmd_render(raw, s, region=[0, 0, 128, 96], max_side=64, denoise=True)
+    assert small["region"] == [0, 0, 128, 96]
+    assert np.asarray(Image.open(small["before"])).shape == np.asarray(Image.open(small["after"])).shape == (48, 64, 3)
+    assert Path(small["difference"]).is_file()
 
 
 def test_istogramma_e_contagocce(engine, raw):

@@ -17,11 +17,16 @@ public enum CompareMode
     Difference,
 }
 
+/// <summary>A view of the photo asked by the viewer: zoom (0 = fit) and the photo point at the centre.</summary>
+public readonly record struct DevelopViewRequest(double Zoom, Point Centre);
+
 /// <summary>
-/// The photo in Develop (decisions S6, S8): before and after with a split line, «after only», «before only», «noise
-/// removed». The bitmaps cover <see cref="Region"/> of the photo: the whole photo when fitted, a region at actual size
-/// (one photo pixel per screen pixel) otherwise. Dragging at actual size pans; double click toggles fit / 100% on the
-/// point; in eyedropper mode a click picks the point.
+/// The photo in Develop (decisions S6, S8, S25): before and after with a split line, «after only», «before only», «noise
+/// removed». The bitmaps cover <see cref="Region"/> of the photo (frame coordinates): the whole photo, or the visible
+/// part when zoomed in. The view is <see cref="Zoom"/> (physical screen pixels per photo pixel, 0 = fit) around
+/// <see cref="Centre"/>: the bitmaps are placed by their region, so while a sharper region is computed the previous one
+/// is shown stretched. The wheel zooms on the pointer (as in Denoiser); dragging pans when zoomed; double click toggles
+/// fit / 100% on the point; in eyedropper mode a click picks the point.
 /// </summary>
 public sealed class DevelopViewer : Control
 {
@@ -29,7 +34,9 @@ public sealed class DevelopViewer : Control
     public static readonly StyledProperty<Bitmap?> AfterProperty = AvaloniaProperty.Register<DevelopViewer, Bitmap?>(nameof(After));
     public static readonly StyledProperty<Bitmap?> DifferenceProperty = AvaloniaProperty.Register<DevelopViewer, Bitmap?>(nameof(Difference));
     public static readonly StyledProperty<Rect> RegionProperty = AvaloniaProperty.Register<DevelopViewer, Rect>(nameof(Region));
-    public static readonly StyledProperty<bool> ActualSizeProperty = AvaloniaProperty.Register<DevelopViewer, bool>(nameof(ActualSize));
+    public static readonly StyledProperty<double> ZoomProperty = AvaloniaProperty.Register<DevelopViewer, double>(nameof(Zoom));
+    public static readonly StyledProperty<Point> CentreProperty = AvaloniaProperty.Register<DevelopViewer, Point>(nameof(Centre));
+    public static readonly StyledProperty<Size> FrameSizeProperty = AvaloniaProperty.Register<DevelopViewer, Size>(nameof(FrameSize));
     public static readonly StyledProperty<CompareMode> ModeProperty = AvaloniaProperty.Register<DevelopViewer, CompareMode>(nameof(Mode));
     public static readonly StyledProperty<bool> ShowOriginalProperty = AvaloniaProperty.Register<DevelopViewer, bool>(nameof(ShowOriginal));
     public static readonly StyledProperty<bool> PickingProperty = AvaloniaProperty.Register<DevelopViewer, bool>(nameof(Picking));
@@ -46,11 +53,18 @@ public sealed class DevelopViewer : Control
     private Rect _cropAtStart;
     private bool _draggingSplit;
     private Point? _panStart;
-    private Vector _pan;
+    private Point _panCentre;
+    private Point? _dragCentre;
+    private double _wheel;
+
+    /// <summary>The zoom levels of the wheel (as in Denoiser, with a few more steps between 50% and 800%).</summary>
+    public static IReadOnlyList<double> ZoomSteps { get; } = [0.0625, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8];
+
+    public static double MaxZoom => ZoomSteps[^1];
 
     static DevelopViewer()
     {
-        AffectsRender<DevelopViewer>(BeforeProperty, AfterProperty, DifferenceProperty, RegionProperty, ActualSizeProperty, ModeProperty,
+        AffectsRender<DevelopViewer>(BeforeProperty, AfterProperty, DifferenceProperty, RegionProperty, ZoomProperty, CentreProperty, FrameSizeProperty, ModeProperty,
             ShowOriginalProperty, BeforeLabelProperty, AfterLabelProperty, CroppingProperty, CropRectProperty);
         FocusableProperty.OverrideDefaultValue<DevelopViewer>(true);
         ClipToBoundsProperty.OverrideDefaultValue<DevelopViewer>(true);
@@ -65,7 +79,14 @@ public sealed class DevelopViewer : Control
     /// <summary>Part of the photo (in photo pixels) the bitmaps show.</summary>
     public Rect Region { get => GetValue(RegionProperty); set => SetValue(RegionProperty, value); }
 
-    public bool ActualSize { get => GetValue(ActualSizeProperty); set => SetValue(ActualSizeProperty, value); }
+    /// <summary>Physical screen pixels per photo pixel; 0 = the whole photo fitted in the viewer.</summary>
+    public double Zoom { get => GetValue(ZoomProperty); set => SetValue(ZoomProperty, value); }
+
+    /// <summary>The photo point (frame coordinates) at the centre of the viewer when zoomed.</summary>
+    public Point Centre { get => GetValue(CentreProperty); set => SetValue(CentreProperty, value); }
+
+    /// <summary>Size of the whole frame at full resolution.</summary>
+    public Size FrameSize { get => GetValue(FrameSizeProperty); set => SetValue(FrameSizeProperty, value); }
 
     public CompareMode Mode { get => GetValue(ModeProperty); set => SetValue(ModeProperty, value); }
 
@@ -99,8 +120,11 @@ public sealed class DevelopViewer : Control
     /// <summary>Double click: toggle fit / actual size centred on this point of the photo.</summary>
     public event EventHandler<Point>? ZoomRequested;
 
-    /// <summary>At actual size the view was dragged: new centre of the photo to show.</summary>
+    /// <summary>Zoomed in, the view was dragged: new centre of the photo to show.</summary>
     public event EventHandler<Point>? PanRequested;
+
+    /// <summary>The wheel asked another zoom, anchored on the pointer.</summary>
+    public event EventHandler<DevelopViewRequest>? ViewRequested;
 
     /// <summary>Size of the viewport in physical pixels (for the region to ask at actual size).</summary>
     public PixelSize ViewportPixels
@@ -114,6 +138,50 @@ public sealed class DevelopViewer : Control
 
     private double Scaling => TopLevel.GetTopLevel(this)?.RenderScaling ?? 1;
 
+    /// <summary>The zoom that shows the whole <paramref name="frame"/> in <paramref name="viewport"/> (physical pixels).</summary>
+    public static double FitZoom(PixelSize viewport, Size frame) =>
+        frame.Width <= 0 || frame.Height <= 0 ? 1 : Math.Min(viewport.Width / frame.Width, viewport.Height / frame.Height);
+
+    /// <summary>The centre that keeps the view inside the frame (centred on an axis the frame does not fill).</summary>
+    public static Point ClampCentre(Point centre, double zoom, PixelSize viewport, Size frame)
+    {
+        static double Axis(double value, double view, double size) => view >= size ? size / 2 : Math.Clamp(value, view / 2, size - view / 2);
+        return zoom <= 0
+            ? new Point(frame.Width / 2, frame.Height / 2)
+            : new Point(Axis(centre.X, viewport.Width / zoom, frame.Width), Axis(centre.Y, viewport.Height / zoom, frame.Height));
+    }
+
+    /// <summary>The next zoom of the wheel from <paramref name="current"/>; 0 (fit) at or below the fitted size.</summary>
+    public static double StepZoom(double current, double fit, int direction)
+    {
+        if (direction > 0)
+        {
+            var up = ZoomSteps.FirstOrDefault(z => z > current * 1.001 && z > fit * 1.001);
+            return up > 0 ? up : Math.Max(current, MaxZoom);
+        }
+
+        var down = ZoomSteps.LastOrDefault(z => z < current * 0.999);
+        return down <= fit * 1.001 ? 0 : down;
+    }
+
+    private Size Frame => FrameSize.Width > 0 ? FrameSize : Region.Size;
+
+    /// <summary>The zoom on screen: the fitted one when <see cref="Zoom"/> is 0.</summary>
+    private double EffectiveZoom => Zoom > 0 ? Zoom : FitZoom(ViewportPixels, Frame);
+
+    /// <summary>Control units per photo pixel.</summary>
+    private double Scale => EffectiveZoom / Scaling;
+
+    private Point ViewCentre => _dragCentre ?? (Zoom > 0 ? Centre : new Point(Frame.Width / 2, Frame.Height / 2));
+
+    /// <summary>Photo rectangle → control coordinates.</summary>
+    private Rect ToScreen(Rect photo)
+    {
+        var s = Scale;
+        var c = ViewCentre;
+        return new Rect(Bounds.Width / 2 + (photo.X - c.X) * s, Bounds.Height / 2 + (photo.Y - c.Y) * s, photo.Width * s, photo.Height * s);
+    }
+
     /// <summary>Where the bitmaps are drawn, in control coordinates.</summary>
     private Rect ImageRect()
     {
@@ -122,14 +190,13 @@ public sealed class DevelopViewer : Control
             return default;
         }
 
-        var size = bitmap.PixelSize;
-        if (ActualSize)
+        if (!Cropping && Region.Width > 0)
         {
-            var w = size.Width / Scaling;
-            var h = size.Height / Scaling;
-            return new Rect((Bounds.Width - w) / 2 + _pan.X, (Bounds.Height - h) / 2 + _pan.Y, w, h);
+            return ToScreen(Region);
         }
 
+        // Crop mode: the whole straightened frame fitted in the viewer.
+        var size = bitmap.PixelSize;
         var fit = Math.Min(Bounds.Width / size.Width, Bounds.Height / size.Height);
         var fw = size.Width * fit;
         var fh = size.Height * fit;
@@ -139,13 +206,14 @@ public sealed class DevelopViewer : Control
     /// <summary>Control coordinates → photo coordinates.</summary>
     private Point ToPhoto(Point p)
     {
-        var r = ImageRect();
-        if (r.Width <= 0 || Region.Width <= 0)
+        var s = Scale;
+        if (s <= 0 || Frame.Width <= 0)
         {
             return default;
         }
 
-        return new Point(Region.X + (p.X - r.X) / r.Width * Region.Width, Region.Y + (p.Y - r.Y) / r.Height * Region.Height);
+        var c = ViewCentre;
+        return new Point(c.X + (p.X - Bounds.Width / 2) / s, c.Y + (p.Y - Bounds.Height / 2) / s);
     }
 
     public override void Render(DrawingContext context)
@@ -168,7 +236,7 @@ public sealed class DevelopViewer : Control
             return;
         }
 
-        using (context.PushRenderOptions(new RenderOptions { BitmapInterpolationMode = ActualSize ? BitmapInterpolationMode.None : BitmapInterpolationMode.HighQuality }))
+        using (context.PushRenderOptions(new RenderOptions { BitmapInterpolationMode = EffectiveZoom >= 0.999 ? BitmapInterpolationMode.None : BitmapInterpolationMode.HighQuality }))
         {
             var after = After ?? before;
             var mode = ShowOriginal ? CompareMode.Before : Mode;
@@ -389,11 +457,42 @@ public sealed class DevelopViewer : Control
     private FontFamily Resource(string key) =>
         this.TryFindResource(key, ActualThemeVariant, out var value) && value is FontFamily family ? family : FontFamily.Default;
 
-    /// <summary>Back to the centre (a new photo or a new region arrived).</summary>
-    public void ResetPan()
+    protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
     {
-        _pan = default;
-        InvalidateVisual();
+        base.OnPointerWheelChanged(e);
+        if (Before is null || Cropping || e.Delta.Y == 0)
+        {
+            return;
+        }
+
+        e.Handled = true;
+        // High-resolution wheels and touchpads send fractions of a notch: one level per notch.
+        if (Math.Sign(e.Delta.Y) != Math.Sign(_wheel))
+        {
+            _wheel = 0;
+        }
+
+        _wheel += e.Delta.Y;
+        var fit = FitZoom(ViewportPixels, Frame);
+        var zoom = Zoom;
+        while (Math.Abs(_wheel) >= 0.999)
+        {
+            var step = Math.Sign(_wheel);
+            _wheel -= step;
+            zoom = StepZoom(zoom > 0 ? zoom : fit, fit, step);
+        }
+
+        if (zoom == Zoom)
+        {
+            return;
+        }
+
+        // The photo point under the pointer stays under the pointer.
+        var pointer = e.GetPosition(this);
+        var anchor = ToPhoto(pointer);
+        var scale = (zoom > 0 ? zoom : fit) / Scaling;
+        var centre = new Point(anchor.X - (pointer.X - Bounds.Width / 2) / scale, anchor.Y - (pointer.Y - Bounds.Height / 2) / scale);
+        ViewRequested?.Invoke(this, new DevelopViewRequest(zoom, ClampCentre(centre, zoom, ViewportPixels, Frame)));
     }
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -442,9 +541,10 @@ public sealed class DevelopViewer : Control
         {
             _draggingSplit = true;
         }
-        else if (ActualSize)
+        else if (Zoom > 0)
         {
-            _panStart = p - _pan;
+            _panStart = p;
+            _panCentre = ViewCentre;
         }
 
         e.Pointer.Capture(this);
@@ -477,7 +577,8 @@ public sealed class DevelopViewer : Control
         }
         else if (_panStart is { } start)
         {
-            _pan = p - start;
+            var s = Scale;
+            _dragCentre = ClampCentre(new Point(_panCentre.X - (p.X - start.X) / s, _panCentre.Y - (p.Y - start.Y) / s), EffectiveZoom, ViewportPixels, Frame);
             InvalidateVisual();
         }
         else
@@ -485,7 +586,7 @@ public sealed class DevelopViewer : Control
             var rect = ImageRect();
             Cursor = Picking ? new Cursor(StandardCursorType.Cross)
                 : Mode == CompareMode.Split && Math.Abs(p.X - (rect.X + rect.Width * _split)) < 12 ? new Cursor(StandardCursorType.SizeWestEast)
-                : ActualSize ? new Cursor(StandardCursorType.Hand) : Cursor.Default;
+                : Zoom > 0 ? new Cursor(StandardCursorType.Hand) : Cursor.Default;
         }
     }
 
@@ -504,11 +605,12 @@ public sealed class DevelopViewer : Control
             return;
         }
 
-        if (_panStart is not null && _pan != default)
+        if (_dragCentre is { } centre)
         {
-            // The centre of the view in photo coordinates becomes the centre of the next region.
-            var centre = ToPhoto(new Point(Bounds.Width / 2, Bounds.Height / 2));
+            // The centre of the view becomes the centre of the next region.
             PanRequested?.Invoke(this, centre);
+            _dragCentre = null;
+            InvalidateVisual();
         }
 
         _draggingSplit = false;

@@ -1081,7 +1081,7 @@
   <data name="Develop.Compare" xml:space="preserve"><value>Compare</value></data>
   <data name="Develop.Pick" xml:space="preserve"><value>Eyedropper</value></data>
   <data name="Develop.Export" xml:space="preserve"><value>Export</value></data>
-  <data name="Develop.Tip.Zoom" xml:space="preserve"><value>Fit to the window or actual pixels (100%), where noise is judged. Double click: 100% on that point</value></data>
+  <data name="Develop.Tip.Zoom" xml:space="preserve"><value>Fit to the window or actual pixels (100%), where the noise is judged. Double click: 100% on that spot; wheel: zoom up to 800%</value></data>
   <data name="Develop.Tip.Compare" xml:space="preserve"><value>Before/after split, after only, before only, noise removed. Hold \ to see the original</value></data>
   <data name="Develop.Tip.Pick" xml:space="preserve"><value>Click something that should be grey or white: the white balance makes it neutral</value></data>
   <data name="Develop.Label.Before" xml:space="preserve"><value>BEFORE</value></data>
@@ -1345,4 +1345,9 @@
   <data name="Develop.Command.OpenFiles" xml:space="preserve"><value>Open files from disk</value></data>
   <data name="Develop.Origin.Files" xml:space="preserve"><value>From disk · {0} · {1} photos</value></data>
   <data name="Develop.Files.None" xml:space="preserve"><value>None of the chosen files can be opened (RAW, DNG, JPEG, PNG or TIFF).</value></data>
+  <data name="Develop.Zoom.Fit" xml:space="preserve"><value>Fit · {0}</value></data>
+  <data name="Develop.Zoom.Tip" xml:space="preserve"><value>Zoom from fit to 800%: mouse wheel on the photo (on the pointed spot), Ctrl + and Ctrl −, Space or double click for 100%</value></data>
+  <data name="Develop.Zoom.In" xml:space="preserve"><value>Zoom in (Ctrl +)</value></data>
+  <data name="Develop.Zoom.Out" xml:space="preserve"><value>Zoom out (Ctrl −)</value></data>
+  <data name="Develop.Command.ZoomStep" xml:space="preserve"><value>Zoom in (Ctrl − out)</value></data>
 </root>

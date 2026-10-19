@@ -179,6 +179,16 @@ per foto in `<dati>/develop-files/` con percorso, impostazioni e ultima esportaz
 all'originale; il catalogo non registra né l'asset né l'esportazione (la tabella Exports ha la chiave esterna
 sugli asset). Il pannello di destra ha la barra verticale sempre visibile e resta attivo mentre la foto si apre.
 
+**S25 — Zoom continuo con la rotella (v0.2.2).** Lo zoom non è più solo adatta/100%: `Zoom` è il numero di pixel
+fisici dello schermo per pixel della foto (0 = adatta), con il punto `Centre` della foto al centro della vista.
+Il visore disegna ogni bitmap dove cade la sua `Region`, quindi reagisce subito alla rotella (ancorata al
+puntatore, gradini come in Denoiser più 75/150/300/600%, massimo 800%) mostrando l'immagine che ha, e il modello
+chiede la parte nuova dopo 150 ms di quiete. Finché lo zoom non supera la risoluzione dell'anteprima (2560 px
+sul lato lungo) basta l'anteprima intera; oltre, il motore calcola la zona visibile con il denoise, ridotta ai
+pixel dello schermo sotto il 100% (`render` con `region` e `max_side`). Tornando sotto, l'anteprima intera già
+calcolata si rimostra senza ricalcolo se le regolazioni non sono cambiate. Cursore logaritmico nella barra in
+basso a destra della foto, Ctrl + / Ctrl −.
+
 ## Rimandato (backlog)
 
 Raggruppamento per scene simili in Sviluppo, cronologia persistente delle regolazioni, profilo di flusso

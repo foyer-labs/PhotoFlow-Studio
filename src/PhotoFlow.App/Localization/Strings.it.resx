@@ -1081,7 +1081,7 @@
   <data name="Develop.Compare" xml:space="preserve"><value>Confronto</value></data>
   <data name="Develop.Pick" xml:space="preserve"><value>Contagocce</value></data>
   <data name="Develop.Export" xml:space="preserve"><value>Esporta</value></data>
-  <data name="Develop.Tip.Zoom" xml:space="preserve"><value>Adatta alla finestra o pixel reali (100%), dove si giudica il rumore. Doppio clic: 100% su quel punto</value></data>
+  <data name="Develop.Tip.Zoom" xml:space="preserve"><value>Adatta alla finestra o pixel reali (100%), dove si giudica il rumore. Doppio clic: 100% su quel punto; rotella: zoom fino all'800%</value></data>
   <data name="Develop.Tip.Compare" xml:space="preserve"><value>Tendina prima/dopo, solo dopo, solo prima, rumore tolto. Tieni premuto \ per vedere l'originale</value></data>
   <data name="Develop.Tip.Pick" xml:space="preserve"><value>Fai clic su qualcosa che dovrebbe essere grigio o bianco: il bilanciamento lo rende neutro</value></data>
   <data name="Develop.Label.Before" xml:space="preserve"><value>PRIMA</value></data>
@@ -1345,4 +1345,9 @@
   <data name="Develop.Command.OpenFiles" xml:space="preserve"><value>Apri file dal disco</value></data>
   <data name="Develop.Origin.Files" xml:space="preserve"><value>Dal disco · {0} · {1} foto</value></data>
   <data name="Develop.Files.None" xml:space="preserve"><value>Nessuna foto apribile tra i file scelti (RAW, DNG, JPEG, PNG o TIFF).</value></data>
+  <data name="Develop.Zoom.Fit" xml:space="preserve"><value>Adatta · {0}</value></data>
+  <data name="Develop.Zoom.Tip" xml:space="preserve"><value>Zoom da «adatta» a 800%: rotella del mouse sulla foto (sul punto indicato), Ctrl + e Ctrl −, Spazio o doppio clic per il 100%</value></data>
+  <data name="Develop.Zoom.In" xml:space="preserve"><value>Ingrandisci (Ctrl +)</value></data>
+  <data name="Develop.Zoom.Out" xml:space="preserve"><value>Riduci (Ctrl −)</value></data>
+  <data name="Develop.Command.ZoomStep" xml:space="preserve"><value>Ingrandisci (Ctrl − riduce)</value></data>
 </root>

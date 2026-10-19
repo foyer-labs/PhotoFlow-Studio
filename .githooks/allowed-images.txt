@@ -51,3 +51,4 @@ docs/studio/img/s11-revisione-lente.png
 docs/studio/img/s12-import-orari.png
 docs/studio/img/s13-import-autore.png
 docs/studio/img/s14-sviluppo-dal-disco.png
+docs/studio/img/s15-sviluppo-zoom.png

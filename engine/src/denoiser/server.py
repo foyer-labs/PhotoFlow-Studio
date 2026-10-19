@@ -234,7 +234,8 @@ class Engine:
         """Anteprima: «prima» (solo sviluppo) e, se ``denoise``, «dopo» (sviluppo e riduzione del rumore).
 
         Senza ``region``: tutta la foto ridotta a ``max_side`` (il denoise, se richiesto, è sulla foto
-        intera: usare la coda lunga «render_full»). Con ``region`` [x, y, w, h]: la zona a piena risoluzione.
+        intera: usare la coda lunga «render_full»). Con ``region`` [x, y, w, h]: la zona a piena risoluzione,
+        ridotta a ``max_side`` se è positivo e la zona è più grande (zoom sotto il 100%, PhotoFlow Studio S25).
         Le coordinate e la dimensione sono quelle dell'uscita, dopo rotazione e ritaglio (``frame``).
         """
         photo = self._photo(path)
@@ -259,6 +260,9 @@ class Engine:
                 shape = lambda rgb: rgb  # noqa: E731
             else:
                 shape = lambda rgb: geometry.apply_region(rgb, rect, out_rect, image.width, image.height, g)  # noqa: E731
+        if region is not None and max_side > 0:
+            sized = shape
+            shape = lambda rgb: _fit(sized(rgb), max_side)  # noqa: E731
         before = shape(self._tone(photo, before_lin, s))
         result = {"region": list(out_rect), "frame": list(frame), "before": _write_png(before, self.temp_dir, "prima"),
                   "width": before.shape[1], "height": before.shape[0]}

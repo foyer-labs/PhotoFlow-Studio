@@ -93,6 +93,14 @@ public sealed class StudioScreenshots : IDisposable
         await Shot("s05-sviluppo-rumore");
         panel.ScrollToHome();
 
+        // S25: the wheel zoom, here at 200% on the umbrellas, with the zoom bar at the bottom right.
+        var frame = develop.FrameSize;
+        develop.SetView(2, new Avalonia.Point(frame.Width * 0.3, frame.Height * 0.72), immediate: true);
+        await Wait(() => develop.Region.Width < frame.Width && develop.After is not null && !develop.IsComputing && !develop.IsBusy, 180);
+        await Shot("s15-sviluppo-zoom");
+        develop.SetView(0, null, immediate: true);
+        await Wait(() => develop.Region.Width >= frame.Width - 1 && develop.After is not null && !develop.IsComputing, 180);
+
         // M1: the crop on the whole straightened frame, a vertical 4:5 slightly straightened.
         develop.SetCrop(new Avalonia.Rect(0.25, 0, 0.5, 1));
         develop.Aspect = develop.AspectOptions.First(o => o.Key == "4:5");

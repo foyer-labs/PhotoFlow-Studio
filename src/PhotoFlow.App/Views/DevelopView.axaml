@@ -89,12 +89,23 @@
 
       <Panel Grid.Row="1">
         <d:DevelopViewer x:Name="Viewer" Before="{Binding Before}" After="{Binding After}" Difference="{Binding Difference}" Region="{Binding Region}"
-                         ActualSize="{Binding ActualSize}" Mode="{Binding CompareMode}" ShowOriginal="{Binding ShowOriginal}" Picking="{Binding IsPicking}"
+                         Zoom="{Binding Zoom}" Centre="{Binding Centre}" FrameSize="{Binding FrameSize}" Mode="{Binding CompareMode}" ShowOriginal="{Binding ShowOriginal}" Picking="{Binding IsPicking}"
                          BeforeLabel="{l:Tr Develop.Label.Before}" AfterLabel="{Binding AfterLabel}"
                          Cropping="{Binding IsCropping}" CropRect="{Binding CropRect}" CropAspect="{Binding CropAspectRatio}" />
         <Border IsVisible="{Binding IsCropping}" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="12" Padding="12,6" CornerRadius="4"
                 Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1">
           <TextBlock Classes="micro secondary" Text="{l:Tr Develop.Crop.Hint}" />
+        </Border>
+        <!-- S25: the zoom, as the wheel on the photo (fit … 800%) -->
+        <Border IsVisible="{Binding HasPhoto}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="12" Padding="6,0"
+                CornerRadius="4" Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1"
+                ToolTip.Tip="{l:Tr Develop.Zoom.Tip}">
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <Button Classes="ghost" Padding="8,0" MinHeight="0" Command="{Binding ZoomStepCommand}" CommandParameter="-1" Content="−" ToolTip.Tip="{l:Tr Develop.Zoom.Out}" />
+            <Slider x:Name="ZoomSlider" Width="140" MinHeight="0" Margin="0,-4" Minimum="0" Maximum="1000" Value="{Binding ZoomSlider}" IsEnabled="{Binding !IsCropping}" />
+            <Button Classes="ghost" Padding="8,0" MinHeight="0" Command="{Binding ZoomStepCommand}" CommandParameter="1" Content="+" ToolTip.Tip="{l:Tr Develop.Zoom.In}" />
+            <TextBlock Classes="value" MinWidth="84" Margin="0,0,4,0" Text="{Binding ZoomText}" />
+          </StackPanel>
         </Border>
         <ProgressBar Classes="thin" VerticalAlignment="Top" Minimum="0" Maximum="1" Value="{Binding NoiseProgress}" IsVisible="{Binding IsComputing}" />
         <!-- Empty: where the photos come from -->

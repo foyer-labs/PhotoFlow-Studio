@@ -24,6 +24,7 @@ public partial class DevelopView : UserControl
         Viewer.Picked += (_, point) => _ = _vm?.PickAtAsync(point);
         Viewer.ZoomRequested += (_, point) => _vm?.ZoomAt(point);
         Viewer.PanRequested += (_, centre) => _vm?.PanTo(centre);
+        Viewer.ViewRequested += (_, view) => _vm?.SetView(view.Zoom, view.Centre);
         Viewer.CropEdited += (_, rect) => _vm?.SetCrop(rect);
         Viewer.CropConfirmed += (_, _) => _vm?.CropDoneCommand.Execute(null);
         Viewer.SizeChanged += (_, _) =>
@@ -74,10 +75,6 @@ public partial class DevelopView : UserControl
         if (e.PropertyName == nameof(DevelopViewModel.Curve) && _vm is not null && !_vm.Curve.SequenceEqual(Curve.Points))
         {
             Curve.SetPoints(_vm.Curve);
-        }
-        else if (e.PropertyName == nameof(DevelopViewModel.Region))
-        {
-            Viewer.ResetPan();
         }
     }
 

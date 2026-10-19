@@ -159,6 +159,15 @@ alle 3 selezionate», copia e incolla.
 rumore); **\\** tenuto mostra l'originale; **Spazio** passa da adatta a 100%, dove l'anteprima calcola
 subito la zona visibile.
 
+**Zoom.** Come in Denoiser, la **rotella del mouse** sulla foto ingrandisce e riduce sul punto indicato,
+da «adatta» fino all'800% (gradini 50, 75, 100, 150, 200, 300, 400, 600, 800%); **Ctrl +** e **Ctrl −** fanno
+lo stesso al centro, **Spazio** o il doppio clic passano al 100%. In basso a destra sulla foto c'è il
+**cursore dello zoom** con la percentuale (scatta sul 100%). Ingrandita, la foto si sposta trascinandola.
+Fino a dove basta l'anteprima la foto si ingrandisce subito; oltre, il motore calcola solo la parte visibile,
+con la riduzione del rumore, mentre si vede quella di prima ingrandita.
+
+![Zoom al 200% con la rotella e il cursore dello zoom](img/s15-sviluppo-zoom.png)
+
 Il pannello di destra scorre con la rotella ovunque si trovi il puntatore, anche sopra i cursori, e la sua
 barra di scorrimento resta sempre visibile: le regolazioni in fondo non restano nascoste.
 
