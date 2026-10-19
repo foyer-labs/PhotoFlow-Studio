@@ -1301,4 +1301,40 @@
   <data name="Home.Card.Eject" xml:space="preserve"><value>Espelli</value></data>
   <data name="Home.Card.Ejected" xml:space="preserve"><value>Scheda espulsa: puoi toglierla.</value></data>
   <data name="Home.Card.EjectFailed" xml:space="preserve"><value>Non riesco a espellerla: usa «Rimozione sicura» di Windows.</value></data>
+  <data name="Develop.Command.SelectGroup" xml:space="preserve"><value>Seleziona il gruppo</value></data>
+  <data name="Develop.Command.SyncGroup" xml:space="preserve"><value>Sincronizza il gruppo</value></data>
+  <data name="Develop.Group" xml:space="preserve"><value>Gruppo {0} · {1} foto con la stessa luce</value></data>
+  <data name="Develop.Groups" xml:space="preserve"><value>{0} gruppi di luce simile (G seleziona il gruppo)</value></data>
+  <data name="Develop.SyncGroup" xml:space="preserve"><value>Sincronizza il gruppo · {0} foto</value></data>
+  <data name="Develop.SyncGroup.Tip" xml:space="preserve"><value>Copia sulle altre foto del gruppo (stessa luce, scattate di seguito) solo le regolazioni cambiate su questa</value></data>
+  <data name="Develop.ApplyUndeveloped" xml:space="preserve"><value>Punto di partenza per le non sviluppate · {0}</value></data>
+  <data name="Develop.ApplyUndeveloped.Tip" xml:space="preserve"><value>Luce, colore, toni e rumore di questa foto diventano il punto di partenza delle foto mai sviluppate (non il ritaglio). Si annulla.</value></data>
+  <data name="Develop.ApplyUndeveloped.None" xml:space="preserve"><value>Tutte le foto hanno già le loro regolazioni.</value></data>
+  <data name="Develop.ApplyUndeveloped.Done" xml:space="preserve"><value>Punto di partenza dato a {0} foto.</value></data>
+  <data name="Develop.Prepared" xml:space="preserve"><value>Pronta: la riduzione del rumore è già calcolata</value></data>
+  <data name="Develop.Prepare" xml:space="preserve"><value>Prepara tutte in background</value></data>
+  <data name="Develop.Prepare.Tip" xml:space="preserve"><value>Calcola la riduzione del rumore di tutte le foto mentre lavori: si aprono subito. Le foto vicine a quella aperta si preparano da sole.</value></data>
+  <data name="Develop.Prepare.Stop" xml:space="preserve"><value>Ferma la preparazione</value></data>
+  <data name="Develop.Prepare.Progress" xml:space="preserve"><value>Preparate {0} di {1} · ancora {2}</value></data>
+  <data name="Develop.Prepare.Done" xml:space="preserve"><value>{0} foto preparate: si aprono subito.</value></data>
+  <data name="Export.Remaining" xml:space="preserve"><value>ancora {0}</value></data>
+  <data name="Command.FullScreen" xml:space="preserve"><value>Schermo intero</value></data>
+  <data name="Review.Command.Candidate" xml:space="preserve"><value>Candidata</value></data>
+  <data name="Review.Candidate" xml:space="preserve"><value>candidata</value></data>
+  <data name="Review.Candidate.Tip" xml:space="preserve"><value>Resta nel confronto: → porta accanto la foto successiva della raffica. K la toglie.</value></data>
+  <data name="Review.Loupe.Eyes" xml:space="preserve"><value>100% sugli occhi · Z torna alla foto intera</value></data>
+  <data name="Review.Loupe.Focus" xml:space="preserve"><value>100% sul punto di messa a fuoco · Z torna alla foto intera</value></data>
+  <data name="Review.Loupe.Centre" xml:space="preserve"><value>100% al centro · Z torna alla foto intera</value></data>
+  <data name="Home.Events" xml:space="preserve"><value>EVENTI RECENTI</value></data>
+  <data name="Home.Event.Chosen" xml:space="preserve"><value>{0} scelte</value></data>
+  <data name="Home.Event.Developed" xml:space="preserve"><value>{0} sviluppate</value></data>
+  <data name="Home.Event.Exported" xml:space="preserve"><value>{0} consegnate</value></data>
+  <data name="Home.Event.Next.Review" xml:space="preserve"><value>Scegli le migliori</value></data>
+  <data name="Home.Event.Next.Develop" xml:space="preserve"><value>Sviluppa</value></data>
+  <data name="Home.Event.Next.Export" xml:space="preserve"><value>Consegna</value></data>
+  <data name="Home.Event.Next.Done" xml:space="preserve"><value>✓ Consegnato</value></data>
+  <data name="Browse.Versions" xml:space="preserve"><value>Versioni ritoccate</value></data>
+  <data name="Browse.Version.Open" xml:space="preserve"><value>Apri</value></data>
+  <data name="Browse.Version.Show" xml:space="preserve"><value>Mostra</value></data>
+  <data name="Browse.Version.Detail" xml:space="preserve"><value>{0} · {1}</value></data>
 </root>

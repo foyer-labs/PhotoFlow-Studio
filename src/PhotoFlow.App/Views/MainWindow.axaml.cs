@@ -31,6 +31,7 @@ public sealed partial class MainWindow : Window
         if (_viewModel is not null)
         {
             _viewModel.SearchFocusRequested -= OnSearchFocusRequested;
+            _viewModel.FullScreenRequested -= OnFullScreenRequested;
         }
 
         _viewModel = DataContext as MainWindowViewModel;
@@ -41,6 +42,7 @@ public sealed partial class MainWindow : Window
         }
 
         _viewModel.SearchFocusRequested += OnSearchFocusRequested;
+        _viewModel.FullScreenRequested += OnFullScreenRequested;
         _viewModel.WindowWidth = Bounds.Width > 0 ? Bounds.Width : Width;
         foreach (var binding in _viewModel.Commands.CreateKeyBindings(_viewModel.ResolveCommand))
         {
@@ -49,6 +51,21 @@ public sealed partial class MainWindow : Window
     }
 
     private void OnSearchFocusRequested(object? sender, EventArgs e) => SearchBox.Focus();
+
+    private WindowState _beforeFullScreen = WindowState.Maximized;
+
+    private void OnFullScreenRequested(object? sender, EventArgs e)
+    {
+        if (WindowState == WindowState.FullScreen)
+        {
+            WindowState = _beforeFullScreen;
+        }
+        else
+        {
+            _beforeFullScreen = WindowState;
+            WindowState = WindowState.FullScreen;
+        }
+    }
 
     private void OnTitleBarPointerPressed(object? sender, PointerPressedEventArgs e)
     {

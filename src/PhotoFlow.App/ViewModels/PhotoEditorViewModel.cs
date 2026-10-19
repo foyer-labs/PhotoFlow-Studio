@@ -158,6 +158,8 @@ public sealed partial class PhotoEditorViewModel(PhotoFlowHost host) : Observabl
             OtherCaptions = string.Empty;
             CaptionSource = string.Empty;
             _current = null;
+            Versions.Clear();
+            OnPropertyChanged(nameof(HasVersions));
         }
 
         if (assetId is not { } id)
@@ -201,6 +203,73 @@ public sealed partial class PhotoEditorViewModel(PhotoFlowHost host) : Observabl
         _persons = persons;
         People = FaceBoxViewModel.People(faces, persons);
         ShowBoxes();
+        await LoadVersionsAsync(id, version);
+    }
+
+    // --- Return from the external editor (M11) ---
+
+    /// <summary>Versions saved by Photoshop or another editor next to the original.</summary>
+    public System.Collections.ObjectModel.ObservableCollection<EditedVersionViewModel> Versions { get; } = [];
+
+    public bool HasVersions => Versions.Count > 0;
+
+    private async Task LoadVersionsAsync(long id, int version)
+    {
+        var path = await AssetFiles.LocateAsync(host.Catalog, host.FileSystem, id, CancellationToken.None);
+        var exports = (await host.Catalog.Develop.LastExportsAsync([id], CancellationToken.None)).Values.Select(e => e.OutputPath).ToList();
+        var found = path is null ? [] : await Task.Run(() => EditedVersions.Find(path, exports));
+        if (version != _version)
+        {
+            return;
+        }
+
+        Versions.Clear();
+        foreach (var v in found)
+        {
+            Versions.Add(new EditedVersionViewModel(v));
+        }
+
+        OnPropertyChanged(nameof(HasVersions));
+    }
+
+    /// <summary>Opens a version in the external editor (or the default app).</summary>
+    [RelayCommand]
+    private void OpenVersion(EditedVersionViewModel? version)
+    {
+        if (version is null)
+        {
+            return;
+        }
+
+        try
+        {
+            var editor = host.Settings.PhotoshopPath is { } exe && File.Exists(exe) ? exe : null;
+            using var _ = editor is null
+                ? System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(version.Version.Path) { UseShellExecute = true })
+                : System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(editor) { ArgumentList = { version.Version.Path }, UseShellExecute = false });
+        }
+        catch (System.ComponentModel.Win32Exception e)
+        {
+            Message = e.Message;
+        }
+    }
+
+    [RelayCommand]
+    private void ShowVersion(EditedVersionViewModel? version)
+    {
+        if (version is null || !OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        try
+        {
+            using var _ = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe") { ArgumentList = { "/select," + version.Version.Path }, UseShellExecute = false });
+        }
+        catch (System.ComponentModel.Win32Exception e)
+        {
+            Message = e.Message;
+        }
     }
 
     /// <summary>The labels offered while typing a tag: those in use, in the language shown.</summary>

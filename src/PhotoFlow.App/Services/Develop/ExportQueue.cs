@@ -49,6 +49,14 @@ public sealed class ExportRun(long id, string title, string recipeId, IReadOnlyL
 
     public DateTimeOffset QueuedAt { get; } = DateTimeOffset.Now;
 
+    /// <summary>When the run started (M8: estimate of the time left).</summary>
+    public DateTimeOffset? StartedAt { get; internal set; }
+
+    /// <summary>Time left from the pace so far; null at the very beginning.</summary>
+    public TimeSpan? Remaining => State == ExportState.Running && StartedAt is { } started && Fraction is > 0.02 and < 1
+        ? TimeSpan.FromSeconds((DateTimeOffset.Now - started).TotalSeconds * (1 - Fraction) / Fraction)
+        : null;
+
     public int Exported => Results.Count(r => r.Outcome == "ok");
 
     public int Skipped => Results.Count(r => r.Outcome == "saltata");
@@ -139,6 +147,7 @@ public sealed class ExportQueue(IDevelopEngine engine, ICatalog catalog)
 
         var token = run.Start();
         run.State = ExportState.Running;
+        run.StartedAt = DateTimeOffset.Now;
         Changed?.Invoke(this, run);
         var progress = new Progress(p =>
         {

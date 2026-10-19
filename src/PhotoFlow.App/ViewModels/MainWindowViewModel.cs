@@ -105,6 +105,12 @@ public sealed partial class MainWindowViewModel : ObservableObject, IShellNaviga
 
     public event EventHandler? SearchFocusRequested;
 
+    /// <summary>F11 (M9): the window asks the system for the whole screen, or back.</summary>
+    public event EventHandler? FullScreenRequested;
+
+    [RelayCommand]
+    private void ToggleFullScreen() => FullScreenRequested?.Invoke(this, EventArgs.Empty);
+
     public CommandTable Commands { get; }
 
     private readonly IReadOnlyList<StatusHint> _globalHints;
@@ -195,6 +201,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, IShellNaviga
         GlobalCommands.OpenSettings => OpenSettingsCommand,
         GlobalCommands.ImportFolder => ImportFolderCommand,
         GlobalCommands.Export => ExportSelectionCommand,
+        GlobalCommands.FullScreen => ToggleFullScreenCommand,
         _ => throw new ArgumentOutOfRangeException(nameof(id), id, "Unknown command."),
     };
 

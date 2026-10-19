@@ -119,13 +119,17 @@
             <ItemsControl.ItemsPanel><ItemsPanelTemplate><VirtualizingStackPanel Orientation="Horizontal" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="vm:DevelopPhotoItem">
-                <Border Classes="strip" Classes.active="{Binding IsActive}" Classes.selected="{Binding IsSelected}" ToolTip.Tip="{Binding Name}"
+                <StackPanel Orientation="Horizontal">
+                <!-- M7: a new group in the same light starts here -->
+                <Border IsVisible="{Binding IsGroupStart}" Width="3" Margin="2,0,8,0" CornerRadius="2" Background="{DynamicResource PF.Brush.Accent}" ToolTip.Tip="{Binding GroupText}" />
+                <Border Classes="strip" Classes.active="{Binding IsActive}" Classes.selected="{Binding IsSelected}" ToolTip.Tip="{Binding GroupText}"
                         PointerPressed="OnStripPressed">
                   <Grid RowDefinitions="*,Auto">
                     <Image Source="{Binding Thumbnail}" Stretch="Uniform" Margin="2" />
                     <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="4,0,4,2">
                       <TextBlock Classes="micro tertiary" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                       <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="3">
+                        <TextBlock Classes="micro" Text="◆" IsVisible="{Binding IsPrepared}" ToolTip.Tip="{l:Tr Develop.Prepared}" />
                         <TextBlock Classes="micro" Text="◐" IsVisible="{Binding IsDeveloped}" ToolTip.Tip="{l:Tr Develop.Developed}" />
                         <TextBlock Classes="micro" Text="↗" IsVisible="{Binding IsExported}" ToolTip.Tip="{l:Tr Develop.Exported}" />
                         <TextBlock Classes="micro" Text="✓" IsVisible="{Binding IsSelected}" />
@@ -133,6 +137,7 @@
                     </Grid>
                   </Grid>
                 </Border>
+                </StackPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
@@ -219,6 +224,10 @@
           </Expander>
 
           <TextBlock Classes="panelHead" Text="{l:Tr Develop.Section.More}" />
+          <TextBlock Classes="micro tertiary" Text="{Binding GroupCountText}" Margin="0,0,0,4" />
+          <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding SyncGroupCommand}" ToolTip.Tip="{l:Tr Develop.SyncGroup.Tip}" Margin="0,0,0,6">
+            <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{Binding SyncGroupText}" /><Border Classes="key"><TextBlock Text="Ctrl Maiusc G" /></Border></StackPanel>
+          </Button>
           <Button Classes="secondary" HorizontalAlignment="Stretch" Command="{Binding ApplySelectedCommand}">
             <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{Binding ApplySelectedText}" /><Border Classes="key"><TextBlock Text="Ctrl Maiusc S" /></Border></StackPanel>
           </Button>
@@ -226,6 +235,13 @@
             <Button Classes="ghost" HorizontalAlignment="Stretch" Command="{Binding CopyCommand}" Content="{l:Tr Develop.Copy}" />
             <Button Grid.Column="1" Classes="ghost" HorizontalAlignment="Stretch" Command="{Binding PasteCommand}" Content="{l:Tr Develop.Paste}" />
           </Grid>
+          <Button Classes="ghost" HorizontalAlignment="Stretch" Command="{Binding ApplyToUndevelopedCommand}" Content="{Binding ApplyUndevelopedText}" ToolTip.Tip="{l:Tr Develop.ApplyUndeveloped.Tip}" />
+          <!-- M8: the noise reduction of the other photos computed in the background -->
+          <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+            <Button Classes="ghost" HorizontalAlignment="Stretch" Command="{Binding PrepareAllCommand}" Content="{l:Tr Develop.Prepare}" ToolTip.Tip="{l:Tr Develop.Prepare.Tip}" IsVisible="{Binding !IsPreparingAll}" />
+            <Button Classes="ghost" HorizontalAlignment="Stretch" Command="{Binding StopPrepareCommand}" Content="{l:Tr Develop.Prepare.Stop}" IsVisible="{Binding IsPreparingAll}" />
+          </Grid>
+          <TextBlock Classes="micro secondary" TextWrapping="Wrap" Text="{Binding PrepareText}" IsVisible="{Binding PrepareText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
         </StackPanel>
       </ScrollViewer>
     </Border>

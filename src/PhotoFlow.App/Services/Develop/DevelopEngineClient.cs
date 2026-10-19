@@ -199,6 +199,14 @@ public sealed class DevelopEngineClient(IAppPaths paths) : IDevelopEngine, IAsyn
         ToRender(await CallAsync("render_full", new JsonObject { ["path"] = path, ["settings"] = settings.DeepClone(), ["max_side"] = maxSide }, progress, ct)
             .ConfigureAwait(false));
 
+    public async Task<(DevelopRender Render, JsonObject Settings)> PrepareAsync(string path, JsonObject settings, int maxSide, bool auto,
+        IProgress<DevelopProgress>? progress, CancellationToken ct)
+    {
+        var r = await CallAsync("prepare", new JsonObject { ["path"] = path, ["settings"] = settings.DeepClone(), ["max_side"] = maxSide, ["auto"] = auto }, progress, ct)
+            .ConfigureAwait(false);
+        return (ToRender(r), r["settings"]?.DeepClone() as JsonObject ?? settings);
+    }
+
     private static DevelopRender ToRender(JsonObject r)
     {
         var region = r["region"] as JsonArray ?? [];

@@ -98,6 +98,54 @@ public sealed partial class JobRowViewModel(Job job) : ObservableObject
     public string ToReviewText => Strings.Format("Home.ToReview.Count", ToReview.ToString("N0", CultureInfo.CurrentCulture));
 
     partial void OnToReviewChanged(int value) => OnPropertyChanged(nameof(ToReviewText));
+
+    // --- Where the event is in the work (M10) ---
+
+    public int Photos { get; init; }
+
+    public int Chosen { get; init; }
+
+    public int Developed { get; init; }
+
+    public int Exported { get; init; }
+
+    public bool HasToReview => ToReview > 0;
+
+    public string PhotosText => Strings.Format("Home.Photos", Photos.ToString("N0", CultureInfo.CurrentCulture));
+
+    public string ChosenText => Strings.Format("Home.Event.Chosen", Chosen.ToString("N0", CultureInfo.CurrentCulture));
+
+    public string DevelopedText => Strings.Format("Home.Event.Developed", Developed.ToString("N0", CultureInfo.CurrentCulture));
+
+    public string ExportedText => Strings.Format("Home.Event.Exported", Exported.ToString("N0", CultureInfo.CurrentCulture));
+
+    /// <summary>The next step of the work (S4): choose, develop, deliver; nothing when everything chosen is delivered.</summary>
+    public EventStep NextStep => ToReview > 0 ? EventStep.Review
+        : Chosen == 0 ? EventStep.Review
+        : Developed < Chosen ? EventStep.Develop
+        : Exported < Chosen ? EventStep.Export
+        : EventStep.Done;
+
+    public bool HasNextStep => NextStep != EventStep.Done;
+
+    public string NextStepText => Strings.Get("Home.Event.Next." + NextStep);
+
+    /// <summary>0 imported, 1 chosen, 2 developed (in part), 3 exported (in part), 4 done.</summary>
+    public int StageValue => NextStep switch
+    {
+        EventStep.Review => ToReview > 0 ? 0 : 1,
+        EventStep.Develop => Developed > 0 ? 2 : 1,
+        EventStep.Export => Exported > 0 ? 3 : 2,
+        _ => 4,
+    };
+}
+
+public enum EventStep
+{
+    Review,
+    Develop,
+    Export,
+    Done,
 }
 
 public sealed record LibraryRowViewModel(Library Library, int Photos)
@@ -209,6 +257,11 @@ public sealed partial class HomeViewModel : PageViewModel, IDisposable
 
     public ObservableCollection<JobRowViewModel> Interrupted { get; } = [];
 
+    /// <summary>The recent events with where they are in the work and their next step (M10).</summary>
+    public ObservableCollection<JobRowViewModel> Events { get; } = [];
+
+    public bool HasEvents => Events.Count > 0;
+
     public ObservableCollection<LibraryRowViewModel> Libraries { get; } = [];
 
     public string ActiveJobsHeader => Strings.Format("Home.ActiveJobs", ActiveJobs.Count);
@@ -250,14 +303,28 @@ public sealed partial class HomeViewModel : PageViewModel, IDisposable
         }
 
         var toReviewRows = new List<JobRowViewModel>();
+        var eventRows = new List<JobRowViewModel>();
         foreach (var job in (await catalog.Jobs.ListRecentAsync(20, CancellationToken.None)).Where(j => j.State == JobState.Completed))
         {
             var counts = await catalog.Decisions.CountOutcomesForJobAsync(job.Id, CancellationToken.None);
             var toReview = counts.GetValueOrDefault(CullingOutcome.ToReview);
+            var photos = counts.Values.Sum();
             if (toReview > 0)
             {
-                var photos = counts.Values.Sum();
                 toReviewRows.Add(new JobRowViewModel(job) { ToReview = toReview, Detail = Strings.Format("Home.Photos", photos.ToString("N0", CultureInfo.CurrentCulture)) });
+            }
+
+            // M10: the last events, with where they are in the work.
+            if (eventRows.Count < 5 && photos > 0)
+            {
+                var chosen = await DevelopSources.BestOfJobAsync(catalog, job.Id, CancellationToken.None);
+                var developed = await catalog.Develop.ListDevelopedAsync(chosen.ToList(), CancellationToken.None);
+                var exported = await catalog.Develop.LastExportsAsync(chosen.ToList(), CancellationToken.None);
+                eventRows.Add(new JobRowViewModel(job)
+                {
+                    ToReview = toReview, Photos = photos, Chosen = chosen.Count, Developed = developed.Count, Exported = exported.Count,
+                    Detail = Strings.Format("Home.Photos", photos.ToString("N0", CultureInfo.CurrentCulture)),
+                });
             }
         }
 
@@ -270,7 +337,9 @@ public sealed partial class HomeViewModel : PageViewModel, IDisposable
         Replace(Interrupted, stopped);
         Replace(ActiveJobs, active);
         Replace(ToReview, toReviewRows);
+        Replace(Events, eventRows);
         Replace(Libraries, libraries);
+        OnPropertyChanged(nameof(HasEvents));
 
         State = Interrupted.Count > 0 ? HomeState.Recovery : HomeState.Normal;
         OnPropertyChanged(nameof(ActiveJobsHeader));
@@ -354,6 +423,32 @@ public sealed partial class HomeViewModel : PageViewModel, IDisposable
 
     [RelayCommand]
     private void OpenJobs() => _navigator.ShowSection(SectionCatalog.Jobs);
+
+    /// <summary>The next step of an event (M10): its review, its development, its delivery.</summary>
+    [RelayCommand]
+    private async Task NextStepAsync(JobRowViewModel? row)
+    {
+        if (row is null)
+        {
+            return;
+        }
+
+        var name = row.Name;
+        switch (row.NextStep)
+        {
+            case EventStep.Review:
+                _navigator.OpenReview(row.Job.Id);
+                break;
+            case EventStep.Develop:
+            case EventStep.Export:
+                var chosen = await DevelopSources.BestOfJobAsync(_host.Catalog, row.Job.Id, CancellationToken.None);
+                _host.WorkingSet.Set(Strings.Format("Develop.Origin.Review", name, chosen.Count), chosen, null, row.Job.EventName);
+                _navigator.ShowSection(row.NextStep == EventStep.Develop ? SectionCatalog.Develop : SectionCatalog.Export);
+                break;
+            default:
+                break;
+        }
+    }
 
     /// <summary>Quick actions (board 3a): search, people, duplicates.</summary>
     [RelayCommand]

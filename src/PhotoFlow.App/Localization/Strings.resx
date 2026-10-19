@@ -1301,4 +1301,40 @@
   <data name="Home.Card.Eject" xml:space="preserve"><value>Eject</value></data>
   <data name="Home.Card.Ejected" xml:space="preserve"><value>Card ejected: you can remove it.</value></data>
   <data name="Home.Card.EjectFailed" xml:space="preserve"><value>Cannot eject it: use Windows' «Safely remove».</value></data>
+  <data name="Develop.Command.SelectGroup" xml:space="preserve"><value>Select the group</value></data>
+  <data name="Develop.Command.SyncGroup" xml:space="preserve"><value>Sync the group</value></data>
+  <data name="Develop.Group" xml:space="preserve"><value>Group {0} · {1} photos in the same light</value></data>
+  <data name="Develop.Groups" xml:space="preserve"><value>{0} groups in similar light (G selects the group)</value></data>
+  <data name="Develop.SyncGroup" xml:space="preserve"><value>Sync the group · {0} photos</value></data>
+  <data name="Develop.SyncGroup.Tip" xml:space="preserve"><value>Copies to the other photos of the group (same light, taken in a row) only the settings changed on this one</value></data>
+  <data name="Develop.ApplyUndeveloped" xml:space="preserve"><value>Starting point for the undeveloped · {0}</value></data>
+  <data name="Develop.ApplyUndeveloped.Tip" xml:space="preserve"><value>Light, colour, tones and noise of this photo become the starting point of the photos never developed (not the crop). It can be undone.</value></data>
+  <data name="Develop.ApplyUndeveloped.None" xml:space="preserve"><value>Every photo already has its own settings.</value></data>
+  <data name="Develop.ApplyUndeveloped.Done" xml:space="preserve"><value>Starting point given to {0} photos.</value></data>
+  <data name="Develop.Prepared" xml:space="preserve"><value>Ready: the noise reduction is already computed</value></data>
+  <data name="Develop.Prepare" xml:space="preserve"><value>Prepare all in the background</value></data>
+  <data name="Develop.Prepare.Tip" xml:space="preserve"><value>Computes the noise reduction of every photo while you work: they open at once. The photos next to the open one get ready on their own.</value></data>
+  <data name="Develop.Prepare.Stop" xml:space="preserve"><value>Stop preparing</value></data>
+  <data name="Develop.Prepare.Progress" xml:space="preserve"><value>Prepared {0} of {1} · {2} left</value></data>
+  <data name="Develop.Prepare.Done" xml:space="preserve"><value>{0} photos prepared: they open at once.</value></data>
+  <data name="Export.Remaining" xml:space="preserve"><value>{0} left</value></data>
+  <data name="Command.FullScreen" xml:space="preserve"><value>Full screen</value></data>
+  <data name="Review.Command.Candidate" xml:space="preserve"><value>Candidate</value></data>
+  <data name="Review.Candidate" xml:space="preserve"><value>candidate</value></data>
+  <data name="Review.Candidate.Tip" xml:space="preserve"><value>Stays in the comparison: → brings the next photo of the burst beside it. K removes it.</value></data>
+  <data name="Review.Loupe.Eyes" xml:space="preserve"><value>100% on the eyes · Z back to the whole photo</value></data>
+  <data name="Review.Loupe.Focus" xml:space="preserve"><value>100% on the focus point · Z back to the whole photo</value></data>
+  <data name="Review.Loupe.Centre" xml:space="preserve"><value>100% at the centre · Z back to the whole photo</value></data>
+  <data name="Home.Events" xml:space="preserve"><value>RECENT EVENTS</value></data>
+  <data name="Home.Event.Chosen" xml:space="preserve"><value>{0} chosen</value></data>
+  <data name="Home.Event.Developed" xml:space="preserve"><value>{0} developed</value></data>
+  <data name="Home.Event.Exported" xml:space="preserve"><value>{0} delivered</value></data>
+  <data name="Home.Event.Next.Review" xml:space="preserve"><value>Choose the best</value></data>
+  <data name="Home.Event.Next.Develop" xml:space="preserve"><value>Develop</value></data>
+  <data name="Home.Event.Next.Export" xml:space="preserve"><value>Deliver</value></data>
+  <data name="Home.Event.Next.Done" xml:space="preserve"><value>✓ Delivered</value></data>
+  <data name="Browse.Versions" xml:space="preserve"><value>Edited versions</value></data>
+  <data name="Browse.Version.Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Browse.Version.Show" xml:space="preserve"><value>Show</value></data>
+  <data name="Browse.Version.Detail" xml:space="preserve"><value>{0} · {1}</value></data>
 </root>

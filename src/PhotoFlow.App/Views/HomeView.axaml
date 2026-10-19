@@ -77,22 +77,27 @@
               </Border>
             </StackPanel>
 
-            <StackPanel IsVisible="{Binding HasToReview}">
-              <TextBlock Classes="overline" Text="{l:Tr Home.ToReview}" />
+            <!-- M10: each recent event, where it is in the work and its next step -->
+            <StackPanel IsVisible="{Binding HasEvents}">
+              <TextBlock Classes="overline" Text="{l:Tr Home.Events}" />
               <Border Classes="card">
-                <ItemsControl ItemsSource="{Binding ToReview}">
+                <ItemsControl ItemsSource="{Binding Events}">
                   <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:JobRowViewModel">
-                      <Grid ColumnDefinitions="*,Auto" Margin="16,12">
-                        <StackPanel Spacing="2" VerticalAlignment="Center">
+                      <Grid ColumnDefinitions="*,Auto" Margin="16,12" ColumnSpacing="12">
+                        <StackPanel Spacing="4" VerticalAlignment="Center">
                           <TextBlock Classes="label" Text="{Binding Name}" />
-                          <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock Classes="data tertiary" Text="{Binding Detail}" />
-                            <TextBlock Classes="data toReview" Text="{Binding ToReviewText}" />
+                          <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Classes="data tertiary" Text="{Binding PhotosText}" />
+                            <TextBlock Classes="data toReview" Text="{Binding ToReviewText}" IsVisible="{Binding HasToReview}" />
+                            <TextBlock Classes="data secondary" Text="{Binding ChosenText}" />
+                            <TextBlock Classes="data secondary" Text="{Binding DevelopedText}" />
+                            <TextBlock Classes="data secondary" Text="{Binding ExportedText}" />
                           </StackPanel>
+                          <ProgressBar Classes="thin" Minimum="0" Maximum="4" Value="{Binding StageValue}" />
                         </StackPanel>
-                        <Button Grid.Column="1" Classes="secondary" Content="{l:Tr Home.OpenReview}"
-                                Command="{Binding $parent[UserControl].((vm:HomeViewModel)DataContext).OpenReviewCommand}"
+                        <Button Grid.Column="1" Classes="secondary" VerticalAlignment="Center" Content="{Binding NextStepText}" IsEnabled="{Binding HasNextStep}"
+                                Command="{Binding $parent[UserControl].((vm:HomeViewModel)DataContext).NextStepCommand}"
                                 CommandParameter="{Binding}" />
                       </Grid>
                     </DataTemplate>

@@ -229,8 +229,24 @@ public sealed class PhotoFlowHost : IAsyncDisposable
 
     private VlmPass? _vlmPass;
 
-    /// <summary>A per-photo analysis: shared with the others, waits while a level D pass holds the GPU.</summary>
-    public Task<IDisposable> EnterAnalysisAsync(CancellationToken ct) => _gpuTurns.EnterSharedAsync(ct);
+    /// <summary>
+    /// A per-photo analysis: shared with the others, waits while a level D pass holds the GPU, and a moment while the user
+    /// develops (M8: the preview gets the GPU first).
+    /// </summary>
+    public async Task<IDisposable> EnterAnalysisAsync(CancellationToken ct)
+    {
+        while (DateTime.UtcNow.Ticks < Interlocked.Read(ref _previewUntilTicks))
+        {
+            await Task.Delay(200, ct).ConfigureAwait(false);
+        }
+
+        return await _gpuTurns.EnterSharedAsync(ct).ConfigureAwait(false);
+    }
+
+    private long _previewUntilTicks;
+
+    /// <summary>Develop asked for a preview (M8): the analyses of the jobs start no new photo for a few seconds.</summary>
+    public void HoldAnalysisForPreview() => Interlocked.Exchange(ref _previewUntilTicks, DateTime.UtcNow.AddSeconds(3).Ticks);
 
     /// <summary>Frees the GPU of the analysis models (they load again at the next analysis).</summary>
     private async Task ReleaseAnalysisModelsAsync(CancellationToken ct)

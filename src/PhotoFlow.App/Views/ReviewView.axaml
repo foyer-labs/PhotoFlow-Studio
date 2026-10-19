@@ -265,6 +265,7 @@
                   <Grid RowDefinitions="Auto,*,Auto">
                     <StackPanel Orientation="Horizontal" Spacing="8" Margin="8,6">
                       <Border Classes="key"><TextBlock Text="{Binding Number}" /></Border>
+                      <Border Classes="mark" IsVisible="{Binding IsPinned}" ToolTip.Tip="{l:Tr Review.Candidate.Tip}"><TextBlock Text="{l:Tr Review.Candidate}" /></Border>
                       <TextBlock Classes="label" Text="{Binding Photo.Name}" TextTrimming="CharacterEllipsis" />
                       <TextBlock Classes="label tertiary" Text="{Binding Photo.OutcomeLabel}" />
                       <TextBlock Classes="micro" Text="{Binding Photo.StarsText}" />
@@ -286,6 +287,13 @@
           <v:LargePhotoView DataContext="{Binding Editor}" AddFaceKey="{l:Tr Review.Key.AddFace}" FacesHint="{l:Tr Review.ClickFaceHint}"
                             Source="{Binding $parent[UserControl].((vm:ReviewViewModel)DataContext).LargeImage}"
                             CloseCommand="{Binding $parent[UserControl].((vm:ReviewViewModel)DataContext).ToggleLargePhotoCommand}" />
+          <!-- M9: Z, one pixel of the photo per screen pixel where sharpness matters -->
+          <Border IsVisible="{Binding IsLoupe}" Background="{DynamicResource PF.Brush.Viewer}" Margin="0,60,0,0">
+            <Grid RowDefinitions="*,Auto">
+              <Image Source="{Binding LoupeImage}" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="True" />
+              <TextBlock Grid.Row="1" Classes="micro secondary" HorizontalAlignment="Center" Margin="8" Text="{Binding LoupeText}" />
+            </Grid>
+          </Border>
           <StackPanel Orientation="Horizontal" Spacing="12" Margin="16,18" HorizontalAlignment="Left" VerticalAlignment="Top">
             <TextBlock Classes="label" Text="{Binding Selected.Name, FallbackValue=''}" />
             <TextBlock Classes="label tertiary" Text="{Binding Selected.OutcomeLabel, FallbackValue=''}" />

@@ -139,3 +139,20 @@ def test_esportazione_con_ritaglio(tmp_path, photo):
     assert result["outcome"] == "ok", result
     assert Image.open(result["output"]).size == (120, 180)
     assert Path(result["output"]).parent == tmp_path / "out"
+
+
+def test_preparazione_in_background(tmp_path, photo):
+    """«prepare» (M8): la foto intera ripulita senza aprirla, con le impostazioni usate; uguale a render_full."""
+    engine = Engine(tmp_path / "anteprime")
+    base = Settings().to_dict()
+    base["geometry"] = {"rotation": 90}
+    prepared = engine.cmd_prepare(photo, base, max_side=120, auto=True)
+    assert prepared["frame"] == [240, 360] and max(prepared["width"], prepared["height"]) == 120
+    assert Path(prepared["after"]).is_file() and Path(prepared["before"]).is_file()
+    assert prepared["settings"]["geometry"]["rotation"] == 90
+    assert photo not in engine._photos  # nothing left open
+    engine.cmd_open(photo)
+    full = engine.cmd_render_full(path=photo, settings=prepared["settings"], max_side=120)
+    a = np.asarray(Image.open(prepared["after"])).astype(int)
+    b = np.asarray(Image.open(full["after"])).astype(int)
+    assert a.shape == b.shape and np.abs(a - b).max() <= 2

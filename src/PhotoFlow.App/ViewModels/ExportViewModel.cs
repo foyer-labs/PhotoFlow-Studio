@@ -64,7 +64,9 @@ public sealed partial class ExportRunViewModel(ExportRun run) : ObservableObject
     {
         StateText = Strings.Get("Export.State." + Run.State);
         Percent = Run.Fraction * 100;
-        Message = Run.State == ExportState.Running ? Run.Message : string.Empty;
+        Message = Run.State == ExportState.Running
+            ? Run.Message + (Run.Remaining is { } left ? " · " + Strings.Format("Export.Remaining", Formats.Duration(left)) : string.Empty)
+            : string.Empty;
         IsRunning = Run.State == ExportState.Running;
         CanCancel = Run.State is ExportState.Queued or ExportState.Running;
         CanOpenFolder = Run.LastFolder is not null;

@@ -13,6 +13,7 @@ public static class GlobalCommands
     public const string OpenSettings = "Global.OpenSettings";
     public const string ImportFolder = "Global.ImportFolder";
     public const string Export = "Global.Export";
+    public const string FullScreen = "Global.FullScreen";
 
     public static CommandTable Create()
     {
@@ -36,6 +37,8 @@ public static class GlobalCommands
         // Decision S13: export the photos of the current page from anywhere.
         commands.Add(new(Export, new KeyGesture(Key.E, KeyModifiers.Control | KeyModifiers.Shift), "Command.Export", StatusGroupKey: "Command.Export"));
         commands.Add(new(OpenSettings, new KeyGesture(Key.OemComma, KeyModifiers.Control), "Command.Settings", StatusGroupKey: "Command.Settings"));
+        // M9: the culling (and everything else) on the whole screen.
+        commands.Add(new(FullScreen, new KeyGesture(Key.F11), "Command.FullScreen"));
         return new CommandTable(commands);
     }
 }

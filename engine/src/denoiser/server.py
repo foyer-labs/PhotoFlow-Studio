@@ -47,6 +47,8 @@ from .sidecar import apply_photo_settings, changed_fields, copy_fields, has_sett
 _PROXY_PIXELS = 1_500_000
 #: Comandi lunghi: coda separata, con avanzamento e annullamento.
 _LONG = {"export", "download_model", "render_full"}
+#: Preparazione in background delle foto non aperte (M8): una coda sua, per non far aspettare la foto aperta.
+_BACKGROUND = {"prepare"}
 
 
 class Cancelled(Exception):
@@ -287,6 +289,36 @@ class Engine:
         """Anteprima della foto intera con il denoise (coda lunga, annullabile)."""
         return self.cmd_render(**{**kw, "region": None, "denoise": True})
 
+    def cmd_prepare(self, path: str, settings: dict | None = None, max_side: int = 2048, auto: bool = False,
+                    use_dng_converter: bool = True, converter: str | None = None, progress: Callable | None = None,
+                    **_: Any) -> dict:
+        """Anteprima della foto intera ripulita di una foto non aperta (coda lunga, PhotoFlow Studio M8): la apre,
+        la calcola come «render_full» e la chiude, senza toccare le foto aperte. ``auto``: foto mai sviluppata, si
+        usa il preset suggerito dal rumore misurato. Restituisce anche le impostazioni usate."""
+        s = _settings(settings)
+        conv = find_converter(converter) if use_dng_converter else None
+        image = load_image(path, s.develop, use_dng_converter, conv)
+        analysis = analyze(image)
+        if auto:
+            s = _auto_preset(image, analysis, s)
+        photo = _Photo(image, analysis, _resize(image.pixels, _PROXY_PIXELS))
+        g = s.geometry
+        frame = geometry.output_size(image.width, image.height, g)
+        side = max(1, int(round(max(image.width, image.height) * min(1.0, max_side / max(frame)))))
+        before = geometry.apply(self._tone(photo, _fit(image.pixels, side), s), g)
+        linear = denoise_region(image, analysis, s, None, True, progress)
+        after = geometry.apply(self._tone(photo, _fit(linear, side), s), g)
+        result = {"region": [0, 0, frame[0], frame[1]], "frame": list(frame), "width": after.shape[1], "height": after.shape[0],
+                  "before": _write_png(before, self.temp_dir, "prima"), "after": _write_png(after, self.temp_dir, "dopo"),
+                  "settings": s.to_dict()}
+        if after.shape == before.shape:
+            diff = cv2.addWeighted((after * 255).astype(np.uint8), 4.0, (before * 255).astype(np.uint8), -4.0, 127.5)
+            result["difference"] = _write_png(diff, self.temp_dir, "differenza")
+            s_before = float(np.std(np.diff(_luma(before), axis=1)))
+            if s_before > 1e-4:
+                result["reduction"] = round(min(max(0.0, 1 - float(np.std(np.diff(_luma(after), axis=1))) / s_before) * 100, 99.0))
+        return result
+
     def cmd_pick_wb(self, path: str, x: float, y: float, settings: dict | None = None, **_: Any) -> dict:
         """Contagocce: temperatura e tinta che rendono neutro il punto (media di un quadratino).
 
@@ -392,7 +424,7 @@ class Server:
         self._stdout = stdout
         self._write_lock = threading.Lock()
         self._cancelled: set[int] = set()
-        self._queues = {"short": queue.Queue(), "long": queue.Queue()}
+        self._queues = {"short": queue.Queue(), "long": queue.Queue(), "background": queue.Queue()}
 
     def send(self, message: dict) -> None:
         line = json.dumps(message, ensure_ascii=False) + "\n"
@@ -453,7 +485,8 @@ class Server:
                 continue
             if cmd == "quit":
                 break
-            self._queues["long" if cmd in _LONG else "short"].put(request)
+            lane = "background" if cmd in _BACKGROUND else "long" if cmd in _LONG else "short"
+            self._queues[lane].put(request)
         for q in self._queues.values():
             q.put(None)
 

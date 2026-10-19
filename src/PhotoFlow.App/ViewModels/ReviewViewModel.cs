@@ -89,6 +89,7 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
         new("Review.Label", new KeyGesture(Key.D8), "Review.Command.Label", StatusGroupKey: "Review.Command.Label", Parameter: "Green"),
         new("Review.Label", new KeyGesture(Key.D9), "Review.Command.Label", StatusGroupKey: "Review.Command.Label", Parameter: "Blue"),
         new("Review.SelectAll", new KeyGesture(Key.A, KeyModifiers.Control), "Review.Command.SelectAll", StatusGroupKey: "Review.Command.SelectAll"),
+        new("Review.Candidate", new KeyGesture(Key.K), "Review.Command.Candidate", StatusGroupKey: "Review.Command.Candidate"),
     ]);
 
     private readonly PhotoFlowHost _host;
@@ -163,6 +164,7 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
         "Review.Escape" => EscapeCommand,
         "Review.Label" => SetLabelCommand,
         "Review.SelectAll" => MarkAllCommand,
+        "Review.Candidate" => PinCandidateCommand,
         _ => base.ResolveCommand(id),
     };
 
@@ -617,9 +619,117 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
             return;
         }
 
+        IsLoupe = false;
+        LoupeImage = null;
+
+        // Prefetched (M9): the next photos of the culling are already decoded.
+        if (_largeCache.TryGetValue(item.AnalyzedAssetId, out var ready))
+        {
+            Show(ready);
+            PrefetchLarge(item, version);
+            return;
+        }
+
         if (item.ThumbnailPath is { } thumbnail && await Task.Run(() => LoadBitmap(thumbnail)) is { } quick && version == _largeVersion)
         {
             Show(quick);
+        }
+
+        if (await DecodeLargeAsync(item) is { } bitmap && version == _largeVersion)
+        {
+            Show(bitmap);
+            PrefetchLarge(item, version);
+        }
+
+        void Show(Bitmap bitmap)
+        {
+            LargeImage = bitmap;
+            Editor.ImageSize = new Size(bitmap.PixelSize.Width, bitmap.PixelSize.Height);
+        }
+    }
+
+    // --- Large photo (M9): prefetch and loupe ---
+
+    private const int LargeCacheSize = 8;
+    private readonly Dictionary<long, Bitmap> _largeCache = [];
+    private readonly List<long> _largeOrder = [];
+
+    private async Task<Bitmap?> DecodeLargeAsync(ReviewItemViewModel item)
+    {
+        if (_largeCache.TryGetValue(item.AnalyzedAssetId, out var cached))
+        {
+            return cached;
+        }
+
+        var path = await AssetFiles.LocateAsync(_host.Catalog, _host.FileSystem, item.AnalyzedAssetId, CancellationToken.None);
+        if (path is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            var preview = await _host.Previews.GetPreviewAsync(path, LargePhotoSide, CancellationToken.None);
+            var bitmap = await Task.Run(() => UiBitmaps.FromImage(preview.Image));
+            _largeCache[item.AnalyzedAssetId] = bitmap;
+            _largeOrder.Remove(item.AnalyzedAssetId);
+            _largeOrder.Add(item.AnalyzedAssetId);
+            while (_largeOrder.Count > LargeCacheSize)
+            {
+                _largeCache.Remove(_largeOrder[0]);
+                _largeOrder.RemoveAt(0);
+            }
+
+            return bitmap;
+        }
+        catch (Exception e) when (e is IOException or InvalidOperationException)
+        {
+            return null; // the thumbnail stays
+        }
+    }
+
+    /// <summary>The two next photos and the previous one, decoded while the user looks at this one.</summary>
+    private void PrefetchLarge(ReviewItemViewModel item, int version) => _ = PrefetchLargeAsync(item, version);
+
+    private async Task PrefetchLargeAsync(ReviewItemViewModel item, int version)
+    {
+        var visible = Visible();
+        var index = visible.IndexOf(item);
+        foreach (var i in new[] { index + 1, index + 2, index - 1 })
+        {
+            if (version != _largeVersion)
+            {
+                return;
+            }
+
+            if (i >= 0 && i < visible.Count && !_largeCache.ContainsKey(visible[i].AnalyzedAssetId))
+            {
+                await DecodeLargeAsync(visible[i]);
+            }
+        }
+    }
+
+    [ObservableProperty]
+    private Avalonia.Media.IImage? _loupeImage;
+
+    [ObservableProperty]
+    private bool _isLoupe;
+
+    [ObservableProperty]
+    private string? _loupeText;
+
+    /// <summary>
+    /// Z on the large photo (M9): one pixel of the photo per screen pixel, where sharpness matters: the eyes of the largest
+    /// face, otherwise the focus point written by the camera, otherwise the centre.
+    /// </summary>
+    [RelayCommand]
+    private async Task ToggleLoupeAsync()
+    {
+        if (IsLoupe || Selected is not { } item)
+        {
+            IsLoupe = false;
+            LoupeImage = null;
+            return;
         }
 
         var path = await AssetFiles.LocateAsync(_host.Catalog, _host.FileSystem, item.AnalyzedAssetId, CancellationToken.None);
@@ -630,23 +740,85 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
 
         try
         {
-            var preview = await _host.Previews.GetPreviewAsync(path, LargePhotoSide, CancellationToken.None);
+            var preview = await _host.Previews.GetPreviewAsync(path, LoupeSide, CancellationToken.None);
             var bitmap = await Task.Run(() => UiBitmaps.FromImage(preview.Image));
-            if (version == _largeVersion)
+            var faces = await _host.Catalog.Analysis.GetFacesAsync(item.AnalyzedAssetId, CancellationToken.None);
+            var (x, y, where) = faces.OrderByDescending(f => (f.Box.X2 - f.Box.X1) * (f.Box.Y2 - f.Box.Y1)).FirstOrDefault() is { } face
+                ? ((face.Box.X1 + face.Box.X2) / 2.0, face.Box.Y1 + ((face.Box.Y2 - face.Box.Y1) * 0.4), "Review.Loupe.Eyes")
+                : item.Exif?.AfArea is { } af
+                    ? ((af.X1 + af.X2) / 2.0, (af.Y1 + af.Y2) / 2.0, "Review.Loupe.Focus")
+                    : (0.5, 0.5, "Review.Loupe.Centre");
+            var size = bitmap.PixelSize;
+            var w = Math.Min(size.Width, 1600);
+            var h = Math.Min(size.Height, 1000);
+            var left = (int)Math.Clamp((x * size.Width) - (w / 2.0), 0, size.Width - w);
+            var top = (int)Math.Clamp((y * size.Height) - (h / 2.0), 0, size.Height - h);
+            if (Selected == item)
             {
-                Show(bitmap);
+                LoupeImage = new Avalonia.Media.Imaging.CroppedBitmap(bitmap, new PixelRect(left, top, w, h));
+                LoupeText = Strings.Get(where);
+                IsLoupe = true;
             }
         }
         catch (Exception e) when (e is IOException or InvalidOperationException)
         {
-            // The thumbnail stays.
+            IsLoupe = false;
+        }
+    }
+
+    /// <summary>Long side asked for the loupe: the embedded preview of a RAW at its size (usually the full size).</summary>
+    private const int LoupeSide = 8192;
+
+    // --- Candidate in the comparison (M9) ---
+
+    /// <summary>
+    /// K in the comparison: the focused photo becomes the candidate and stays; → past the last photo brings the next one of
+    /// the burst in place of the other photo, so each new shot is compared with the best so far.
+    /// </summary>
+    [RelayCommand]
+    private void PinCandidate()
+    {
+        if (!IsCompare || CompareItems.FirstOrDefault(c => c.IsFocused) is not { } focused)
+        {
+            return;
         }
 
-        void Show(Bitmap bitmap)
+        var pin = !focused.IsPinned;
+        foreach (var item in CompareItems)
         {
-            LargeImage = bitmap;
-            Editor.ImageSize = new Size(bitmap.PixelSize.Width, bitmap.PixelSize.Height);
+            item.IsPinned = false;
         }
+
+        focused.IsPinned = pin;
+    }
+
+    /// <summary>With a candidate: the next photo after the compared ones replaces the last photo that is not the candidate.</summary>
+    private bool AdvanceContender()
+    {
+        if (CompareItems.FirstOrDefault(c => c.IsPinned) is not { } candidate)
+        {
+            return false;
+        }
+
+        var visible = Visible();
+        var last = CompareItems.Select(c => visible.IndexOf(c.Photo)).Max();
+        if (last + 1 >= visible.Count || CompareItems.LastOrDefault(c => !c.IsPinned) is not { } slot)
+        {
+            return false;
+        }
+
+        var next = visible[last + 1];
+        var replacement = new CompareItemViewModel(next, slot.Index) { IsFocused = true };
+        foreach (var item in CompareItems)
+        {
+            item.IsFocused = false;
+        }
+
+        CompareItems[CompareItems.IndexOf(slot)] = replacement;
+        _ = LoadPreviewAsync(replacement);
+        Selected = next;
+        _ = candidate;
+        return true;
     }
 
     private async Task<string> PersonNameAsync(long personId)
@@ -690,6 +862,11 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
     {
         if (IsCompare)
         {
+            if (CompareItems.Count > 0 && dx > 0 && CompareItems.LastOrDefault()?.Photo == Selected && AdvanceContender())
+            {
+                return;
+            }
+
             if (CompareItems.Count > 0 && dx != 0)
             {
                 var current = CompareItems.FirstOrDefault(c => c.Photo == Selected)?.Index ?? 0;
@@ -1269,7 +1446,11 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
     [RelayCommand]
     private void ZoomToggle()
     {
-        if (IsCompare)
+        if (IsLargePhoto)
+        {
+            _ = ToggleLoupeAsync();
+        }
+        else if (IsCompare)
         {
             Zoom = Zoom is null ? 1.0 : null;
             Pan = default;

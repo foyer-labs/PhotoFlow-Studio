@@ -259,6 +259,10 @@ public sealed record PersonChipViewModel(string Name, bool IsSuggestion, string 
 /// <summary>A photo of the comparison (board 2b), with its own preview.</summary>
 public sealed partial class CompareItemViewModel(ReviewItemViewModel photo, int index) : ObservableObject
 {
+    /// <summary>The candidate (M9: K): it stays while the other photos of the burst pass beside it.</summary>
+    [ObservableProperty]
+    private bool _isPinned;
+
     public ReviewItemViewModel Photo { get; } = photo;
 
     public int Index { get; } = index;

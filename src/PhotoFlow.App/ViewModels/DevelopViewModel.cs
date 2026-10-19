@@ -45,6 +45,20 @@ public sealed partial class DevelopPhotoItem(long assetId, string name, string? 
     [ObservableProperty]
     private bool _isExported;
 
+    /// <summary>Preview with the noise reduction already computed in the background (M8).</summary>
+    [ObservableProperty]
+    private bool _isPrepared;
+
+    /// <summary>Group of photos in the same light (M7), and whether this photo starts it.</summary>
+    [ObservableProperty]
+    private int _groupIndex;
+
+    [ObservableProperty]
+    private bool _isGroupStart;
+
+    [ObservableProperty]
+    private string _groupText = string.Empty;
+
     public void LoadThumbnail()
     {
         if (Thumbnail is null && ThumbnailPath is { } path && File.Exists(path))
@@ -89,6 +103,8 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         new("Develop.Escape", new KeyGesture(Key.Escape), "Develop.Command.Escape"),
         new("Develop.Crop", new KeyGesture(Key.C), "Develop.Command.Crop", StatusGroupKey: "Develop.Command.Crop"),
         new("Develop.SelectAll", new KeyGesture(Key.A, KeyModifiers.Control), "Review.Command.SelectAll", StatusGroupKey: "Review.Command.SelectAll"),
+        new("Develop.SelectGroup", new KeyGesture(Key.G), "Develop.Command.SelectGroup", StatusGroupKey: "Develop.Command.SelectGroup"),
+        new("Develop.SyncGroup", new KeyGesture(Key.G, KeyModifiers.Control | KeyModifiers.Shift), "Develop.Command.SyncGroup", StatusGroupKey: "Develop.Command.SyncGroup"),
         new("Develop.CropDone", new KeyGesture(Key.Enter), "Develop.Command.CropDone"),
     ]);
 
@@ -119,8 +135,11 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         _host = host;
         _navigator = navigator;
         _cleaner = new InternalFileCleaner(host.Paths);
+        _cache = new PreviewCache(host.Paths);
         host.WorkingSet.Changed += OnWorkingSetChanged;
     }
+
+    private readonly PreviewCache _cache;
 
     public override string Title => Strings.Get("Nav.Develop");
 
@@ -351,7 +370,26 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
             Photos.Add(item);
         }
 
+        // Groups in the same light (M7), in shooting order.
+        var shots = Photos.Select(p => assets.TryGetValue(p.AssetId, out var a) ? (a.CapturedAt, DevelopGroups.Ev100(a.Exif)) : ((DateTimeOffset?)null, (double?)null)).ToList();
+        var groups = DevelopGroups.Assign(shots);
+        for (var i = 0; i < Photos.Count; i++)
+        {
+            Photos[i].GroupIndex = groups[i];
+            Photos[i].IsGroupStart = i == 0 || groups[i] != groups[i - 1];
+        }
+
+        foreach (var group in Photos.GroupBy(p => p.GroupIndex))
+        {
+            var text = Strings.Format("Develop.Group", (group.Key + 1).ToString(CultureInfo.CurrentCulture), group.Count().ToString(CultureInfo.CurrentCulture));
+            foreach (var photo in group)
+            {
+                photo.GroupText = text;
+            }
+        }
+
         OnPropertyChanged(nameof(IsEmpty));
+        OnPropertyChanged(nameof(GroupCountText));
         UpdateCounters();
         var active = Photos.FirstOrDefault(p => p.AssetId == set.ActiveId) ?? Photos.FirstOrDefault();
         Active = null;
@@ -466,8 +504,12 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
             _frame = default;
             IsCropping = false;
             _centre = new Point(photo.Width / 2.0, photo.Height / 2.0);
+            OnPropertyChanged(nameof(SyncGroupText));
+            OnPropertyChanged(nameof(ApplyUndevelopedText));
             ScheduleHistogram();
             await RefreshAsync(full: true);
+            item.IsPrepared = true;
+            PrefetchAround(item);
         }
         catch (DevelopEngineException e)
         {
@@ -1048,7 +1090,16 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
                 return;
             }
 
+            // Prepared in the background (M8): the cleaned photo at once.
+            var key = Active is { } active ? PreviewCache.Key(active.AssetId, settings, PreviewSide) : null;
+            if (full && NoiseEnabled && key is not null && _cache.TryGet(key) is { } prepared)
+            {
+                Show(prepared, true, cached: true);
+                return;
+            }
+
             // Fitted: the development at once, then the whole photo cleaned (decision S8).
+            _host.HoldAnalysisForPreview();
             var quick = await _host.DevelopEngine.RenderAsync(path, settings, null, PreviewSide, false, null, cts.Token);
             if (cts.IsCancellationRequested)
             {
@@ -1058,7 +1109,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
             Show(quick, false);
             if (NoiseEnabled && full)
             {
-                await RenderFullAsync(path, settings);
+                await RenderFullAsync(path, settings, key);
             }
             else if (NoiseEnabled && After is null)
             {
@@ -1081,7 +1132,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         }
     }
 
-    private async Task RenderFullAsync(string path, JsonObject settings)
+    private async Task RenderFullAsync(string path, JsonObject settings, string? key)
     {
         _fullCts?.Cancel();
         var cts = _fullCts = new CancellationTokenSource();
@@ -1092,9 +1143,11 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         {
             var progress = new Progress<DevelopProgress>(p => { NoiseProgress = p.Fraction; OnPropertyChanged(nameof(NoiseBadge)); });
             var render = await _host.DevelopEngine.RenderFullAsync(path, settings, PreviewSide, progress, cts.Token);
+            // Kept: going back to this photo (or exporting it soon after) does not compute it again (M8).
+            var stored = key is null ? null : _cache.Store(key, render);
             if (!cts.IsCancellationRequested && !ActualSize)
             {
-                Show(render, true);
+                Show(stored ?? render, true, cached: stored is not null);
             }
         }
         catch (OperationCanceledException)
@@ -1115,11 +1168,11 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         }
     }
 
-    private void Show(DevelopRender render, bool withAfter)
+    private void Show(DevelopRender render, bool withAfter, bool cached = false)
     {
-        var before = Load(render.BeforeFile);
-        var after = withAfter && render.AfterFile is { } a ? Load(a) : null;
-        var difference = withAfter && render.DifferenceFile is { } d ? Load(d) : null;
+        var before = Load(render.BeforeFile, !cached);
+        var after = withAfter && render.AfterFile is { } a ? Load(a, !cached) : null;
+        var difference = withAfter && render.DifferenceFile is { } d ? Load(d, !cached) : null;
         if (render.Frame.Width > 0 && render.Frame != _frame)
         {
             _frame = render.Frame;
@@ -1138,7 +1191,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
             : Strings.Get("Develop.Label.Computing");
     }
 
-    private Bitmap? Load(string file)
+    private Bitmap? Load(string file, bool delete = true)
     {
         try
         {
@@ -1151,7 +1204,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         }
         finally
         {
-            if (_cleaner.IsInternal(file))
+            if (delete && _cleaner.IsInternal(file))
             {
                 _cleaner.DeleteInternalFile(file);
             }
@@ -1239,6 +1292,8 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         "Develop.Escape" => EscapeCommand,
         "Develop.Crop" => ToggleCropCommand,
         "Develop.SelectAll" => SelectAllCommand,
+        "Develop.SelectGroup" => SelectGroupCommand,
+        "Develop.SyncGroup" => SyncGroupCommand,
         "Develop.CropDone" => CropDoneCommand,
         _ => base.ResolveCommand(id),
     };
@@ -1272,6 +1327,258 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
 
         item.IsSelected = true;
         Active = item;
+    }
+
+    // ------------------------------------------------------------------ groups in the same light (M7)
+
+    public string GroupCountText => Strings.Format("Develop.Groups", (Photos.Count == 0 ? 0 : Photos.Max(p => p.GroupIndex) + 1).ToString(CultureInfo.CurrentCulture));
+
+    public string SyncGroupText => Active is { } a ? Strings.Format("Develop.SyncGroup", (Photos.Count(p => p.GroupIndex == a.GroupIndex) - 1).ToString(CultureInfo.CurrentCulture)) : string.Empty;
+
+    public int UndevelopedCount => Photos.Count(p => !p.IsDeveloped && p != Active);
+
+    public string ApplyUndevelopedText => Strings.Format("Develop.ApplyUndeveloped", UndevelopedCount.ToString(CultureInfo.CurrentCulture));
+
+    /// <summary>G (M7): the photos of the group of the open photo become the selection.</summary>
+    [RelayCommand]
+    private void SelectGroup()
+    {
+        if (Active is not { } active)
+        {
+            return;
+        }
+
+        foreach (var photo in Photos)
+        {
+            photo.IsSelected = photo.GroupIndex == active.GroupIndex;
+        }
+    }
+
+    /// <summary>Ctrl+Shift+G (M7): what changed on the open photo goes to the rest of its group (as «apply to the selected»).</summary>
+    [RelayCommand]
+    private async Task SyncGroupAsync()
+    {
+        SelectGroup();
+        await ApplySelectedAsync();
+    }
+
+    /// <summary>
+    /// The look of the open photo as the starting point of the photos never developed (M7): light, colour, tones and noise,
+    /// not the framing. One undo for all.
+    /// </summary>
+    [RelayCommand]
+    private async Task ApplyToUndevelopedAsync()
+    {
+        var targets = Photos.Where(p => !p.IsDeveloped && p != Active).ToList();
+        if (targets.Count == 0 || _photo is null)
+        {
+            Message = Strings.Get("Develop.ApplyUndeveloped.None");
+            return;
+        }
+
+        await FlushSaveAsync();
+        var previous = new Dictionary<long, string?>();
+        foreach (var target in targets)
+        {
+            previous[target.AssetId] = await _host.Catalog.Develop.GetSettingsAsync(target.AssetId, CancellationToken.None);
+            var settings = BaseSettings();
+            foreach (var section in new[] { "tone", "denoise", "studio" })
+            {
+                settings[section] = _settings[section]?.DeepClone();
+            }
+
+            foreach (var key in new[] { "wb_mode", "temperature", "tint" })
+            {
+                Json.Section(settings, "develop")[key] = _settings["develop"]?[key]?.DeepClone();
+            }
+
+            await _host.Catalog.Develop.SetSettingsAsync(target.AssetId, settings.ToJsonString(), CancellationToken.None);
+            target.IsDeveloped = true;
+            target.IsPrepared = false; // its prepared preview no longer matches
+        }
+
+        _lastBulk = previous;
+        UndoBulkVisible = true;
+        UpdateCounters();
+        Message = Strings.Format("Develop.ApplyUndeveloped.Done", targets.Count);
+    }
+
+    // ------------------------------------------------------------------ prepared in the background (M8)
+
+    private readonly List<DevelopPhotoItem> _prepareQueue = [];
+    private CancellationTokenSource? _prepareCts;
+    private bool _prepareAll;
+    private int _prepareDone;
+    private int _prepareTotal;
+    private double _secondsPerPhoto;
+
+    [ObservableProperty]
+    private string? _prepareText;
+
+    [ObservableProperty]
+    private bool _isPreparingAll;
+
+    /// <summary>The photos around the open one get ready while the user looks at it.</summary>
+    private void PrefetchAround(DevelopPhotoItem item)
+    {
+        var index = Photos.IndexOf(item);
+        foreach (var i in new[] { index + 1, index + 2, index - 1 })
+        {
+            if (i >= 0 && i < Photos.Count)
+            {
+                Enqueue(Photos[i]);
+            }
+        }
+    }
+
+    /// <summary>«Prepara tutte»: every photo of the strip with the noise reduction computed, with the time left.</summary>
+    [RelayCommand]
+    private void PrepareAll()
+    {
+        _prepareAll = true;
+        _prepareDone = 0;
+        foreach (var photo in Photos.Where(p => !p.IsPrepared))
+        {
+            Enqueue(photo);
+        }
+
+        lock (_prepareQueue)
+        {
+            _prepareTotal = _prepareQueue.Count;
+        }
+
+        IsPreparingAll = _prepareTotal > 0;
+        UpdatePrepareText();
+    }
+
+    [RelayCommand]
+    private void StopPrepare()
+    {
+        lock (_prepareQueue)
+        {
+            _prepareQueue.Clear();
+        }
+
+        _prepareCts?.Cancel();
+        _prepareAll = false;
+        IsPreparingAll = false;
+        PrepareText = null;
+    }
+
+    private void Enqueue(DevelopPhotoItem item)
+    {
+        if (item.IsPrepared)
+        {
+            return;
+        }
+
+        lock (_prepareQueue)
+        {
+            if (!_prepareQueue.Contains(item))
+            {
+                _prepareQueue.Add(item);
+            }
+        }
+
+        if (_prepareCts is null)
+        {
+            var cts = _prepareCts = new CancellationTokenSource();
+            _ = PrepareLoopAsync(cts);
+        }
+    }
+
+    private async Task PrepareLoopAsync(CancellationTokenSource cts)
+    {
+        try
+        {
+            while (!cts.IsCancellationRequested)
+            {
+                DevelopPhotoItem? next;
+                lock (_prepareQueue)
+                {
+                    if (_prepareQueue.Count == 0)
+                    {
+                        break;
+                    }
+
+                    next = _prepareQueue[0];
+                    _prepareQueue.RemoveAt(0);
+                }
+
+                var started = Stopwatch.GetTimestamp();
+                await PrepareOneAsync(next, cts.Token);
+                var seconds = Stopwatch.GetElapsedTime(started).TotalSeconds;
+                _secondsPerPhoto = _secondsPerPhoto == 0 ? seconds : (_secondsPerPhoto * 0.7) + (seconds * 0.3);
+                if (_prepareAll)
+                {
+                    _prepareDone++;
+                    UpdatePrepareText();
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (DevelopEngineException)
+        {
+            // the photo is computed when it is opened
+        }
+        finally
+        {
+            if (_prepareCts == cts)
+            {
+                _prepareCts = null;
+            }
+
+            if (_prepareAll && _prepareQueue.Count == 0)
+            {
+                _prepareAll = false;
+                IsPreparingAll = false;
+                PrepareText = Strings.Format("Develop.Prepare.Done", _prepareDone.ToString(CultureInfo.CurrentCulture));
+            }
+        }
+    }
+
+    private void UpdatePrepareText()
+    {
+        int left;
+        lock (_prepareQueue)
+        {
+            left = _prepareQueue.Count;
+        }
+
+        PrepareText = Strings.Format("Develop.Prepare.Progress", _prepareDone.ToString(CultureInfo.CurrentCulture), _prepareTotal.ToString(CultureInfo.CurrentCulture),
+            _secondsPerPhoto > 0 ? Formats.Duration(TimeSpan.FromSeconds(left * _secondsPerPhoto)) : "…");
+    }
+
+    /// <summary>
+    /// The cleaned preview of a photo that is not open, with the settings it would open with: its own, or (never developed)
+    /// the base ones with the preset suggested by the noise, as <see cref="OpenAsync"/> does.
+    /// </summary>
+    private async Task PrepareOneAsync(DevelopPhotoItem item, CancellationToken ct)
+    {
+        if (item.IsPrepared || await AssetFiles.LocateAsync(_host.Catalog, _host.FileSystem, item.AssetId, ct) is not { } path)
+        {
+            return;
+        }
+
+        var stored = await _host.Catalog.Develop.GetSettingsAsync(item.AssetId, ct) is { } json ? JsonNode.Parse(json) as JsonObject : null;
+        var settings = stored ?? BaseSettings();
+        if (!Json.Bool(settings["studio"]?["noise_enabled"], true))
+        {
+            return; // no noise reduction: the preview is quick anyway
+        }
+
+        var engineSettings = DevelopJson.ForEngine(settings);
+        if (stored is not null && _cache.Contains(PreviewCache.Key(item.AssetId, engineSettings, PreviewSide)))
+        {
+            item.IsPrepared = true;
+            return;
+        }
+
+        var (render, used) = await _host.DevelopEngine.PrepareAsync(path, engineSettings, PreviewSide, auto: stored is null, null, ct);
+        _cache.Store(PreviewCache.Key(item.AssetId, stored is null ? used : engineSettings, PreviewSide), render);
+        item.IsPrepared = true;
     }
 
     /// <summary>Ctrl+A (M3): every photo of the strip selected, for «apply to the selected» and the export.</summary>
@@ -1415,6 +1722,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
 
             await _host.Catalog.Develop.SetSettingsAsync(target.AssetId, settings.ToJsonString(), CancellationToken.None);
             target.IsDeveloped = true;
+            target.IsPrepared = false; // its prepared preview no longer matches
         }
 
         _lastBulk = previous;
@@ -1614,6 +1922,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     public void Dispose()
     {
         _host.WorkingSet.Changed -= OnWorkingSetChanged;
+        _prepareCts?.Cancel();
         CancelRenders();
         _saveCts?.Cancel();
         _renderCts?.Dispose();

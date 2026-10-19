@@ -49,5 +49,26 @@
     <Button Classes="ghost" HorizontalAlignment="Left" Command="{Binding StartTagCommand}" IsVisible="{Binding !IsTagging}">
       <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Text="{l:Tr Browse.AddTag}" /><Border Classes="key"><TextBlock Text="T" /></Border></StackPanel>
     </Button>
+
+    <!-- M11: what the external editor saved next to the original -->
+    <StackPanel Spacing="4" IsVisible="{Binding HasVersions}" Margin="0,8,0,0">
+      <TextBlock Classes="label tertiary" Text="{l:Tr Browse.Versions}" />
+      <ItemsControl ItemsSource="{Binding Versions}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="vm:EditedVersionViewModel">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4" Margin="0,0,0,2">
+              <StackPanel Spacing="0">
+                <TextBlock Classes="label" Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Path}" />
+                <TextBlock Classes="micro tertiary" Text="{Binding Detail}" />
+              </StackPanel>
+              <Button Grid.Column="1" Classes="ghost" Content="{l:Tr Browse.Version.Open}"
+                      Command="{Binding $parent[UserControl].((vm:PhotoEditorViewModel)DataContext).OpenVersionCommand}" CommandParameter="{Binding}" />
+              <Button Grid.Column="2" Classes="ghost" Content="{l:Tr Browse.Version.Show}"
+                      Command="{Binding $parent[UserControl].((vm:PhotoEditorViewModel)DataContext).ShowVersionCommand}" CommandParameter="{Binding}" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
   </StackPanel>
 </UserControl>

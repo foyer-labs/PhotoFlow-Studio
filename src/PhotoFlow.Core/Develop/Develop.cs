@@ -80,6 +80,14 @@ public interface IDevelopEngine
     /// <summary>The whole photo with the noise reduction (long queue of the engine).</summary>
     Task<DevelopRender> RenderFullAsync(string path, JsonObject settings, int maxSide, IProgress<DevelopProgress>? progress, CancellationToken ct);
 
+    /// <summary>
+    /// The whole photo with the noise reduction for a photo that is not open (M8: prepared in the background, long queue).
+    /// <paramref name="auto"/>: never developed, the engine applies the preset suggested by the measured noise. Gives the
+    /// settings it used too.
+    /// </summary>
+    Task<(DevelopRender Render, JsonObject Settings)> PrepareAsync(string path, JsonObject settings, int maxSide, bool auto, IProgress<DevelopProgress>? progress,
+        CancellationToken ct);
+
     /// <summary>Histogram (red, green, blue, luminance × 256) of the developed photo.</summary>
     Task<int[][]> HistogramAsync(string path, JsonObject settings, CancellationToken ct);
 
