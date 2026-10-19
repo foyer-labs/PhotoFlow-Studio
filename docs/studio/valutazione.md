@@ -9,6 +9,9 @@ dovrebbero seguire, il confronto con ciò che PhotoFlow Studio fa oggi, la valut
 Le funzioni indicate come presenti o assenti sono state verificate nel codice della 0.1.0; i tempi sono stime da
 misurare su RAW reali.
 
+> **Stato (versione 0.2.0):** le ondate 1 e 2 (M1–M11) sono realizzate; le decisioni sono S14–S23 in
+> [`progetto.md`](progetto.md). Restano le ondate 3–5 (M12–M24) e i temi trasversali.
+
 ## 1. Il flusso ideale delle 2.000 foto
 
 | # | Fase | Cosa deve succedere | Perché |

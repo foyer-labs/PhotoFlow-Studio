@@ -70,11 +70,12 @@ L'originale non cambia mai: la scheda SD non viene toccata, i RAW ricevono solo 
 
 ![Home](img/s01-home.png)
 
-La Home dice cosa c'è da fare: i job in corso, gli eventi **da rivedere** con «Apri revisione», le
-librerie, e le azioni rapide nell'ordine del lavoro (Importa Ctrl I, Cerca Ctrl K, Sviluppo Ctrl 4,
-Esporta Ctrl 5, Persone Ctrl 6, Duplicati Ctrl 8). Con la scheda inserita, Ctrl I apre l'import. Al primo
-avvio una procedura guidata chiede dove tenere il catalogo e quali modelli scaricare, mostrando ogni
-licenza.
+La Home dice cosa c'è da fare: i job in corso, gli **eventi recenti** con a che punto sono (da decidere,
+scelte, sviluppate, consegnate) e il pulsante del passo successivo («Scegli le migliori», «Sviluppa»,
+«Consegna»), le librerie e le azioni rapide nell'ordine del lavoro. Con la scheda inserita la Home dice
+anche se è **al sicuro**: quando tutte le foto sono nel catalogo e verificate in almeno due posti si può
+formattarla nella fotocamera, e «Espelli» la toglie. Al primo avvio una procedura guidata chiede dove
+tenere il catalogo e quali modelli scaricare, mostrando ogni licenza.
 
 ### 2. Import e Job — copiare senza paura, analizzare in background
 
@@ -83,6 +84,17 @@ licenza.
 Si sceglie la scheda o la cartella, il nome dell'evento e lo schema dei nomi. PhotoFlow Studio copia,
 **ricontrolla ogni file**, salta quelli già importati e avvia il job: raffiche, nitidezza, occhi chiusi,
 esposizione, volti, tag in italiano e inglese, didascalie. Si può continuare a lavorare mentre gira.
+
+![Fotocamere e orari](img/s12-import-orari.png)
+
+Con **due corpi macchina** l'import elenca le fotocamere della scheda: si corregge l'orario di quella che è
+indietro («+5») e in Revisione e Sviluppo gli scatti si alternano nell'ordine vero. La seconda scheda dello
+stesso evento si aggiunge e la numerazione continua.
+
+![Autore e copyright](img/s13-import-autore.png)
+
+Al passo 3, accanto alle destinazioni, **autore e copyright** dell'evento («© {anno} Nome Cognome»): vanno
+negli XMP alla conferma della Revisione e in ogni foto consegnata.
 
 ### 3. Revisione — scegliere le migliori
 
@@ -94,6 +106,18 @@ tastiera: **P** tieni, **X** scarta, **1–5** stelle, **C** confronta, **Spazio
 
 Quando le scelte ci sono, nell'intestazione compare **«Sviluppa le migliori (N)»**: le migliori e le
 tenute del job diventano la selezione di lavoro e si apre lo Sviluppo.
+
+![Selezione multipla ed etichette](img/s10-revisione-selezione.png)
+
+**Ctrl+clic** e **Ctrl A** selezionano più foto: P, X, stelle ed **etichette colore** (6 rosso, 7 giallo,
+8 verde, 9 blu, come in Lightroom) valgono per tutte con un solo Ctrl Z, e il pulsante diventa «Sviluppa le
+selezionate». I filtri in alto contano anche le etichette.
+
+![Lente sugli occhi](img/s11-revisione-lente.png)
+
+Nella foto grande **Z** mostra al 100% gli occhi del volto più grande (o il punto di fuoco); le foto
+successive sono già pronte mentre si guarda quella aperta. Nel confronto **K** fissa la candidata e **→**
+le porta accanto lo scatto successivo della raffica. **F11** mette tutto a schermo intero.
 
 ### 4. Sviluppo — luce, colore e rumore, foto per foto
 
@@ -107,6 +131,7 @@ selezione in basso; a destra il pannello, dall'alto verso il basso nell'ordine i
 | Istogramma e curva | sempre visibile; la curva si modifica trascinando i punti |
 | Foto | ISO, rumore misurato, metodo |
 | Punto di partenza | preset (Delicato, Bilanciato, Forte…), copia/incolla |
+| Inquadratura | ritaglio **C** con proporzioni (3:2, 4:5, 1:1…), raddrizza (anche «Livella» automatico), ruota, specchia |
 | Luce | esposizione, alte luci, ombre, luminosità (automatica di serie) |
 | Colore | bilanciamento del bianco (fotocamera, automatico, luce diurna, temperatura e tinta), contagocce **W**, saturazione |
 | Toni | contrasto |
@@ -134,6 +159,18 @@ alle 3 selezionate», copia e incolla.
 rumore); **\\** tenuto mostra l'originale; **Spazio** passa da adatta a 100%, dove l'anteprima calcola
 subito la zona visibile.
 
+![Ritaglio](img/s09-sviluppo-ritaglio.png)
+
+**C** apre il ritaglio sulla foto intera raddrizzata: si trascinano bordi e angoli con le proporzioni
+scelte, Invio o doppio clic conferma. Il ritaglio vale per le anteprime e per tutte le consegne; nel DNG per
+Lightroom rotazione e ritaglio diventano istruzioni standard.
+
+**Con centinaia di foto.** La striscia è divisa in **gruppi di luce simile** (una barra azzurra dove ne
+comincia uno): si sviluppa una foto per gruppo e **Ctrl Maiusc G** porta le stesse modifiche sul resto del
+gruppo. «Punto di partenza per le non sviluppate» dà a tutte le altre il look della foto aperta. Le foto
+vicine si **preparano da sole** in background (◆ nella striscia) e si aprono subito; «Prepara tutte» le
+calcola tutte con il tempo che manca.
+
 ### 5. Esporta — ricetta e coda
 
 ![Esporta](img/s06-esporta.png)
@@ -155,9 +192,10 @@ escono con lo sviluppo automatico (preset scelto dal rumore).
 
 ![Coda di esportazione](img/s07-esporta-coda.png)
 
-**Ctrl Invio** mette l'esportazione in coda e si può tornare a lavorare: la coda mostra l'avanzamento, poi
-esportate, saltate ed errori, con **Apri cartella**. Ogni foto esce con le regolazioni che aveva quando è
-entrata in coda.
+**Ctrl Invio** mette l'esportazione in coda e si può tornare a lavorare: la coda mostra l'avanzamento e il
+tempo che manca, poi esportate, saltate ed errori, con **Apri cartella**. Ogni foto esce con le regolazioni
+che aveva quando è entrata in coda, con autore, copyright, parole chiave, persone e didascalia scritti nel
+file.
 
 ### 6. Archivio — persone, ricerca, duplicati
 
@@ -166,8 +204,12 @@ entrata in coda.
 La **Consultazione** trova qualsiasi foto per persona, evento, tag, data, fotocamera, stelle o
 descrivendola a parole; **«Sviluppa i risultati»**, accanto al numero di foto trovate, manda la ricerca
 allo Sviluppo, chiudendo il cerchio
-anche per le foto d'archivio. **Persone** raccoglie i volti riconosciuti da confermare e nominare;
-**Duplicati** mette a confronto copie esatte e quasi uguali e sposta (mai cancella) quelle da togliere.
+anche per le foto d'archivio. Anche qui **Ctrl+clic** e **Ctrl A** selezionano più foto per dare stelle,
+etichette e un tag a tutte o mandarle allo Sviluppo o all'Esportazione; il filtro **Etichetta** ritrova le
+selezioni («verde = album»). Nel pannello della foto compaiono le **versioni ritoccate** salvate da Photoshop
+accanto all'originale, con Apri e Mostra. **Persone** raccoglie i volti riconosciuti da confermare e
+nominare; **Duplicati** mette a confronto copie esatte e quasi uguali e sposta (mai cancella) quelle da
+togliere.
 
 ## Dietro le quinte: lo sviluppo
 
@@ -210,6 +252,12 @@ separato con due code: le anteprime non aspettano mai un'esportazione.
 | Spazio | Revisione, Consultazione / Sviluppo | foto grande / adatta ↔ 100% |
 | ← → | Sviluppo | foto precedente / successiva |
 | R · W · Y | Sviluppo | rumore sì/no · contagocce · tipo di confronto |
+| C · Invio | Sviluppo | ritaglio · conferma |
+| G · Ctrl Maiusc G | Sviluppo | seleziona il gruppo · sincronizza il gruppo |
+| Ctrl+clic · Ctrl A | Revisione, Consultazione, Sviluppo | selezione multipla · seleziona tutte |
+| 6 · 7 · 8 · 9 | Revisione, Consultazione | etichetta rossa · gialla · verde · blu |
+| Z · K | Revisione | 100% sugli occhi (foto grande) · candidata (confronto) |
+| F11 | ovunque | schermo intero |
 | \ (tenuto) | Sviluppo | mostra l'originale |
 | Ctrl Maiusc C / V / S | Sviluppo | copia · incolla · applica alle selezionate |
 | Ctrl Z / Ctrl Y | Sviluppo | annulla / ripeti (per foto) |

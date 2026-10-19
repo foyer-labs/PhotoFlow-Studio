@@ -1269,7 +1269,7 @@
   <data name="Settings.Rights.Note" xml:space="preserve"><value>Written in the photos (XMP, the IPTC fields Lightroom and Bridge show as author and copyright) when the Review is confirmed and in every exported photo, with keywords and people. Each import can change author and copyright for its event. {anno} becomes the year of the photo.</value></data>
   <data name="Review.Command.Label" xml:space="preserve"><value>Label</value></data>
   <data name="Review.Command.SelectAll" xml:space="preserve"><value>Select all</value></data>
-  <data name="Review.Marked" xml:space="preserve"><value>{0} selected · P, X, stars and labels apply to all · Esc clears the selection</value></data>
+  <data name="Review.Marked" xml:space="preserve"><value>{0} selected · Esc clears</value></data>
   <data name="Review.DevelopMarked" xml:space="preserve"><value>Develop the selected · {0}</value></data>
   <data name="Label.Red" xml:space="preserve"><value>Red</value></data>
   <data name="Label.Yellow" xml:space="preserve"><value>Yellow</value></data>

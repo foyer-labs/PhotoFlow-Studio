@@ -45,3 +45,8 @@ docs/studio/img/s05-sviluppo-rumore.png
 docs/studio/img/s06-esporta.png
 docs/studio/img/s07-esporta-coda.png
 docs/studio/img/s08-consultazione.png
+docs/studio/img/s09-sviluppo-ritaglio.png
+docs/studio/img/s10-revisione-selezione.png
+docs/studio/img/s11-revisione-lente.png
+docs/studio/img/s12-import-orari.png
+docs/studio/img/s13-import-autore.png

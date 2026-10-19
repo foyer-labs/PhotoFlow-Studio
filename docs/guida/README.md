@@ -1,4 +1,4 @@
-# Guida utente di PhotoFlow Studio 0.1.0
+# Guida utente di PhotoFlow Studio 0.2.0
 
 Benvenuto! Questa guida ti accompagna passo per passo, dall'installazione alla prima foto ritrovata in un secondo.
 Non serve essere esperti di computer: basta sapere come lavori con le tue foto.
@@ -604,6 +604,9 @@ La barra di stato in basso mostra sempre i tasti della schermata. Ecco l'elenco 
 | --- | --- |
 | `Ctrl 1`-`9` | Passa da una sezione all'altra: `1` Home · `2` Job · `3` Revisione · `4` Sviluppo · `5` Esporta · `6` Persone · `7` Consultazione · `8` Duplicati · `9` Librerie |
 | `Ctrl Maiusc E` | Esporta le foto della pagina (apre Esporta) |
+| `F11` | Schermo intero |
+| `Ctrl`+clic · `Ctrl A` | Selezione multipla in Revisione e Consultazione: stelle, etichette e decisioni valgono per tutte |
+| `6` `7` `8` `9` | Etichetta rossa, gialla, verde, blu (lo stesso tasto la toglie) |
 | `Ctrl K` | Cerca ovunque |
 | `Ctrl I` | Importa cartella |
 | `Ctrl ,` | Impostazioni |

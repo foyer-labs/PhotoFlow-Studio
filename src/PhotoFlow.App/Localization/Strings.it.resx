@@ -1269,7 +1269,7 @@
   <data name="Settings.Rights.Note" xml:space="preserve"><value>Scritti nelle foto (XMP, campi IPTC che Lightroom e Bridge mostrano come autore e copyright) alla conferma della Revisione e in ogni foto esportata, insieme a parole chiave e persone. Ogni import può cambiare autore e copyright per il suo evento. {anno} diventa l'anno della foto.</value></data>
   <data name="Review.Command.Label" xml:space="preserve"><value>Etichetta</value></data>
   <data name="Review.Command.SelectAll" xml:space="preserve"><value>Seleziona tutte</value></data>
-  <data name="Review.Marked" xml:space="preserve"><value>{0} selezionate · P, X, stelle ed etichette valgono per tutte · Esc toglie la selezione</value></data>
+  <data name="Review.Marked" xml:space="preserve"><value>{0} selezionate · Esc toglie</value></data>
   <data name="Review.DevelopMarked" xml:space="preserve"><value>Sviluppa le selezionate · {0}</value></data>
   <data name="Label.Red" xml:space="preserve"><value>Rosso</value></data>
   <data name="Label.Yellow" xml:space="preserve"><value>Giallo</value></data>

@@ -4,11 +4,11 @@
 
 PhotoFlow Studio unisce **PhotoFlow** (import verificato, scelta assistita delle migliori, tag in italiano, persone, ricerca, duplicati) e **Denoiser** (sviluppo RAW, riduzione del rumore classica e neurale, esportazione) in un solo programma che copre tutto il ciclo di una foto. L'intelligenza artificiale gira **sul tuo computer**: niente cloud, niente account.
 
-[![Versione 0.1.0](https://img.shields.io/badge/versione-0.1.0-informational)](https://github.com/foyer-labs/PhotoFlow-Studio/releases/latest)
+[![Versione 0.2.0](https://img.shields.io/badge/versione-0.2.0-informational)](https://github.com/foyer-labs/PhotoFlow-Studio/releases/latest)
 [![Windows 10 | 11](https://img.shields.io/badge/piattaforma-Windows%2010%20%7C%2011%20(64%20bit)-0078D6)](#-scarica-e-installa)
 [![Licenza Apache 2.0](https://img.shields.io/badge/licenza-Apache%202.0-blue)](LICENSE)
 
-**[⬇️ Scarica PhotoFlow Studio 0.1.0](https://github.com/foyer-labs/PhotoFlow-Studio/releases/latest)** · [Il flusso di lavoro](docs/studio/flusso.md) · [Guida utente](docs/guida/README.md) · [Domande frequenti](docs/guida/faq.md) · [Per sviluppatori](docs/SVILUPPO.md)
+**[⬇️ Scarica PhotoFlow Studio 0.2.0](https://github.com/foyer-labs/PhotoFlow-Studio/releases/latest)** · [Il flusso di lavoro](docs/studio/flusso.md) · [Guida utente](docs/guida/README.md) · [Domande frequenti](docs/guida/faq.md) · [Per sviluppatori](docs/SVILUPPO.md)
 
 <p align="center">
   <img src="docs/studio/img/s03-sviluppo.png" alt="Lo Sviluppo di PhotoFlow Studio: la foto al centro con il prima/dopo a tendina, la striscia della selezione in basso, a destra istogramma, curva e regolazioni di luce, colore e rumore" width="100%">
@@ -25,6 +25,16 @@ PhotoFlow Studio unisce **PhotoFlow** (import verificato, scelta assistita delle
 - 🎚️ **Sviluppo e rumore insieme.** Esposizione, bilanciamento del bianco, contrasto, curva, saturazione, alte luci e ombre, con la riduzione del rumore già attiva su un preset scelto dal rumore misurato.
 - 📦 **Consegne in un gesto.** Ricette pronte (web, cliente, stampa, DNG ripulito per Lightroom) e una coda che lavora mentre tu continui.
 - 🔎 **Trovi qualsiasi foto in un attimo.** Per persona, evento, tag, data o descrivendola a parole: *"bambini che ridono al tramonto"*.
+
+### Novità della 0.2.0: il servizio da 2.000 foto
+
+- **Due corpi macchina** con gli orari allineati all'import, e la **scheda al sicuro** quando le copie verificate sono due.
+- **Selezione multipla** (Ctrl+clic, Ctrl A) ed **etichette colore** 6–9 come in Lightroom, in Revisione e in Consultazione.
+- **Ritaglio, raddrizzamento e rotazione** nello Sviluppo; **gruppi di luce simile** da sincronizzare in un gesto; la riduzione del rumore **preparata in background**.
+- **Autore e copyright** per evento, scritti negli XMP e, con parole chiave e persone, in ogni consegna.
+- **Lente al 100% sugli occhi**, candidata fissa nel confronto, schermo intero (F11); in Home il **punto di ogni evento** e il passo successivo.
+
+Tutte le novità nelle [note di rilascio](docs/release/studio-v0.2.0.md); il perché nella [valutazione da fotografo](docs/studio/valutazione.md).
 
 Pensato per chi scatta tanto (eventi, viaggi, motorsport), ha archivi di decine di migliaia di foto, RAW e JPEG, e vuole un solo programma dalla scheda alla consegna, senza rinunciare a Lightroom quando serve.
 
@@ -96,12 +106,12 @@ Trova le copie esatte e le foto quasi uguali, te le mette una accanto all'altra 
 
 ## ⬇️ Scarica e installa
 
-1. Vai alla pagina **[Releases](https://github.com/foyer-labs/PhotoFlow-Studio/releases/latest)** e scarica **`PhotoFlowStudio-0.1.0-Setup.exe`**.
+1. Vai alla pagina **[Releases](https://github.com/foyer-labs/PhotoFlow-Studio/releases/latest)** e scarica **`PhotoFlowStudio-0.2.0-Setup.exe`**.
 2. Avvialo.
 3. Al primo avvio scegli dove salvare il catalogo. Poi PhotoFlow Studio ti propone i modelli di intelligenza artificiale da scaricare e, se hai una scheda NVIDIA, il pacchetto GPU. Ogni licenza ti viene mostrata prima: decidi tu.
 4. Inserisci una scheda e premi **Ctrl I**, oppure aggiungi una cartella di foto in **Librerie**.
 
-> **Windows dice «Windows ha protetto il PC»?** Niente paura. PhotoFlow Studio 0.1.0 non è ancora firmato digitalmente, e SmartScreen avvisa per tutti i programmi in questa situazione. Fai clic su **Ulteriori informazioni** e poi su **Esegui comunque**. Il codice di PhotoFlow Studio è tutto qui, pubblico, da leggere.
+> **Windows dice «Windows ha protetto il PC»?** Niente paura. PhotoFlow Studio 0.2.0 non è ancora firmato digitalmente, e SmartScreen avvisa per tutti i programmi in questa situazione. Fai clic su **Ulteriori informazioni** e poi su **Esegui comunque**. Il codice di PhotoFlow Studio è tutto qui, pubblico, da leggere.
 
 **Requisiti**
 
@@ -138,7 +148,7 @@ PhotoFlow Studio ti avvisa all'avvio quando esce una nuova versione (puoi spegne
 
 ---
 
-## 🚧 Limiti della 0.1.0
+## 🚧 Limiti della 0.2.0
 
 È la prima versione pubblica: funziona, ma è giovane.
 

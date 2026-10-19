@@ -124,6 +124,53 @@ In Sviluppo: **R** riduzione del rumore sì/no, **W** contagocce, **Y** tipo di 
 - **Un solo stile:** token, font e componenti di PhotoFlow; nessun colore d'esito usato per altro.
   *(UI)*
 
+## Versione 0.2.0: il servizio da 2.000 foto
+
+Decisioni prese con la valutazione «da fotografo» ([`valutazione.md`](valutazione.md), ondate 1 e 2, M1–M11).
+
+**S14 — Inquadratura nello Sviluppo (M1).** Rotazione di 90°, specchio, raddrizzamento (anche automatico
+sulle linee lunghe) e ritaglio con proporzioni, applicati dopo lo sviluppo dal motore
+(`engine/src/denoiser/geometry.py`). Le anteprime, le zone al 100% e il contagocce lavorano nelle coordinate
+dell'uscita. Nei DNG la rotazione va nell'orientamento e il ritaglio nei tag standard DefaultCrop; il
+raddrizzamento no (nota nell'esito dell'esportazione). Tasto C; Invio o doppio clic conferma.
+
+**S15 — Autore e diritti (M2).** In Impostazioni › Generali; ogni import può cambiare autore e copyright per
+il suo evento (salvati nel job). Scritti come IPTC in XMP alla conferma della Revisione e, con parole chiave,
+persone, didascalia e stelle, in ogni foto esportata. «{anno}» diventa l'anno dello scatto.
+
+**S16 — Selezione multipla ed etichette colore (M3, M4).** Ctrl+clic e Ctrl A in Revisione, Consultazione e
+striscia dello Sviluppo; P, X, stelle ed etichette valgono per tutta la selezione con un solo Ctrl Z. Tasti
+6–9 come Lightroom (rosso, giallo, verde, blu); l'etichetta dell'utente vince sul rosso automatico «da
+rivedere». Filtri per etichetta in Revisione e in Consultazione.
+
+**S17 — Due corpi, più schede (M5).** All'import ogni fotocamera della scheda ha la sua correzione
+dell'orario: gli scatti si ordinano con l'ora corretta, ma i doppioni si riconoscono con quella della
+fotocamera (colonna `ClockOffsetMs`, migrazione 20). Una seconda scheda dello stesso evento continua la
+numerazione.
+
+**S18 — Scheda al sicuro (M6).** La Home dice quando ogni foto della scheda è nel catalogo e verificata in
+almeno due posti (o perché no) e offre «Espelli». La scheda non viene mai toccata (I1).
+
+**S19 — Sviluppo per gruppi (M7).** Le foto della selezione si raggruppano per pause di oltre 15 minuti o
+cambi di esposizione di oltre 1 EV; G seleziona il gruppo, Ctrl Maiusc G lo sincronizza. «Punto di partenza
+per le non sviluppate» copia luce, colore, toni e rumore (non l'inquadratura).
+
+**S20 — Precalcolo (M8).** Le foto vicine a quella aperta si preparano da sole in una coda del motore
+separata; «Prepara tutte» con il tempo che manca; le anteprime restano in cache sotto le loro regolazioni
+esatte. Mentre si sviluppa, le analisi dei job non iniziano nuove foto per qualche secondo. Le esportazioni
+in coda mostrano il tempo che manca.
+
+**S21 — Cernita veloce (M9).** Le foto grandi successive si decodificano in anticipo; Z sulla foto grande
+mostra al 100% gli occhi del volto più grande, o il punto di fuoco, o il centro; K nel confronto fissa la
+candidata e → porta accanto lo scatto successivo; F11 schermo intero.
+
+**S22 — Riepilogo degli eventi (M10).** La Home elenca gli ultimi eventi con da decidere, scelte, sviluppate
+e consegnate, e il pulsante del passo successivo.
+
+**S23 — Ritorno dall'editor esterno (M11).** I file salvati accanto all'originale con lo stesso nome (PSD,
+TIFF, JPEG…) compaiono come «Versioni ritoccate» nel pannello della foto, con Apri e Mostra. Nessun
+servizio in ascolto: si guarda la cartella quando la foto si apre.
+
 ## Rimandato (backlog)
 
 Raggruppamento per scene simili in Sviluppo, cronologia persistente delle regolazioni, profilo di flusso
