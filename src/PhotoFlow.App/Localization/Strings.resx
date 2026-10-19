@@ -1096,7 +1096,7 @@
   <data name="Develop.Origin.Browse" xml:space="preserve"><value>From Browse · {0} photos</value></data>
   <data name="Develop.Origin.Selected" xml:space="preserve"><value>Selected in Develop · {0} photos</value></data>
   <data name="Develop.Empty.Title" xml:space="preserve"><value>No photo to develop</value></data>
-  <data name="Develop.Empty.Body" xml:space="preserve"><value>Choose the photos first: in Review press "Develop the best", or in Browse "Develop the results".</value></data>
+  <data name="Develop.Empty.Body" xml:space="preserve"><value>Choose the photos: in Review press "Develop the best", in Browse "Develop the results", or open from disk photos you have not imported.</value></data>
   <data name="Develop.Empty.UseLatest" xml:space="preserve"><value>Use the best of the last event</value></data>
   <data name="Develop.Empty.NoBest" xml:space="preserve"><value>The last event has no best or kept photos yet: choose them in Review.</value></data>
   <data name="Develop.Developed" xml:space="preserve"><value>Adjusted</value></data>
@@ -1337,4 +1337,12 @@
   <data name="Browse.Version.Open" xml:space="preserve"><value>Open</value></data>
   <data name="Browse.Version.Show" xml:space="preserve"><value>Show</value></data>
   <data name="Browse.Version.Detail" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="Develop.OpenFiles" xml:space="preserve"><value>Open files…</value></data>
+  <data name="Develop.OpenFiles.Tip" xml:space="preserve"><value>Open photos from disk without importing them into the catalog (or drag them here)</value></data>
+  <data name="Develop.OpenFiles.Drop" xml:space="preserve"><value>or drag photos or folders here from File Explorer</value></data>
+  <data name="Develop.OpenFiles.Title" xml:space="preserve"><value>Open photos to develop</value></data>
+  <data name="Develop.OpenFiles.Type" xml:space="preserve"><value>Photos (RAW, DNG, JPEG, PNG, TIFF)</value></data>
+  <data name="Develop.Command.OpenFiles" xml:space="preserve"><value>Open files from disk</value></data>
+  <data name="Develop.Origin.Files" xml:space="preserve"><value>From disk · {0} · {1} photos</value></data>
+  <data name="Develop.Files.None" xml:space="preserve"><value>None of the chosen files can be opened (RAW, DNG, JPEG, PNG or TIFF).</value></data>
 </root>

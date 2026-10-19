@@ -166,6 +166,22 @@ public sealed class StudioScreenshots : IDisposable
         wizard.NextCommand.Execute(null);
         wizard.NextCommand.Execute(null);
         await Shot("s13-import-autore");
+
+        // S24: photos opened from a folder of the disk, without importing them.
+        var loose = Path.Combine(drive, "Da sistemare");
+        Directory.CreateDirectory(loose);
+        foreach (var name in new[] { "DSC_0420.jpg", "DSC_0401.jpg", "DSC_0402.jpg" })
+        {
+            var source = await PhotoFlow.Core.Catalog.AssetFiles.LocateAsync(host.Catalog, host.FileSystem, byFile[name], ct);
+            File.Copy(source!, Path.Combine(loose, name.Replace("DSC_", "IMG_", StringComparison.Ordinal)), overwrite: true);
+        }
+
+        shell.ShowSection(SectionCatalog.Develop);
+        var fromDisk = Assert.IsType<DevelopViewModel>(shell.CurrentPage);
+        await fromDisk.OpenFilesAsync([loose]);
+        await Wait(() => fromDisk.HasPhoto && fromDisk.After is not null && fromDisk.Histogram is not null && !fromDisk.IsComputing && !fromDisk.IsBusy
+                         && fromDisk.Photos.All(p => p.Thumbnail is not null), 180);
+        await Shot("s14-sviluppo-dal-disco");
     }
 
     public void Dispose() => _temp.Dispose();

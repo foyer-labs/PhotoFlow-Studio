@@ -1096,7 +1096,7 @@
   <data name="Develop.Origin.Browse" xml:space="preserve"><value>Da Consultazione · {0} foto</value></data>
   <data name="Develop.Origin.Selected" xml:space="preserve"><value>Selezionate in Sviluppo · {0} foto</value></data>
   <data name="Develop.Empty.Title" xml:space="preserve"><value>Nessuna foto da sviluppare</value></data>
-  <data name="Develop.Empty.Body" xml:space="preserve"><value>Scegli prima le foto: in Revisione premi «Sviluppa le migliori», oppure in Consultazione «Sviluppa i risultati».</value></data>
+  <data name="Develop.Empty.Body" xml:space="preserve"><value>Scegli le foto: in Revisione premi «Sviluppa le migliori», in Consultazione «Sviluppa i risultati», oppure apri dal disco foto che non hai importato.</value></data>
   <data name="Develop.Empty.UseLatest" xml:space="preserve"><value>Usa le migliori dell'ultimo evento</value></data>
   <data name="Develop.Empty.NoBest" xml:space="preserve"><value>Nell'ultimo evento non ci sono ancora foto migliori o tenute: scegli in Revisione.</value></data>
   <data name="Develop.Developed" xml:space="preserve"><value>Regolata</value></data>
@@ -1337,4 +1337,12 @@
   <data name="Browse.Version.Open" xml:space="preserve"><value>Apri</value></data>
   <data name="Browse.Version.Show" xml:space="preserve"><value>Mostra</value></data>
   <data name="Browse.Version.Detail" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="Develop.OpenFiles" xml:space="preserve"><value>Apri file…</value></data>
+  <data name="Develop.OpenFiles.Tip" xml:space="preserve"><value>Apri foto dal disco senza importarle nel catalogo (anche trascinandole qui)</value></data>
+  <data name="Develop.OpenFiles.Drop" xml:space="preserve"><value>oppure trascina qui foto o cartelle da Esplora file</value></data>
+  <data name="Develop.OpenFiles.Title" xml:space="preserve"><value>Apri foto da sviluppare</value></data>
+  <data name="Develop.OpenFiles.Type" xml:space="preserve"><value>Foto (RAW, DNG, JPEG, PNG, TIFF)</value></data>
+  <data name="Develop.Command.OpenFiles" xml:space="preserve"><value>Apri file dal disco</value></data>
+  <data name="Develop.Origin.Files" xml:space="preserve"><value>Dal disco · {0} · {1} foto</value></data>
+  <data name="Develop.Files.None" xml:space="preserve"><value>Nessuna foto apribile tra i file scelti (RAW, DNG, JPEG, PNG o TIFF).</value></data>
 </root>

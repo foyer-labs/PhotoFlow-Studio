@@ -171,6 +171,14 @@ e consegnate, e il pulsante del passo successivo.
 TIFF, JPEG…) compaiono come «Versioni ritoccate» nel pannello della foto, con Apri e Mostra. Nessun
 servizio in ascolto: si guarda la cartella quando la foto si apre.
 
+**S24 — Sviluppo di file non importati (v0.2.1).** Lo Sviluppo apre anche file dal disco (Ctrl O,
+trascinamento di file o cartelle). Un file così ha un id negativo ricavato dal percorso completo (SHA-256,
+lo stesso in ogni sessione), così cache delle anteprime, selezione di lavoro ed esportazione funzionano senza
+toccare il catalogo. `DevelopFiles` implementa `IDevelopStore`: id positivi al catalogo, id negativi a un JSON
+per foto in `<dati>/develop-files/` con percorso, impostazioni e ultima esportazione. Niente sidecar accanto
+all'originale; il catalogo non registra né l'asset né l'esportazione (la tabella Exports ha la chiave esterna
+sugli asset). Il pannello di destra ha la barra verticale sempre visibile e resta attivo mentre la foto si apre.
+
 ## Rimandato (backlog)
 
 Raggruppamento per scene simili in Sviluppo, cronologia persistente delle regolazioni, profilo di flusso

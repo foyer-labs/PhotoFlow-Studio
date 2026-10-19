@@ -30,6 +30,9 @@ public sealed partial class DevelopPhotoItem(long assetId, string name, string? 
 
     public string? ThumbnailPath { get; } = thumbnailPath;
 
+    /// <summary>Opened from disk, not in the catalog (decision S24).</summary>
+    public bool IsLoose { get; init; }
+
     [ObservableProperty]
     private Bitmap? _thumbnail;
 
@@ -106,6 +109,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         new("Develop.SelectGroup", new KeyGesture(Key.G), "Develop.Command.SelectGroup", StatusGroupKey: "Develop.Command.SelectGroup"),
         new("Develop.SyncGroup", new KeyGesture(Key.G, KeyModifiers.Control | KeyModifiers.Shift), "Develop.Command.SyncGroup", StatusGroupKey: "Develop.Command.SyncGroup"),
         new("Develop.CropDone", new KeyGesture(Key.Enter), "Develop.Command.CropDone"),
+        new("Develop.OpenFiles", new KeyGesture(Key.O, KeyModifiers.Control), "Develop.Command.OpenFiles", StatusGroupKey: "Develop.Command.OpenFiles"),
     ]);
 
     private readonly PhotoFlowHost _host;
@@ -341,23 +345,38 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         Origin = set.Origin;
         Photos.Clear();
         var assets = await _host.Catalog.Assets.GetManyAsync(set.AssetIds.ToList(), CancellationToken.None);
-        var developed = await _host.Catalog.Develop.ListDevelopedAsync(set.AssetIds.ToList(), CancellationToken.None);
-        var exported = await _host.Catalog.Develop.LastExportsAsync(set.AssetIds.ToList(), CancellationToken.None);
+        var developed = await _host.DevelopFiles.ListDevelopedAsync(set.AssetIds.ToList(), CancellationToken.None);
+        var exported = await _host.DevelopFiles.LastExportsAsync(set.AssetIds.ToList(), CancellationToken.None);
+        var loose = new List<(DevelopPhotoItem Item, string Path)>();
         foreach (var id in set.AssetIds)
         {
-            if (!assets.TryGetValue(id, out var asset))
+            DevelopPhotoItem item;
+            if (DevelopFiles.IsLoose(id))
+            {
+                // A file opened from disk (decision S24): its name, and a preview read from the file in the background.
+                if (_host.DevelopFiles.PathOf(id) is not { } path)
+                {
+                    continue;
+                }
+
+                item = new DevelopPhotoItem(id, Path.GetFileName(path), null) { IsLoose = true };
+                loose.Add((item, path));
+            }
+            else if (assets.TryGetValue(id, out var asset))
+            {
+                var thumbnail = new[] { asset.FullHash, asset.QuickHash }.OfType<string>().Select(_host.Thumbnails.PathFor).FirstOrDefault(File.Exists);
+                var locations = await _host.Catalog.Assets.GetLocationsAsync(id, CancellationToken.None);
+                var name = locations.Count > 0 ? Path.GetFileName(locations[0].RelativePath) : id.ToString(CultureInfo.InvariantCulture);
+                item = new DevelopPhotoItem(id, name, thumbnail);
+                item.LoadThumbnail();
+            }
+            else
             {
                 continue;
             }
 
-            var thumbnail = new[] { asset.FullHash, asset.QuickHash }.OfType<string>().Select(_host.Thumbnails.PathFor).FirstOrDefault(File.Exists);
-            var locations = await _host.Catalog.Assets.GetLocationsAsync(id, CancellationToken.None);
-            var name = locations.Count > 0 ? Path.GetFileName(locations[0].RelativePath) : id.ToString(CultureInfo.InvariantCulture);
-            var item = new DevelopPhotoItem(id, name, thumbnail)
-            {
-                IsDeveloped = developed.Contains(id),
-                IsExported = exported.ContainsKey(id),
-            };
+            item.IsDeveloped = developed.Contains(id);
+            item.IsExported = exported.ContainsKey(id);
             item.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName == nameof(DevelopPhotoItem.IsSelected))
@@ -366,8 +385,12 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
                     OnPropertyChanged(nameof(ApplySelectedText));
                 }
             };
-            item.LoadThumbnail();
             Photos.Add(item);
+        }
+
+        if (loose.Count > 0)
+        {
+            _ = LoadLooseThumbnailsAsync(loose);
         }
 
         // Groups in the same light (M7), in shooting order.
@@ -395,6 +418,62 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         Active = null;
         Active = active;
     }
+
+    private async Task LoadLooseThumbnailsAsync(List<(DevelopPhotoItem Item, string Path)> photos)
+    {
+        foreach (var (item, path) in photos)
+        {
+            if (!Photos.Contains(item))
+            {
+                return;
+            }
+
+            try
+            {
+                var preview = await Task.Run(() => _host.Previews.GetPreviewAsync(path, 320, CancellationToken.None));
+                item.Thumbnail = UiBitmaps.FromImage(preview.Image);
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException or InvalidOperationException)
+            {
+            }
+        }
+    }
+
+    /// <summary>Opens files from disk without importing them (decision S24): they replace the working selection.</summary>
+    public async Task OpenFilesAsync(IEnumerable<string> paths)
+    {
+        ArgumentNullException.ThrowIfNull(paths);
+        var files = new List<string>();
+        foreach (var path in paths)
+        {
+            if (Directory.Exists(path))
+            {
+                files.AddRange(Directory.EnumerateFiles(path).Where(DevelopFiles.IsSupported).Order(StringComparer.OrdinalIgnoreCase));
+            }
+            else if (File.Exists(path) && DevelopFiles.IsSupported(path))
+            {
+                files.Add(path);
+            }
+        }
+
+        if (files.Count == 0)
+        {
+            Message = Strings.Get("Develop.Files.None");
+            return;
+        }
+
+        await FlushSaveAsync();
+        var ids = files.Select(_host.DevelopFiles.Register).Distinct().ToList();
+        var folder = Path.GetFileName(Path.GetDirectoryName(Path.GetFullPath(files[0]))) ?? string.Empty;
+        _host.WorkingSet.Set(Strings.Format("Develop.Origin.Files", folder, ids.Count), ids);
+        await ActivateAsync();
+    }
+
+    /// <summary>Asks the view for the file picker (Ctrl+O).</summary>
+    public event EventHandler? OpenFilesRequested;
+
+    [RelayCommand]
+    private void OpenFiles() => OpenFilesRequested?.Invoke(this, EventArgs.Empty);
 
     private void UpdateCounters() => Counters = Strings.Format("Develop.Counters", Photos.Count, Photos.Count(p => p.IsDeveloped), Photos.Count(p => p.IsExported));
 
@@ -446,7 +525,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         Message = null;
         try
         {
-            var path = await AssetFiles.LocateAsync(_host.Catalog, _host.FileSystem, item.AssetId, CancellationToken.None);
+            var path = await _host.DevelopFiles.LocateAsync(item.AssetId, CancellationToken.None);
             if (Active != item)
             {
                 return;
@@ -463,7 +542,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
                 _ = _host.DevelopEngine.CloseAsync(previous, CancellationToken.None);
             }
 
-            var stored = await _host.Catalog.Develop.GetSettingsAsync(item.AssetId, CancellationToken.None) is { } json
+            var stored = await _host.DevelopFiles.GetSettingsAsync(item.AssetId, CancellationToken.None) is { } json
                 ? JsonNode.Parse(json) as JsonObject
                 : null;
             var photo = await _host.DevelopEngine.OpenAsync(path, stored ?? BaseSettings(), CancellationToken.None);
@@ -1250,7 +1329,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
                 await Task.Delay(500, cts.Token);
                 if (assetId is { } id)
                 {
-                    await _host.Catalog.Develop.SetSettingsAsync(id, json, CancellationToken.None);
+                    await _host.DevelopFiles.SetSettingsAsync(id, json, CancellationToken.None);
                 }
             }
             catch (OperationCanceledException)
@@ -1268,7 +1347,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         if (_pendingSave is { } save)
         {
             _pendingSave = null;
-            await _host.Catalog.Develop.SetSettingsAsync(save.AssetId, save.Json, CancellationToken.None);
+            await _host.DevelopFiles.SetSettingsAsync(save.AssetId, save.Json, CancellationToken.None);
         }
     }
 
@@ -1295,6 +1374,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         "Develop.SelectGroup" => SelectGroupCommand,
         "Develop.SyncGroup" => SyncGroupCommand,
         "Develop.CropDone" => CropDoneCommand,
+        "Develop.OpenFiles" => OpenFilesCommand,
         _ => base.ResolveCommand(id),
     };
 
@@ -1380,7 +1460,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         var previous = new Dictionary<long, string?>();
         foreach (var target in targets)
         {
-            previous[target.AssetId] = await _host.Catalog.Develop.GetSettingsAsync(target.AssetId, CancellationToken.None);
+            previous[target.AssetId] = await _host.DevelopFiles.GetSettingsAsync(target.AssetId, CancellationToken.None);
             var settings = BaseSettings();
             foreach (var section in new[] { "tone", "denoise", "studio" })
             {
@@ -1392,7 +1472,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
                 Json.Section(settings, "develop")[key] = _settings["develop"]?[key]?.DeepClone();
             }
 
-            await _host.Catalog.Develop.SetSettingsAsync(target.AssetId, settings.ToJsonString(), CancellationToken.None);
+            await _host.DevelopFiles.SetSettingsAsync(target.AssetId, settings.ToJsonString(), CancellationToken.None);
             target.IsDeveloped = true;
             target.IsPrepared = false; // its prepared preview no longer matches
         }
@@ -1557,12 +1637,12 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     /// </summary>
     private async Task PrepareOneAsync(DevelopPhotoItem item, CancellationToken ct)
     {
-        if (item.IsPrepared || await AssetFiles.LocateAsync(_host.Catalog, _host.FileSystem, item.AssetId, ct) is not { } path)
+        if (item.IsPrepared || await _host.DevelopFiles.LocateAsync(item.AssetId, ct) is not { } path)
         {
             return;
         }
 
-        var stored = await _host.Catalog.Develop.GetSettingsAsync(item.AssetId, ct) is { } json ? JsonNode.Parse(json) as JsonObject : null;
+        var stored = await _host.DevelopFiles.GetSettingsAsync(item.AssetId, ct) is { } json ? JsonNode.Parse(json) as JsonObject : null;
         var settings = stored ?? BaseSettings();
         if (!Json.Bool(settings["studio"]?["noise_enabled"], true))
         {
@@ -1712,7 +1792,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         var previous = new Dictionary<long, string?>();
         foreach (var target in targets)
         {
-            var stored = await _host.Catalog.Develop.GetSettingsAsync(target.AssetId, CancellationToken.None);
+            var stored = await _host.DevelopFiles.GetSettingsAsync(target.AssetId, CancellationToken.None);
             previous[target.AssetId] = stored;
             var settings = stored is not null ? JsonNode.Parse(stored) as JsonObject ?? BaseSettings() : BaseSettings();
             foreach (var (section, key) in fields)
@@ -1720,7 +1800,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
                 Json.Section(settings, section)[key] = _settings[section]?[key]?.DeepClone();
             }
 
-            await _host.Catalog.Develop.SetSettingsAsync(target.AssetId, settings.ToJsonString(), CancellationToken.None);
+            await _host.DevelopFiles.SetSettingsAsync(target.AssetId, settings.ToJsonString(), CancellationToken.None);
             target.IsDeveloped = true;
             target.IsPrepared = false; // its prepared preview no longer matches
         }
@@ -1748,7 +1828,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         {
             if (json is not null)
             {
-                await _host.Catalog.Develop.SetSettingsAsync(assetId, json, CancellationToken.None);
+                await _host.DevelopFiles.SetSettingsAsync(assetId, json, CancellationToken.None);
             }
         }
 

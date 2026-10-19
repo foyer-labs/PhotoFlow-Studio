@@ -267,8 +267,8 @@ public sealed partial class ExportViewModel : PageViewModel, IDisposable
             return;
         }
 
-        var developed = await _host.Catalog.Develop.ListDevelopedAsync(scope.AssetIds.ToList(), CancellationToken.None);
-        var exported = await _host.Catalog.Develop.LastExportsAsync(scope.AssetIds.ToList(), CancellationToken.None);
+        var developed = await _host.DevelopFiles.ListDevelopedAsync(scope.AssetIds.ToList(), CancellationToken.None);
+        var exported = await _host.DevelopFiles.LastExportsAsync(scope.AssetIds.ToList(), CancellationToken.None);
         var never = scope.AssetIds.Count - developed.Count;
         Summary = Strings.Format("Export.Summary", scope.AssetIds.Count, developed.Count, never, exported.Count)
                   + (IsDng ? " " + Strings.Get("Export.DngNote") : string.Empty);
@@ -353,13 +353,13 @@ public sealed partial class ExportViewModel : PageViewModel, IDisposable
             var seq = 0;
             foreach (var id in scope.AssetIds)
             {
-                if (await AssetFiles.LocateAsync(_host.Catalog, _host.FileSystem, id, CancellationToken.None) is not { } path)
+                if (await _host.DevelopFiles.LocateAsync(id, CancellationToken.None) is not { } path)
                 {
                     continue;
                 }
 
                 seq++;
-                var stored = await _host.Catalog.Develop.GetSettingsAsync(id, CancellationToken.None);
+                var stored = await _host.DevelopFiles.GetSettingsAsync(id, CancellationToken.None);
                 var settings = stored is not null ? JsonNode.Parse(stored) as JsonObject : null;
                 var decision = await _host.Catalog.Decisions.GetAsync(id, CancellationToken.None);
                 var values = new Dictionary<string, string>

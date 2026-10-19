@@ -159,6 +159,18 @@ alle 3 selezionate», copia e incolla.
 rumore); **\\** tenuto mostra l'originale; **Spazio** passa da adatta a 100%, dove l'anteprima calcola
 subito la zona visibile.
 
+Il pannello di destra scorre con la rotella ovunque si trovi il puntatore, anche sopra i cursori, e la sua
+barra di scorrimento resta sempre visibile: le regolazioni in fondo non restano nascoste.
+
+**Foto non importate.** «Apri file…» (**Ctrl O**) o il trascinamento di file e cartelle da Esplora file
+aprono nello Sviluppo foto che non sono nel catalogo: RAW, DNG, JPEG, PNG, TIFF. Diventano la selezione
+di lavoro («Dal disco · cartella · N foto») con tutte le regolazioni, il rumore, il ritaglio e
+l'esportazione; le impostazioni si salvano nella cartella dati di PhotoFlow Studio (mai accanto
+all'originale) e ritornano quando lo stesso file si riapre. Il catalogo non cambia: per archiviarle e
+cercarle resta l'importazione.
+
+![Foto aperte dal disco senza importarle](img/s14-sviluppo-dal-disco.png)
+
 ![Ritaglio](img/s09-sviluppo-ritaglio.png)
 
 **C** apre il ritaglio sulla foto intera raddrizzata: si trascinano bordi e angoli con le proporzioni

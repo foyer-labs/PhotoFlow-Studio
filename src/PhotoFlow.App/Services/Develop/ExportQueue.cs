@@ -90,7 +90,7 @@ public sealed class ExportRun(long id, string title, string recipeId, IReadOnlyL
 }
 
 /// <summary>Runs the exports one at a time in the background; the results are recorded in the catalog.</summary>
-public sealed class ExportQueue(IDevelopEngine engine, ICatalog catalog)
+public sealed class ExportQueue(IDevelopEngine engine, IDevelopStore store)
 {
     private readonly Lock _lock = new();
     private readonly List<ExportRun> _runs = [];
@@ -165,7 +165,7 @@ public sealed class ExportQueue(IDevelopEngine engine, ICatalog catalog)
             {
                 if (byPath.TryGetValue(result.Path, out var assetId))
                 {
-                    await catalog.Develop.AddExportAsync(new ExportRecord(assetId, result.Output!, run.RecipeId, DateTimeOffset.Now), CancellationToken.None)
+                    await store.AddExportAsync(new ExportRecord(assetId, result.Output!, run.RecipeId, DateTimeOffset.Now), CancellationToken.None)
                         .ConfigureAwait(false);
                 }
             }

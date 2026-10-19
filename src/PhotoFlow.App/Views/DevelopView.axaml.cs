@@ -5,6 +5,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
+using PhotoFlow.App.Localization;
+using PhotoFlow.App.Services.Develop;
 using Avalonia.VisualTree;
 using PhotoFlow.App.ViewModels;
 
@@ -43,6 +46,9 @@ public partial class DevelopView : UserControl
         // \ held: the original (decision S13); released, back to the result.
         AddHandler(KeyDownEvent, OnKey, RoutingStrategies.Tunnel);
         AddHandler(KeyUpEvent, OnKey, RoutingStrategies.Tunnel);
+        // Files and folders dropped from Explorer open without importing them (decision S24).
+        AddHandler(DragDrop.DragOverEvent, OnDragOver);
+        AddHandler(DragDrop.DropEvent, OnDrop);
     }
 
     protected override void OnDataContextChanged(EventArgs e)
@@ -51,12 +57,14 @@ public partial class DevelopView : UserControl
         if (_vm is not null)
         {
             _vm.PropertyChanged -= OnViewModelChanged;
+            _vm.OpenFilesRequested -= OnOpenFiles;
         }
 
         _vm = DataContext as DevelopViewModel;
         if (_vm is not null)
         {
             _vm.PropertyChanged += OnViewModelChanged;
+            _vm.OpenFilesRequested += OnOpenFiles;
             Curve.SetPoints(_vm.Curve);
         }
     }
@@ -70,6 +78,46 @@ public partial class DevelopView : UserControl
         else if (e.PropertyName == nameof(DevelopViewModel.Region))
         {
             Viewer.ResetPan();
+        }
+    }
+
+    private async void OnOpenFiles(object? sender, EventArgs e)
+    {
+        if (_vm is not { } vm || TopLevel.GetTopLevel(this)?.StorageProvider is not { } storage)
+        {
+            return;
+        }
+
+        var photos = new FilePickerFileType(Strings.Get("Develop.OpenFiles.Type")) { Patterns = [.. DevelopFiles.Extensions.Select(x => "*." + x)] };
+        var files = await storage.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = Strings.Get("Develop.OpenFiles.Title"),
+            AllowMultiple = true,
+            FileTypeFilter = [photos, FilePickerFileTypes.All],
+        });
+        var paths = files.Select(f => f.TryGetLocalPath()).OfType<string>().ToList();
+        if (paths.Count > 0)
+        {
+            await vm.OpenFilesAsync(paths);
+        }
+    }
+
+    private static IEnumerable<string> DroppedPaths(DragEventArgs e) =>
+        e.DataTransfer.TryGetFiles() is { } items ? items.Select(i => i.TryGetLocalPath()).OfType<string>() : [];
+
+    private void OnDragOver(object? sender, DragEventArgs e)
+    {
+        e.DragEffects = DroppedPaths(e).Any() ? DragDropEffects.Copy : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private async void OnDrop(object? sender, DragEventArgs e)
+    {
+        var paths = DroppedPaths(e).ToList();
+        e.Handled = true;
+        if (_vm is { } vm && paths.Count > 0)
+        {
+            await vm.OpenFilesAsync(paths);
         }
     }
 

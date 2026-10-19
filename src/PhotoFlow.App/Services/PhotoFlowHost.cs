@@ -139,7 +139,12 @@ public sealed class PhotoFlowHost : IAsyncDisposable
     public WorkingSet WorkingSet { get; } = new();
 
     /// <summary>Exports running in the background, one at a time (decision S11).</summary>
-    public ExportQueue Exports => _exports ??= new ExportQueue(DevelopEngine, Catalog);
+    public ExportQueue Exports => _exports ??= new ExportQueue(DevelopEngine, DevelopFiles);
+
+    private DevelopFiles? _developFiles;
+
+    /// <summary>Development settings and exports of the catalog photos and of the files opened from disk (decision S24).</summary>
+    public DevelopFiles DevelopFiles => _developFiles ??= new DevelopFiles(Catalog, FileSystem, Path.Combine(Paths.DataDirectory, "develop-files"));
 
     /// <summary>Key of the face fingerprints (D12): locked on another account or PC until the password or a recompute.</summary>
     public FingerprintKeyStore FingerprintKeys { get; }
