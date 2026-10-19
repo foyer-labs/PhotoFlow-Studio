@@ -17,6 +17,9 @@ public enum ImportSelection
 
 public sealed record PlannedFile(ScannedFile File, ExifInfo? Exif, string QuickHash, bool AlreadyImported, int Sequence, string TargetRelativePath);
 
+/// <summary>A camera found on the card (M5).</summary>
+public sealed record CameraOnCard(string Model, int Photos, DateTimeOffset? First, DateTimeOffset? Last);
+
 public sealed record DestinationSpace(IngestDestination Destination, long RequiredBytes, long AvailableBytes)
 {
     public bool IsSufficient => AvailableBytes >= RequiredBytes;
@@ -34,6 +37,12 @@ public sealed record ImportPlan(
     DateTimeOffset? LastCapture,
     DateOnly ProposedEventDate)
 {
+    /// <summary>The cameras of the card (M5): model, photos, first and last shot as written by the camera.</summary>
+    public IReadOnlyList<CameraOnCard> Cameras { get; init; } = [];
+
+    /// <summary>Last sequence number of the plan (the next import of the same event goes on from here).</summary>
+    public int LastSequence { get; init; }
+
     /// <summary>Files to copy for the chosen selection.</summary>
     public IReadOnlyList<PlannedFile> Selected(ImportSelection selection) =>
         selection == ImportSelection.All ? Files : Files.Where(f => !f.AlreadyImported).ToList();
@@ -56,8 +65,11 @@ public sealed class ImportPlanner
         _assets = assets;
     }
 
+    /// <param name="clockOffsets">Clock correction per camera model (M5): the shots of two bodies go in one order.</param>
+    /// <param name="sequenceStart">Last number already used by the same event (another card of the same day): the numbering goes on.</param>
     public async Task<ImportPlan> PlanAsync(
-        IReadOnlyList<ScannedFile> scanned, string eventName, DateOnly? eventDate, PathTemplate template, CancellationToken ct)
+        IReadOnlyList<ScannedFile> scanned, string eventName, DateOnly? eventDate, PathTemplate template, CancellationToken ct,
+        IReadOnlyDictionary<string, TimeSpan>? clockOffsets = null, int sequenceStart = 0)
     {
         ArgumentNullException.ThrowIfNull(scanned);
         ArgumentNullException.ThrowIfNull(template);
@@ -83,16 +95,20 @@ public sealed class ImportPlanner
         var proposed = first is { } f ? DateOnly.FromDateTime(f.DateTime) : DateOnly.FromDateTime(DateTime.Today);
         var date = eventDate ?? proposed;
 
-        // Sequence in shooting order; RAW and JPEG of the same photo share it.
+        // Sequence in shooting order (clocks corrected); RAW and JPEG of the same photo share it.
+        DateTimeOffset Corrected(ExifInfo? exif) =>
+            exif?.CapturedAt is { } at
+                ? at + (exif.Model is { } model && clockOffsets?.TryGetValue(model, out var offset) == true ? offset : TimeSpan.Zero)
+                : DateTimeOffset.MaxValue;
         var groups = identified
             .GroupBy(i => i.File.PairKey, StringComparer.OrdinalIgnoreCase)
-            .Select(g => (Members: g.ToList(), Order: g.Min(i => i.Exif?.CapturedAt ?? DateTimeOffset.MaxValue), Name: g.Key))
+            .Select(g => (Members: g.ToList(), Order: g.Min(i => Corrected(i.Exif)), Name: g.Key))
             .OrderBy(g => g.Order)
             .ThenBy(g => g.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
         var planned = new List<PlannedFile>();
-        var sequence = 0;
+        var sequence = Math.Max(0, sequenceStart);
         foreach (var group in groups)
         {
             sequence++;
@@ -105,6 +121,13 @@ public sealed class ImportPlanner
         }
 
         var photos = groups.Where(g => g.Members.Any(m => m.File.Kind != MediaKind.Video && m.File.Kind != MediaKind.Other)).ToList();
+        var cameras = photos
+            .Select(g => g.Members.Select(m => m.Exif).FirstOrDefault(e => e?.Model is not null))
+            .OfType<ExifInfo>()
+            .GroupBy(e => e.Model!, StringComparer.Ordinal)
+            .Select(c => new CameraOnCard(c.Key, c.Count(), c.Min(e => e.CapturedAt), c.Max(e => e.CapturedAt)))
+            .OrderBy(c => c.First ?? DateTimeOffset.MaxValue)
+            .ToList();
         return new ImportPlan(
             planned,
             NewPhotos: photos.Count(g => g.Members.Any(m => !m.Already)),
@@ -114,7 +137,11 @@ public sealed class ImportPlanner
             TotalBytes: identified.Sum(i => i.File.Item.Length),
             first,
             last,
-            proposed);
+            proposed)
+        {
+            Cameras = cameras,
+            LastSequence = sequence,
+        };
     }
 
     /// <summary>Free space check per local destination (board 3f).</summary>

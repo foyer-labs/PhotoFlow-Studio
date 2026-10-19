@@ -84,6 +84,11 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
         new("Review.Faces", new KeyGesture(Key.V), "Browse.Command.Faces"),
         new("Review.AddFace", new KeyGesture(Key.N, KeyModifiers.Shift), "Browse.Command.AddFace"),
         new("Review.Escape", new KeyGesture(Key.Escape), "Common.Cancel"),
+        new("Review.Label", new KeyGesture(Key.D6), "Review.Command.Label", StatusGroupKey: "Review.Command.Label", Parameter: "Red"),
+        new("Review.Label", new KeyGesture(Key.D7), "Review.Command.Label", StatusGroupKey: "Review.Command.Label", Parameter: "Yellow"),
+        new("Review.Label", new KeyGesture(Key.D8), "Review.Command.Label", StatusGroupKey: "Review.Command.Label", Parameter: "Green"),
+        new("Review.Label", new KeyGesture(Key.D9), "Review.Command.Label", StatusGroupKey: "Review.Command.Label", Parameter: "Blue"),
+        new("Review.SelectAll", new KeyGesture(Key.A, KeyModifiers.Control), "Review.Command.SelectAll", StatusGroupKey: "Review.Command.SelectAll"),
     ]);
 
     private readonly PhotoFlowHost _host;
@@ -91,6 +96,9 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
     private readonly Stack<List<(ReviewItemViewModel Item, List<Decision?> Before)>> _undo = new();
     private readonly Dictionary<long, string> _personNames = [];
     private List<ReviewItemViewModel> _all = [];
+
+    /// <summary>Author and copyright chosen at the import of the job (M2); null: those of the settings.</summary>
+    private Core.Metadata.RightsInfo? _jobRights;
     private List<ReviewGroupViewModel> _groups = [];
     private List<long> _failedAssets = [];
     private int _columns = 4;
@@ -100,7 +108,8 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
     {
         _host = host;
         _navigator = navigator;
-        Filters = [new(null) { IsActive = true }, .. new[] { CullingOutcome.Discard, CullingOutcome.ToReview, CullingOutcome.Best, CullingOutcome.Similar, CullingOutcome.Kept }.Select(o => new OutcomeFilterViewModel(o))];
+        Filters = [new(null) { IsActive = true }, .. new[] { CullingOutcome.Discard, CullingOutcome.ToReview, CullingOutcome.Best, CullingOutcome.Similar, CullingOutcome.Kept }.Select(o => new OutcomeFilterViewModel(o)),
+            .. ColorLabels.Keyed.Select(l => new OutcomeFilterViewModel(null, l))];
         Editor = new PhotoEditorViewModel(host);
         Editor.Changed += async (_, _) => await ShowPeopleAsync(Selected);
         Editor.LargePhotoRequested += (_, _) => OpenLargePhoto();
@@ -152,6 +161,8 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
         "Review.Faces" => Editor.ToggleFacesCommand,
         "Review.AddFace" => Editor.StartAddFaceCommand,
         "Review.Escape" => EscapeCommand,
+        "Review.Label" => SetLabelCommand,
+        "Review.SelectAll" => MarkAllCommand,
         _ => base.ResolveCommand(id),
     };
 
@@ -340,6 +351,7 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
         }
 
         _profileId = job.ProfileId ?? "events";
+        _jobRights = JobRights.Of(job);
         IsAnalyzing = _host.Jobs.IsRunning(jobId) || job.State is JobState.Running or JobState.Pending;
         var items = (await catalog.Jobs.GetItemsAsync(jobId, CancellationToken.None)).Where(i => i.AssetId is not null).ToList();
         var photos = new List<ReviewItemViewModel>();
@@ -809,6 +821,10 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
         {
             IsConfirming = false;
         }
+        else if (HasMarked)
+        {
+            ClearMarks();
+        }
         else if (Editor.Escape())
         {
             // a field or the face being added closed
@@ -842,23 +858,94 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
             return;
         }
 
-        var outcome = item.Outcome == CullingOutcome.Best ? CullingOutcome.Best : CullingOutcome.Kept;
-        await ApplyAsync([(item, d => (outcome, d?.Rating, d?.Label))]);
+        await ApplyAsync([.. Targets().Select(t =>
+        {
+            var outcome = t.Outcome == CullingOutcome.Best ? CullingOutcome.Best : CullingOutcome.Kept;
+            return (t, (Func<Decision?, (CullingOutcome?, int?, string?)>)(d => (outcome, d?.Rating, d?.Label)));
+        })]);
     }
 
     [RelayCommand]
     private Task DiscardAsync() =>
-        Selected is { } item ? ApplyAsync([(item, d => (CullingOutcome.Discard, null, d?.Label))]) : Task.CompletedTask;
+        Targets() is { Count: > 0 } targets
+            ? ApplyAsync([.. targets.Select(t => (t, (Func<Decision?, (CullingOutcome?, int?, string?)>)(d => (CullingOutcome.Discard, null, d?.Label))))])
+            : Task.CompletedTask;
 
     [RelayCommand]
     private async Task RateAsync(string? stars)
     {
-        if (Selected is not { } item || !int.TryParse(stars, CultureInfo.InvariantCulture, out var value))
+        if (Targets() is not { Count: > 0 } targets || !int.TryParse(stars, CultureInfo.InvariantCulture, out var value))
         {
             return;
         }
 
-        await ApplyAsync([(item, d => (d?.UserOutcome, value is >= 1 and <= 5 ? value : null, d?.Label))]);
+        await ApplyAsync([.. targets.Select(t => (t, (Func<Decision?, (CullingOutcome?, int?, string?)>)(d => (d?.UserOutcome, value is >= 1 and <= 5 ? value : null, d?.Label))))]);
+    }
+
+    /// <summary>6–9 (M4): the colour label on the photo or on the multiple selection; the same key again takes it off.</summary>
+    [RelayCommand]
+    private async Task SetLabelAsync(string? label)
+    {
+        if (Targets() is not { Count: > 0 } targets || label is null || !ColorLabels.Keys.Contains(label))
+        {
+            return;
+        }
+
+        var value = targets.All(t => t.ColorLabel == label) ? null : label;
+        await ApplyAsync([.. targets.Select(t => (t, (Func<Decision?, (CullingOutcome?, int?, string?)>)(d => (d?.UserOutcome, d?.Rating, value))))]);
+    }
+
+    // --- Multiple selection (M3) ---
+
+    /// <summary>What P, X, stars and labels act on: the multiple selection if there is one, otherwise the selected photo.</summary>
+    private List<ReviewItemViewModel> Targets()
+    {
+        var marked = Visible().Where(i => i.IsMarked).ToList();
+        return marked.Count > 0 ? marked : Selected is { } item ? [item] : [];
+    }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasMarked), nameof(MarkedText), nameof(DevelopBestText), nameof(HasBest))]
+    private int _markedCount;
+
+    public bool HasMarked => MarkedCount > 0;
+
+    public string MarkedText => Strings.Format("Review.Marked", MarkedCount.ToString("N0", CultureInfo.CurrentCulture));
+
+    /// <summary>Ctrl+click: in or out of the multiple selection (the photo also becomes the selected one).</summary>
+    public void ToggleMark(ReviewItemViewModel item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        if (MarkedCount == 0 && Selected is { } current && current != item)
+        {
+            current.IsMarked = true; // the first Ctrl+click starts from the photo already selected
+        }
+
+        item.IsMarked = !item.IsMarked;
+        Selected = item;
+        MarkedCount = _all.Count(i => i.IsMarked);
+    }
+
+    [RelayCommand]
+    private void MarkAll()
+    {
+        foreach (var item in Visible())
+        {
+            item.IsMarked = true;
+        }
+
+        MarkedCount = _all.Count(i => i.IsMarked);
+    }
+
+    [RelayCommand]
+    private void ClearMarks()
+    {
+        foreach (var item in _all.Where(i => i.IsMarked))
+        {
+            item.IsMarked = false;
+        }
+
+        MarkedCount = 0;
     }
 
     [RelayCommand]
@@ -1032,7 +1119,7 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
                 await _host.UpdateSettingsAsync(s => s with { PrudentMode = PrudentMode }, CancellationToken.None);
             }
 
-            var summary = await Task.Run(() => _host.CreatePublisher().WriteAsync(assets, PrudentMode, null, CancellationToken.None));
+            var summary = await Task.Run(() => _host.CreatePublisher(_jobRights).WriteAsync(assets, PrudentMode, null, CancellationToken.None));
             _failedAssets = [.. summary.FailedAssets];
             ResultMessage = Strings.Format("Review.Result.Written", DateTime.Now.ToString("d MMM yyyy · HH:mm", CultureInfo.CurrentCulture), summary.Written.ToString("N0", CultureInfo.CurrentCulture));
             ResultError = summary.Failed.Count == 0 ? null
@@ -1205,8 +1292,15 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
 
     private List<ReviewItemViewModel> Visible()
     {
-        var filter = Filters.FirstOrDefault(f => f.IsActive)?.Outcome;
-        return filter is null || IsAnalyzing ? _all : _all.Where(i => i.Outcome == filter).ToList();
+        var filter = Filters.FirstOrDefault(f => f.IsActive);
+        if (IsAnalyzing || filter is null)
+        {
+            return _all;
+        }
+
+        return filter.ColorLabel is { } label ? _all.Where(i => i.ColorLabel == label).ToList()
+            : filter.Outcome is { } outcome ? _all.Where(i => i.Outcome == outcome).ToList()
+            : _all;
     }
 
     /// <summary>Rows in shooting order: each group under its header, the single shots in plain rows.</summary>
@@ -1259,7 +1353,8 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
     {
         foreach (var filter in Filters)
         {
-            filter.Count = filter.Outcome is null ? _all.Count : Count(filter.Outcome.Value);
+            filter.Count = filter.ColorLabel is { } label ? _all.Count(i => i.ColorLabel == label)
+                : filter.Outcome is null ? _all.Count : Count(filter.Outcome.Value);
         }
 
         ManualCount = _all.Count(i => i.IsManual);
@@ -1274,9 +1369,11 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
     [NotifyPropertyChangedFor(nameof(DevelopBestText), nameof(HasBest))]
     private int _bestCount;
 
-    public bool HasBest => BestCount > 0;
+    public bool HasBest => BestCount > 0 || MarkedCount > 0;
 
-    public string DevelopBestText => Strings.Format("Review.DevelopBest", BestCount.ToString("N0", CultureInfo.CurrentCulture));
+    public string DevelopBestText => MarkedCount > 0
+        ? Strings.Format("Review.DevelopMarked", MarkedCount.ToString("N0", CultureInfo.CurrentCulture))
+        : Strings.Format("Review.DevelopBest", BestCount.ToString("N0", CultureInfo.CurrentCulture));
 
     /// <summary>
     /// The chosen photos become the working selection (decision S5): one per RAW+JPEG pair, the RAW; without chosen photos,
@@ -1284,7 +1381,7 @@ public sealed partial class ReviewViewModel : PageViewModel, IPhotoSource, IDisp
     /// </summary>
     public async Task<bool> SendToWorkingSetAsync(bool forExport)
     {
-        var chosen = _all.Where(IsChosen).ToList();
+        var chosen = _all.Any(i => i.IsMarked) ? _all.Where(i => i.IsMarked).ToList() : _all.Where(IsChosen).ToList();
         if (chosen.Count == 0 && Selected is { } selected)
         {
             chosen = [selected];

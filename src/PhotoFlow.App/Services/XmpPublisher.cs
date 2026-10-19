@@ -21,7 +21,8 @@ public sealed record XmpWriteSummary(int Written, int Skipped, IReadOnlyList<(st
 /// <param name="writeCaptions">Captions in <c>dc:description</c> (spec §8, off by default); the user's are written too.</param>
 /// <param name="reader">With a reader, the changes other programs made are imported before writing, and the state of
 /// the file is recorded after (spec §4, <see cref="ExternalXmpSync"/>).</param>
-public sealed class XmpPublisher(ICatalog catalog, IMetadataWriter writer, bool writeCaptions = false, IMetadataReader? reader = null)
+/// <param name="rights">Author and copyright written in every photo (M2), with the year of the photo in place of «{anno}».</param>
+public sealed class XmpPublisher(ICatalog catalog, IMetadataWriter writer, bool writeCaptions = false, IMetadataReader? reader = null, RightsInfo? rights = null)
 {
     public const string RedLabel = "Red";
 
@@ -30,7 +31,8 @@ public sealed class XmpPublisher(ICatalog catalog, IMetadataWriter writer, bool 
     {
         var outcome = decision?.EffectiveOutcome;
         int? rating = decision?.Rating is { } stars and > 0 ? stars : outcome == CullingOutcome.Discard && !prudentMode ? -1 : null;
-        var label = outcome == CullingOutcome.ToReview || (outcome == CullingOutcome.Discard && prudentMode) ? RedLabel : decision?.Label;
+        // The user's colour label (M4) wins; otherwise red marks what is still to review (and the discards in prudent mode).
+        var label = decision?.Label ?? (outcome == CullingOutcome.ToReview || (outcome == CullingOutcome.Discard && prudentMode) ? RedLabel : null);
         if (rating is null && label is null)
         {
             return writtenBefore ? new MetadataChanges(0, string.Empty, [], [], null) : null;
@@ -46,7 +48,8 @@ public sealed class XmpPublisher(ICatalog catalog, IMetadataWriter writer, bool 
             $"{changes.Rating}|{changes.Label}|{string.Join(',', changes.FlatKeywords)}|-{string.Join(',', changes.RemovedFlatKeywords ?? [])}|"
             + string.Join(';', changes.Regions?.Regions.Select(r => FormattableString.Invariant($"{r.Name}:{r.CenterX:0.####},{r.CenterY:0.####}")) ?? [])
             + (changes.Description is { } description ? "|d:" + description : string.Empty)
-            + string.Concat((changes.DescriptionAlternatives ?? new Dictionary<string, string>()).OrderBy(a => a.Key, StringComparer.Ordinal).Select(a => $"|d-{a.Key}:{a.Value}")))));
+            + string.Concat((changes.DescriptionAlternatives ?? new Dictionary<string, string>()).OrderBy(a => a.Key, StringComparer.Ordinal).Select(a => $"|d-{a.Key}:{a.Value}"))
+            + (changes.Rights is { IsEmpty: false } r ? $"|r:{r.Creator}|{r.Copyright}|{r.Email}|{r.Website}|{r.UsageTerms}" : string.Empty))));
 
     /// <summary>
     /// The captions of the photo in <c>dc:description</c>: the first (Italian when there is one, U5) as x-default, the
@@ -206,6 +209,11 @@ public sealed class XmpPublisher(ICatalog catalog, IMetadataWriter writer, bool 
                     }
 
                     changes = WithCaption(changes, captions);
+                }
+
+                if (rights is { IsEmpty: false })
+                {
+                    changes = (changes ?? new MetadataChanges(null, null, [], [], null)) with { Rights = rights.ForYear(asset.CapturedAt?.Year) };
                 }
             }
             if (asset is null || changes is null || (sync?.XmpSignature == Signature(changes) && !sync.WritePending))

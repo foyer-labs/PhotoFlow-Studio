@@ -49,7 +49,8 @@ public sealed record SearchQuery(
     CullingOutcome? Outcome = null,
     string? EmbeddingModelVersion = null,
     int Limit = 5000,
-    IReadOnlyList<IReadOnlyList<long>>? TagGroups = null)
+    IReadOnlyList<IReadOnlyList<long>>? TagGroups = null,
+    string? Label = null)
 {
     public static SearchQuery Empty { get; } = new([], []);
 }

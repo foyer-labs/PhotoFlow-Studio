@@ -288,6 +288,12 @@ public sealed class ImportJobRunner : IJobRunner
                 exif?.ToSummary(),
                 AssetState.Active), ct).ConfigureAwait(false);
 
+            // Clock of the camera corrected at the import (M5): the shots of two bodies in one order.
+            if (existing is null && exif?.Model is { } model && settings.ClockOffsetsMs?.TryGetValue(model, out var offsetMs) == true && offsetMs != 0)
+            {
+                await catalog.Assets.SetClockOffsetAsync(assetId, TimeSpan.FromMilliseconds(offsetMs), CancellationToken.None).ConfigureAwait(false);
+            }
+
             // The copy is verified: record it even if a pause was requested meanwhile.
             ct = CancellationToken.None;
             var relative = Path.GetRelativePath(primary.RootPath, verified.PrimaryPath);

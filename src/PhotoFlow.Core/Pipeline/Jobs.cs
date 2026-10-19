@@ -21,7 +21,11 @@ public sealed record ImportJobSettings(
     int MaxParallelFiles = 2,
     int AnalysisWorkers = 0,
     FaceMode? Faces = null,
-    Tagging.TagLevels? Tags = null);
+    Tagging.TagLevels? Tags = null,
+    Metadata.RightsInfo? Rights = null,
+    IReadOnlyDictionary<string, long>? ClockOffsetsMs = null,
+    int SequenceStart = 0,
+    int? SequenceEnd = null);
 
 /// <summary>Order of an archive analysis (spec §10, archives).</summary>
 public enum ArchiveOrder

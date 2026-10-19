@@ -50,6 +50,25 @@ public sealed record AppSettings
 
     /// <summary>The model chosen by the user for a function, among the installed ones (spec §5); missing: the default.</summary>
     public IReadOnlyDictionary<string, string> ModelChoices { get; init; } = new Dictionary<string, string>();
+
+    /// <summary>Author and copyright written in the photos and in the deliveries (M2); each import can change them for its event.</summary>
+    public RightsSettings Rights { get; init; } = new();
+}
+
+/// <summary>Author, copyright and contacts (M2). In the copyright «{anno}» becomes the year of the photo.</summary>
+public sealed record RightsSettings
+{
+    public string? Creator { get; init; }
+
+    public string? Copyright { get; init; }
+
+    public string? Email { get; init; }
+
+    public string? Website { get; init; }
+
+    public string? UsageTerms { get; init; }
+
+    public RightsInfo ToInfo() => new(Creator, Copyright, Email, Website, UsageTerms);
 }
 
 /// <summary>XMP preferences (spec §4, §8, board 5h).</summary>

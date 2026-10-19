@@ -113,10 +113,16 @@ internal sealed class AssetStore(SqliteCatalog catalog) : IAssetStore
 
     public Task<Asset?> GetAsync(long id, CancellationToken ct) => QuerySingleAsync("Id = @id", new { id }, ct);
 
+    // The time written by the camera identifies the photo, whatever clock correction it got afterwards (M5).
     public Task<Asset?> FindByIdentityAsync(string quickHash, DateTimeOffset? capturedAt, CancellationToken ct) =>
         capturedAt is null
             ? QuerySingleAsync("QuickHash = @quickHash AND CapturedAtMs IS NULL", new { quickHash }, ct)
-            : QuerySingleAsync("QuickHash = @quickHash AND CapturedAtMs = @ms", new { quickHash, ms = Db.Ms(capturedAt) }, ct);
+            : QuerySingleAsync("QuickHash = @quickHash AND CapturedAtMs - ClockOffsetMs = @ms", new { quickHash, ms = Db.Ms(capturedAt) }, ct);
+
+    public Task SetClockOffsetAsync(long assetId, TimeSpan offset, CancellationToken ct) =>
+        catalog.RunAsync(c => c.ExecuteAsync(new CommandDefinition(
+            "UPDATE Assets SET CapturedAtMs = CapturedAtMs - ClockOffsetMs + @offset, ClockOffsetMs = @offset WHERE Id = @assetId AND CapturedAtMs IS NOT NULL;",
+            new { assetId, offset = (long)offset.TotalMilliseconds }, cancellationToken: ct)), ct);
 
     public Task<Asset?> FindByFullHashAsync(string fullHash, CancellationToken ct) => QuerySingleAsync("FullHash = @fullHash", new { fullHash }, ct);
 

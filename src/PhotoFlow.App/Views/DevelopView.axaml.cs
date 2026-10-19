@@ -21,6 +21,8 @@ public partial class DevelopView : UserControl
         Viewer.Picked += (_, point) => _ = _vm?.PickAtAsync(point);
         Viewer.ZoomRequested += (_, point) => _vm?.ZoomAt(point);
         Viewer.PanRequested += (_, centre) => _vm?.PanTo(centre);
+        Viewer.CropEdited += (_, rect) => _vm?.SetCrop(rect);
+        Viewer.CropConfirmed += (_, _) => _vm?.CropDoneCommand.Execute(null);
         Viewer.SizeChanged += (_, _) =>
         {
             if (_vm is not null)

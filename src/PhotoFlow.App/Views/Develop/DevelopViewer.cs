@@ -35,8 +35,15 @@ public sealed class DevelopViewer : Control
     public static readonly StyledProperty<bool> PickingProperty = AvaloniaProperty.Register<DevelopViewer, bool>(nameof(Picking));
     public static readonly StyledProperty<string?> BeforeLabelProperty = AvaloniaProperty.Register<DevelopViewer, string?>(nameof(BeforeLabel));
     public static readonly StyledProperty<string?> AfterLabelProperty = AvaloniaProperty.Register<DevelopViewer, string?>(nameof(AfterLabel));
+    public static readonly StyledProperty<bool> CroppingProperty = AvaloniaProperty.Register<DevelopViewer, bool>(nameof(Cropping));
+    public static readonly StyledProperty<Rect> CropRectProperty = AvaloniaProperty.Register<DevelopViewer, Rect>(nameof(CropRect), new Rect(0, 0, 1, 1));
+    public static readonly StyledProperty<double> CropAspectProperty = AvaloniaProperty.Register<DevelopViewer, double>(nameof(CropAspect));
 
+    private const double Handle = 10;
     private double _split = 0.5;
+    private CropDrag _cropDrag;
+    private Point _cropStart;
+    private Rect _cropAtStart;
     private bool _draggingSplit;
     private Point? _panStart;
     private Vector _pan;
@@ -44,7 +51,7 @@ public sealed class DevelopViewer : Control
     static DevelopViewer()
     {
         AffectsRender<DevelopViewer>(BeforeProperty, AfterProperty, DifferenceProperty, RegionProperty, ActualSizeProperty, ModeProperty,
-            ShowOriginalProperty, BeforeLabelProperty, AfterLabelProperty);
+            ShowOriginalProperty, BeforeLabelProperty, AfterLabelProperty, CroppingProperty, CropRectProperty);
         FocusableProperty.OverrideDefaultValue<DevelopViewer>(true);
         ClipToBoundsProperty.OverrideDefaultValue<DevelopViewer>(true);
     }
@@ -70,6 +77,21 @@ public sealed class DevelopViewer : Control
     public string? BeforeLabel { get => GetValue(BeforeLabelProperty); set => SetValue(BeforeLabelProperty, value); }
 
     public string? AfterLabel { get => GetValue(AfterLabelProperty); set => SetValue(AfterLabelProperty, value); }
+
+    /// <summary>Crop mode (M1): the whole straightened frame with the crop drawn on it.</summary>
+    public bool Cropping { get => GetValue(CroppingProperty); set => SetValue(CroppingProperty, value); }
+
+    /// <summary>The crop in fractions of the frame.</summary>
+    public Rect CropRect { get => GetValue(CropRectProperty); set => SetValue(CropRectProperty, value); }
+
+    /// <summary>Width / height in pixels the crop keeps while resized (0 = free).</summary>
+    public double CropAspect { get => GetValue(CropAspectProperty); set => SetValue(CropAspectProperty, value); }
+
+    /// <summary>The crop was moved or resized (fractions of the frame), at the end of the drag.</summary>
+    public event EventHandler<Rect>? CropEdited;
+
+    /// <summary>Double click in crop mode: the crop is done.</summary>
+    public event EventHandler? CropConfirmed;
 
     /// <summary>A point of the photo was clicked with the eyedropper (photo coordinates).</summary>
     public event EventHandler<Point>? Picked;
@@ -135,6 +157,17 @@ public sealed class DevelopViewer : Control
         }
 
         var rect = ImageRect();
+        if (Cropping)
+        {
+            using (context.PushRenderOptions(new RenderOptions { BitmapInterpolationMode = BitmapInterpolationMode.HighQuality }))
+            {
+                context.DrawImage(ShowOriginal ? before : After ?? before, rect);
+            }
+
+            DrawCrop(context, rect);
+            return;
+        }
+
         using (context.PushRenderOptions(new RenderOptions { BitmapInterpolationMode = ActualSize ? BitmapInterpolationMode.None : BitmapInterpolationMode.HighQuality }))
         {
             var after = After ?? before;
@@ -169,6 +202,149 @@ public sealed class DevelopViewer : Control
         }
 
         DrawLabels(context, rect);
+    }
+
+    // ------------------------------------------------------------------ crop (M1)
+
+    private enum CropDrag
+    {
+        None,
+        Move,
+        Left,
+        Right,
+        Top,
+        Bottom,
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+    }
+
+    /// <summary>The crop in control coordinates.</summary>
+    private Rect CropOnScreen(Rect image) =>
+        new(image.X + CropRect.X * image.Width, image.Y + CropRect.Y * image.Height, CropRect.Width * image.Width, CropRect.Height * image.Height);
+
+    private void DrawCrop(DrawingContext context, Rect image)
+    {
+        var crop = CropOnScreen(image);
+        var shade = new SolidColorBrush(Color.FromArgb(150, 0, 0, 0));
+        context.FillRectangle(shade, new Rect(image.X, image.Y, image.Width, Math.Max(0, crop.Y - image.Y)));
+        context.FillRectangle(shade, new Rect(image.X, crop.Bottom, image.Width, Math.Max(0, image.Bottom - crop.Bottom)));
+        context.FillRectangle(shade, new Rect(image.X, crop.Y, Math.Max(0, crop.X - image.X), crop.Height));
+        context.FillRectangle(shade, new Rect(crop.Right, crop.Y, Math.Max(0, image.Right - crop.Right), crop.Height));
+        var thirds = new Pen(new SolidColorBrush(Color.FromArgb(120, 255, 255, 255)), 1);
+        for (var i = 1; i < 3; i++)
+        {
+            var x = crop.X + crop.Width * i / 3;
+            var y = crop.Y + crop.Height * i / 3;
+            context.DrawLine(thirds, new Point(x, crop.Y), new Point(x, crop.Bottom));
+            context.DrawLine(thirds, new Point(crop.X, y), new Point(crop.Right, y));
+        }
+
+        context.DrawRectangle(null, new Pen(Brushes.White, 1.5), crop);
+        var handle = new Pen(Brushes.White, 3);
+        foreach (var (p, dx, dy) in new[] { (crop.TopLeft, 1, 1), (crop.TopRight, -1, 1), (crop.BottomLeft, 1, -1), (crop.BottomRight, -1, -1) })
+        {
+            context.DrawLine(handle, p, new Point(p.X + dx * 16, p.Y));
+            context.DrawLine(handle, p, new Point(p.X, p.Y + dy * 16));
+        }
+    }
+
+    private CropDrag HitCrop(Point p)
+    {
+        var crop = CropOnScreen(ImageRect());
+        var left = Math.Abs(p.X - crop.Left) < Handle;
+        var right = Math.Abs(p.X - crop.Right) < Handle;
+        var top = Math.Abs(p.Y - crop.Top) < Handle;
+        var bottom = Math.Abs(p.Y - crop.Bottom) < Handle;
+        var insideX = p.X > crop.Left - Handle && p.X < crop.Right + Handle;
+        var insideY = p.Y > crop.Top - Handle && p.Y < crop.Bottom + Handle;
+        return (left, right, top, bottom) switch
+        {
+            (true, _, true, _) => CropDrag.TopLeft,
+            (_, true, true, _) => CropDrag.TopRight,
+            (true, _, _, true) => CropDrag.BottomLeft,
+            (_, true, _, true) => CropDrag.BottomRight,
+            (true, _, _, _) when insideY => CropDrag.Left,
+            (_, true, _, _) when insideY => CropDrag.Right,
+            (_, _, true, _) when insideX => CropDrag.Top,
+            (_, _, _, true) when insideX => CropDrag.Bottom,
+            _ => crop.Contains(p) ? CropDrag.Move : CropDrag.None,
+        };
+    }
+
+    private static Cursor CursorFor(CropDrag drag) => drag switch
+    {
+        CropDrag.Move => new Cursor(StandardCursorType.SizeAll),
+        CropDrag.Left or CropDrag.Right => new Cursor(StandardCursorType.SizeWestEast),
+        CropDrag.Top or CropDrag.Bottom => new Cursor(StandardCursorType.SizeNorthSouth),
+        CropDrag.TopLeft or CropDrag.BottomRight => new Cursor(StandardCursorType.TopLeftCorner),
+        CropDrag.TopRight or CropDrag.BottomLeft => new Cursor(StandardCursorType.TopRightCorner),
+        _ => Cursor.Default,
+    };
+
+    /// <summary>The crop after dragging by (<paramref name="dx"/>, <paramref name="dy"/>) fractions of the frame.</summary>
+    private Rect Dragged(Rect r, double dx, double dy)
+    {
+        const double min = 0.03;
+        if (_cropDrag == CropDrag.Move)
+        {
+            return new Rect(Math.Clamp(r.X + dx, 0, 1 - r.Width), Math.Clamp(r.Y + dy, 0, 1 - r.Height), r.Width, r.Height);
+        }
+
+        double left = r.Left, top = r.Top, right = r.Right, bottom = r.Bottom;
+        if (_cropDrag is CropDrag.Left or CropDrag.TopLeft or CropDrag.BottomLeft)
+        {
+            left = Math.Clamp(left + dx, 0, right - min);
+        }
+
+        if (_cropDrag is CropDrag.Right or CropDrag.TopRight or CropDrag.BottomRight)
+        {
+            right = Math.Clamp(right + dx, left + min, 1);
+        }
+
+        if (_cropDrag is CropDrag.Top or CropDrag.TopLeft or CropDrag.TopRight)
+        {
+            top = Math.Clamp(top + dy, 0, bottom - min);
+        }
+
+        if (_cropDrag is CropDrag.Bottom or CropDrag.BottomLeft or CropDrag.BottomRight)
+        {
+            bottom = Math.Clamp(bottom + dy, top + min, 1);
+        }
+
+        var result = new Rect(left, top, right - left, bottom - top);
+        return CropAspect > 0 && Before is { } bitmap ? KeepAspect(result, bitmap.PixelSize) : result;
+    }
+
+    /// <summary>Keeps <see cref="CropAspect"/>: the dragged side decides, the other follows (anchored on the opposite edge).</summary>
+    private Rect KeepAspect(Rect r, PixelSize frame)
+    {
+        var q = CropAspect * frame.Height / Math.Max(1, frame.Width); // width / height in fractions of the frame
+        var widthLeads = _cropDrag is CropDrag.Left or CropDrag.Right
+            || (_cropDrag is not (CropDrag.Top or CropDrag.Bottom) && r.Width / q >= r.Height);
+        var w = widthLeads ? r.Width : r.Height * q;
+        var h = widthLeads ? r.Width / q : r.Height;
+        var anchorRight = _cropDrag is CropDrag.Left or CropDrag.TopLeft or CropDrag.BottomLeft;
+        var anchorBottom = _cropDrag is CropDrag.Top or CropDrag.TopLeft or CropDrag.TopRight;
+        var x = anchorRight ? r.Right - w : r.X;
+        var y = anchorBottom ? r.Bottom - h : _cropDrag is CropDrag.Left or CropDrag.Right ? r.Y + (r.Height - h) / 2 : r.Y;
+        if (_cropDrag is CropDrag.Top or CropDrag.Bottom)
+        {
+            x = r.X + (r.Width - w) / 2;
+        }
+
+        // Inside the frame, scaling down when needed.
+        var scale = Math.Min(1, Math.Min(w > 0 ? Math.Min(1, (anchorRight ? r.Right : 1 - x) / w) : 1, h > 0 ? (anchorBottom ? r.Bottom : 1 - y) / h : 1));
+        if (scale < 1)
+        {
+            w *= scale;
+            h *= scale;
+            x = anchorRight ? r.Right - w : x;
+            y = anchorBottom ? r.Bottom - h : y;
+        }
+
+        return new Rect(Math.Clamp(x, 0, 1 - w), Math.Clamp(y, 0, 1 - h), w, h);
     }
 
     private void DrawLabels(DrawingContext context, Rect rect)
@@ -230,6 +406,25 @@ public sealed class DevelopViewer : Control
             return;
         }
 
+        if (Cropping)
+        {
+            if (e.ClickCount == 2)
+            {
+                CropConfirmed?.Invoke(this, EventArgs.Empty);
+                return;
+            }
+
+            _cropDrag = HitCrop(p);
+            if (_cropDrag != CropDrag.None)
+            {
+                _cropStart = p;
+                _cropAtStart = CropRect;
+                e.Pointer.Capture(this);
+            }
+
+            return;
+        }
+
         if (Picking)
         {
             Picked?.Invoke(this, ToPhoto(p));
@@ -259,6 +454,21 @@ public sealed class DevelopViewer : Control
     {
         base.OnPointerMoved(e);
         var p = e.GetPosition(this);
+        if (Cropping)
+        {
+            if (_cropDrag != CropDrag.None)
+            {
+                var image = ImageRect();
+                CropRect = Dragged(_cropAtStart, (p.X - _cropStart.X) / Math.Max(1, image.Width), (p.Y - _cropStart.Y) / Math.Max(1, image.Height));
+            }
+            else
+            {
+                Cursor = CursorFor(HitCrop(p));
+            }
+
+            return;
+        }
+
         if (_draggingSplit)
         {
             var rect = ImageRect();
@@ -282,6 +492,18 @@ public sealed class DevelopViewer : Control
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
+        if (_cropDrag != CropDrag.None)
+        {
+            _cropDrag = CropDrag.None;
+            e.Pointer.Capture(null);
+            if (CropRect != _cropAtStart)
+            {
+                CropEdited?.Invoke(this, CropRect);
+            }
+
+            return;
+        }
+
         if (_panStart is not null && _pan != default)
         {
             // The centre of the view in photo coordinates becomes the centre of the next region.

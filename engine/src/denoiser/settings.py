@@ -110,12 +110,37 @@ class OutputSettings:
     camera_raw: bool = True
 
 
+#: Proporzioni del ritaglio (solo un aiuto dell'interfaccia: il ritaglio vero è ``crop``).
+ASPECTS: dict[str, str] = {
+    "original": "Originale", "free": "Libero", "3:2": "3:2", "4:3": "4:3", "4:5": "4:5", "1:1": "1:1",
+    "16:9": "16:9",
+}
+
+#: Rotazioni a passi di 90° in senso orario.
+ROTATIONS = (0, 90, 180, 270)
+
+
+@dataclass
+class GeometrySettings:
+    """Rotazione, raddrizzamento e ritaglio, applicati dopo lo sviluppo (vedi :mod:`denoiser.geometry`)."""
+
+    rotation: int = 0
+    #: Specchio orizzontale.
+    flip: bool = False
+    #: Raddrizzamento in gradi, positivo in senso orario.
+    angle: float = 0.0
+    #: Ritaglio (x, y, larghezza, altezza) in frazioni della foto ruotata e raddrizzata.
+    crop: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
+    aspect: str = "original"
+
+
 @dataclass
 class Settings:
     develop: DevelopSettings = field(default_factory=DevelopSettings)
     denoise: DenoiseSettings = field(default_factory=DenoiseSettings)
     tone: ToneSettings = field(default_factory=ToneSettings)
     output: OutputSettings = field(default_factory=OutputSettings)
+    geometry: GeometrySettings = field(default_factory=GeometrySettings)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -136,6 +161,7 @@ class Settings:
             denoise=_build(DenoiseSettings, data.get("denoise")),
             tone=_build(ToneSettings, data.get("tone")),
             output=_build(OutputSettings, data.get("output")),
+            geometry=_build(GeometrySettings, data.get("geometry")),
         )
 
 
@@ -145,6 +171,7 @@ def _choices() -> dict[str, Any]:
     return {
         "wb_mode": WB_MODES, "demosaic": DEMOSAIC_ALGORITHMS, "raw_stage": RAW_STAGES,
         "format": OUTPUT_FORMATS, "algorithm": ALGORITHMS, "bit_depth": (8, 16),
+        "rotation": ROTATIONS, "aspect": ASPECTS,
     }
 
 
@@ -155,6 +182,7 @@ _RANGES: dict[str, tuple[float, float]] = {
     "temperature": (2000.0, 15000.0), "tint": (-150.0, 150.0),
     "contrast": (-100.0, 100.0), "brightness": (-100.0, 100.0), "highlights": (-100.0, 100.0),
     "shadows": (-100.0, 100.0), "saturation": (-100.0, 100.0), "max_side": (0, 30000),
+    "angle": (-45.0, 45.0),
 }
 
 #: Numero massimo di punti della curva dei toni.
@@ -201,6 +229,11 @@ def _coerce(name: str, value: Any, default: Any) -> Any:
         return value
     if name == "curve":
         return _coerce_curve(value)
+    if name == "crop":
+        x, y, w, h = (float(str(v).replace(",", ".")) for v in value)
+        if not (0.0 <= x < 1.0 and 0.0 <= y < 1.0 and 0.01 <= w <= 1.0 - x + 1e-6 and 0.01 <= h <= 1.0 - y + 1e-6):
+            raise ValueError(name)
+        return (x, y, min(w, 1.0 - x), min(h, 1.0 - y))
     if isinstance(default, tuple):  # wb_custom
         values = tuple(float(str(x).replace(",", ".")) for x in value)
         if len(values) != len(default) or any(not (0.01 <= x <= 100) for x in values):

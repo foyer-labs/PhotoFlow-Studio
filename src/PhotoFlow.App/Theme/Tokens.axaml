@@ -32,6 +32,12 @@
       <Color x:Key="PF.Color.Outcome.Best">#4CC38A</Color>
       <Color x:Key="PF.Color.Outcome.Similar">#9C9AE0</Color>
       <Color x:Key="PF.Color.Outcome.Kept">#3A3A3A</Color>
+      <!-- Colour labels (M4), the five of Lightroom: their own tokens, never the outcome colours -->
+      <Color x:Key="PF.Color.Label.Red">#E0525C</Color>
+      <Color x:Key="PF.Color.Label.Yellow">#E8D04A</Color>
+      <Color x:Key="PF.Color.Label.Green">#62B862</Color>
+      <Color x:Key="PF.Color.Label.Blue">#4C8FE0</Color>
+      <Color x:Key="PF.Color.Label.Purple">#A879D8</Color>
 
       <!-- Brushes of this variant -->
       <SolidColorBrush x:Key="PF.Brush.Viewer" Color="{StaticResource PF.Color.Viewer}" />
@@ -54,6 +60,11 @@
       <SolidColorBrush x:Key="PF.Brush.Outcome.Best" Color="{StaticResource PF.Color.Outcome.Best}" />
       <SolidColorBrush x:Key="PF.Brush.Outcome.Similar" Color="{StaticResource PF.Color.Outcome.Similar}" />
       <SolidColorBrush x:Key="PF.Brush.Outcome.Kept" Color="{StaticResource PF.Color.Outcome.Kept}" />
+      <SolidColorBrush x:Key="PF.Brush.Label.Red" Color="{StaticResource PF.Color.Label.Red}" />
+      <SolidColorBrush x:Key="PF.Brush.Label.Yellow" Color="{StaticResource PF.Color.Label.Yellow}" />
+      <SolidColorBrush x:Key="PF.Brush.Label.Green" Color="{StaticResource PF.Color.Label.Green}" />
+      <SolidColorBrush x:Key="PF.Brush.Label.Blue" Color="{StaticResource PF.Color.Label.Blue}" />
+      <SolidColorBrush x:Key="PF.Brush.Label.Purple" Color="{StaticResource PF.Color.Label.Purple}" />
       <SolidColorBrush x:Key="PF.Brush.State.Info" Color="{StaticResource PF.Color.Accent}" />
       <SolidColorBrush x:Key="PF.Brush.State.Warning" Color="{StaticResource PF.Color.Outcome.ToReview}" />
       <SolidColorBrush x:Key="PF.Brush.State.Error" Color="{StaticResource PF.Color.Outcome.Discard}" />
@@ -81,6 +92,11 @@
       <Color x:Key="PF.Color.Outcome.Best">#1E8A55</Color>
       <Color x:Key="PF.Color.Outcome.Similar">#5F5BB8</Color>
       <Color x:Key="PF.Color.Outcome.Kept">#D4D4D4</Color>
+      <Color x:Key="PF.Color.Label.Red">#C8323E</Color>
+      <Color x:Key="PF.Color.Label.Yellow">#B8980A</Color>
+      <Color x:Key="PF.Color.Label.Green">#2F8A2F</Color>
+      <Color x:Key="PF.Color.Label.Blue">#2563B8</Color>
+      <Color x:Key="PF.Color.Label.Purple">#7A48B0</Color>
 
       <!-- Brushes of this variant -->
       <SolidColorBrush x:Key="PF.Brush.Viewer" Color="{StaticResource PF.Color.Viewer}" />
@@ -103,6 +119,11 @@
       <SolidColorBrush x:Key="PF.Brush.Outcome.Best" Color="{StaticResource PF.Color.Outcome.Best}" />
       <SolidColorBrush x:Key="PF.Brush.Outcome.Similar" Color="{StaticResource PF.Color.Outcome.Similar}" />
       <SolidColorBrush x:Key="PF.Brush.Outcome.Kept" Color="{StaticResource PF.Color.Outcome.Kept}" />
+      <SolidColorBrush x:Key="PF.Brush.Label.Red" Color="{StaticResource PF.Color.Label.Red}" />
+      <SolidColorBrush x:Key="PF.Brush.Label.Yellow" Color="{StaticResource PF.Color.Label.Yellow}" />
+      <SolidColorBrush x:Key="PF.Brush.Label.Green" Color="{StaticResource PF.Color.Label.Green}" />
+      <SolidColorBrush x:Key="PF.Brush.Label.Blue" Color="{StaticResource PF.Color.Label.Blue}" />
+      <SolidColorBrush x:Key="PF.Brush.Label.Purple" Color="{StaticResource PF.Color.Label.Purple}" />
       <SolidColorBrush x:Key="PF.Brush.State.Info" Color="{StaticResource PF.Color.Accent}" />
       <SolidColorBrush x:Key="PF.Brush.State.Warning" Color="{StaticResource PF.Color.Outcome.ToReview}" />
       <SolidColorBrush x:Key="PF.Brush.State.Error" Color="{StaticResource PF.Color.Outcome.Discard}" />

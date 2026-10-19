@@ -30,6 +30,7 @@ import cv2
 import numpy as np
 
 from . import __version__
+from . import geometry
 from .algorithms import ALGORITHMS, get_algorithm
 from .batch import EXISTING_POLICIES, export_one, settings_for
 from .color import srgb_decode
@@ -208,8 +209,23 @@ class Engine:
 
     def cmd_histogram(self, path: str, settings: dict, **_: Any) -> dict:
         photo = self._photo(path)
-        rgb = self._tone(photo, photo.proxy, _settings(settings))
+        s = _settings(settings)
+        rgb = geometry.apply(self._tone(photo, photo.proxy, s), s.geometry)
         return {"histogram": histogram(rgb).tolist()}
+
+    def cmd_frame(self, path: str, settings: dict, **_: Any) -> dict:
+        """Dimensione dell'uscita (dopo rotazione e ritaglio) a piena risoluzione."""
+        image = self._photo(path).image
+        w, h = geometry.output_size(image.width, image.height, _settings(settings).geometry)
+        return {"frame": [w, h]}
+
+    def cmd_auto_level(self, path: str, settings: dict, **_: Any) -> dict:
+        """Raddrizzamento automatico: l'angolo che rende orizzontali o verticali le linee lunghe."""
+        photo = self._photo(path)
+        s = _settings(settings)
+        s.geometry.angle, s.geometry.crop = 0.0, geometry.FULL_CROP
+        rgb = geometry.apply(self._tone(photo, photo.proxy, s), s.geometry)
+        return {"angle": geometry.level_angle(rgb)}
 
     def cmd_render(self, path: str, settings: dict, region: list[int] | None = None, max_side: int = 2048,
                    denoise: bool = False, progress: Callable | None = None, **_: Any) -> dict:
@@ -217,21 +233,32 @@ class Engine:
 
         Senza ``region``: tutta la foto ridotta a ``max_side`` (il denoise, se richiesto, è sulla foto
         intera: usare la coda lunga «render_full»). Con ``region`` [x, y, w, h]: la zona a piena risoluzione.
+        Le coordinate e la dimensione sono quelle dell'uscita, dopo rotazione e ritaglio (``frame``).
         """
         photo = self._photo(path)
         s = _settings(settings)
         image = photo.image
+        g = s.geometry
+        frame = geometry.output_size(image.width, image.height, g)
         if region is None:
+            # Lato della foto sviluppata perché l'uscita ritagliata arrivi a max_side.
+            side = max(image.width, image.height) * min(1.0, max_side / max(frame))
+            side = max(1, int(round(side)))
+            out_rect = (0, 0, frame[0], frame[1])
             rect = (0, 0, image.width, image.height)
-            source = photo.proxy if max(photo.proxy.shape[:2]) >= max_side else image.pixels
-            before_lin = _fit(source, max_side)
+            source = photo.proxy if max(photo.proxy.shape[:2]) >= side else image.pixels
+            before_lin = _fit(source, side)
+            shape = lambda rgb: geometry.apply(rgb, g)  # noqa: E731
         else:
-            x, y, w, h = (int(v) for v in region)
-            x, y = max(0, min(x, image.width - 1)), max(0, min(y, image.height - 1))
-            rect = (x, y, max(1, min(w, image.width - x)), max(1, min(h, image.height - y)))
+            out_rect = geometry.clamp_region(region, image.width, image.height, g)
+            rect = geometry.source_box(out_rect, image.width, image.height, g) if not geometry.is_identity(g) else out_rect
             before_lin = image.pixels[rect[1]:rect[1] + rect[3], rect[0]:rect[0] + rect[2]]
-        before = self._tone(photo, before_lin, s)
-        result = {"region": list(rect), "before": _write_png(before, self.temp_dir, "prima"),
+            if geometry.is_identity(g):
+                shape = lambda rgb: rgb  # noqa: E731
+            else:
+                shape = lambda rgb: geometry.apply_region(rgb, rect, out_rect, image.width, image.height, g)  # noqa: E731
+        before = shape(self._tone(photo, before_lin, s))
+        result = {"region": list(out_rect), "frame": list(frame), "before": _write_png(before, self.temp_dir, "prima"),
                   "width": before.shape[1], "height": before.shape[0]}
         if denoise:
             key = (_denoise_key(s, s.develop.demosaic), rect)
@@ -240,8 +267,8 @@ class Engine:
                 linear = denoise_region(image, photo.analysis, s, rect, True, progress)
                 photo.denoised = {k: v for k, v in photo.denoised.items() if k[0] == key[0]}  # solo l'ultimo metodo
                 photo.denoised[key] = linear
-            after_lin = _fit(linear, max_side) if region is None else linear
-            after = self._tone(photo, after_lin, s)
+            after_lin = _fit(linear, max(before_lin.shape[:2])) if region is None else linear
+            after = shape(self._tone(photo, after_lin, s))
             result["after"] = _write_png(after, self.temp_dir, "dopo")
             diff = cv2.addWeighted((after * 255).astype(np.uint8), 4.0, (before * 255).astype(np.uint8), -4.0, 127.5) \
                 if after.shape == before.shape else None
@@ -260,10 +287,14 @@ class Engine:
         """Anteprima della foto intera con il denoise (coda lunga, annullabile)."""
         return self.cmd_render(**{**kw, "region": None, "denoise": True})
 
-    def cmd_pick_wb(self, path: str, x: float, y: float, **_: Any) -> dict:
-        """Contagocce: temperatura e tinta che rendono neutro il punto (media di un quadratino)."""
+    def cmd_pick_wb(self, path: str, x: float, y: float, settings: dict | None = None, **_: Any) -> dict:
+        """Contagocce: temperatura e tinta che rendono neutro il punto (media di un quadratino).
+
+        ``x``, ``y``: punto dell'uscita (dopo rotazione e ritaglio di ``settings``) a piena risoluzione."""
         photo = self._photo(path)
         image = photo.image
+        if settings:
+            x, y = geometry.to_source(x, y, image.width, image.height, _settings(settings).geometry)
         r = max(2, int(min(image.width, image.height) / 400))
         xi, yi = int(x), int(y)
         patch = image.pixels[max(0, yi - r): yi + r + 1, max(0, xi - r): xi + r + 1].reshape(-1, 3)
@@ -333,7 +364,7 @@ class Engine:
             try:
                 adjust = _auto_preset if item.get("auto") else None
                 outcome, saved, notes = export_one(Path(path), s, policy, conv, use_dng_converter, step,
-                                                   frozenset(taken), item.get("name_values"), adjust)
+                                                   frozenset(taken), item.get("name_values"), adjust, item.get("metadata"))
                 if saved is not None and outcome == "ok":
                     taken.append(saved)
                 results.append({"path": path, "outcome": outcome, "output": str(saved) if saved else None,

@@ -19,7 +19,7 @@ from .settings import Settings
 
 SUFFIX = ".denoiser"
 #: Sezioni delle impostazioni che appartengono alla foto.
-SECTIONS = ("denoise", "develop", "tone")
+SECTIONS = ("denoise", "develop", "tone", "geometry")
 
 
 def sidecar_path(photo: str | Path) -> Path:

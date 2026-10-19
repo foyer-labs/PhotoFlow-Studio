@@ -198,6 +198,12 @@ internal sealed class SqliteSearchIndex(SqliteCatalog catalog) : ISearchIndex
             parameters.Add("outcome", outcome.ToString());
         }
 
+        if (query.Label is { } label)
+        {
+            sql.Append(" AND d.Label = @label");
+            parameters.Add("label", label);
+        }
+
         sql.Append(" ORDER BY a.CapturedAtMs DESC, a.Id DESC;");
         return (await catalog.RunAsync(c => c.QueryAsync<long>(new CommandDefinition(sql.ToString(), parameters, cancellationToken: ct)), ct).ConfigureAwait(false)).ToList();
     }

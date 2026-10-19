@@ -87,6 +87,9 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         new("Develop.Redo", new KeyGesture(Key.Y, KeyModifiers.Control), "Develop.Command.Redo"),
         new("Develop.Editor", new KeyGesture(Key.E, KeyModifiers.Control), "Develop.Command.Editor", StatusGroupKey: "Develop.Command.Editor"),
         new("Develop.Escape", new KeyGesture(Key.Escape), "Develop.Command.Escape"),
+        new("Develop.Crop", new KeyGesture(Key.C), "Develop.Command.Crop", StatusGroupKey: "Develop.Command.Crop"),
+        new("Develop.SelectAll", new KeyGesture(Key.A, KeyModifiers.Control), "Review.Command.SelectAll", StatusGroupKey: "Review.Command.SelectAll"),
+        new("Develop.CropDone", new KeyGesture(Key.Enter), "Develop.Command.CropDone"),
     ]);
 
     private readonly PhotoFlowHost _host;
@@ -107,6 +110,9 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     private CancellationTokenSource? _histogramCts;
     private CancellationTokenSource? _saveCts;
     private Point _centre;
+
+    /// <summary>Size of the output (after rotation, straightening and crop) at full resolution, as the engine reports it.</summary>
+    private (int Width, int Height) _frame;
 
     public DevelopViewModel(PhotoFlowHost host, IShellNavigator navigator)
     {
@@ -248,6 +254,21 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     [ObservableProperty] private DevelopOption? _preset;
     [ObservableProperty] private bool _showAdvanced;
     [ObservableProperty] private string? _downloadText;
+
+    // Panel: geometry (M1). In crop mode the preview shows the whole straightened frame and the viewer draws the crop.
+    [ObservableProperty] private bool _isCropping;
+    [ObservableProperty] private Rect _cropRect = new(0, 0, 1, 1);
+    [ObservableProperty] private double _angle;
+    [ObservableProperty] private DevelopOption? _aspect;
+
+    public IReadOnlyList<DevelopOption> AspectOptions { get; } =
+    [
+        new("original", Strings.Get("Develop.Aspect.Original")), new("free", Strings.Get("Develop.Aspect.Free")),
+        new("3:2", "3:2"), new("4:3", "4:3"), new("4:5", "4:5"), new("1:1", "1:1"), new("16:9", "16:9"),
+    ];
+
+    /// <summary>Width / height in pixels the crop keeps (0 = free), for the viewer.</summary>
+    public double CropAspectRatio => AspectRatio(Aspect?.Key);
 
     public bool IsRaw => _photo?.IsRaw == true;
 
@@ -442,6 +463,8 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
             OnPropertyChanged(nameof(HasPhoto));
             OnPropertyChanged(nameof(IsRaw));
             ActualSize = false;
+            _frame = default;
+            IsCropping = false;
             _centre = new Point(photo.Width / 2.0, photo.Height / 2.0);
             ScheduleHistogram();
             await RefreshAsync(full: true);
@@ -497,6 +520,10 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
             Method = Methods.FirstOrDefault(m => m.Key == Json.String(denoise["algorithm"], "wavelet")) ?? Methods.FirstOrDefault();
             SensorStage = Json.String(denoise["raw_stage"], "sensor") == "sensor";
             HotPixels = Json.Double(denoise["hot_pixel_threshold"]) > 0;
+            var geometry = Json.Section(_settings, "geometry");
+            Angle = Json.Double(geometry["angle"]);
+            CropRect = CropOf(geometry);
+            Aspect = AspectOptions.FirstOrDefault(o => o.Key == Json.String(geometry["aspect"], "original")) ?? AspectOptions[0];
             Preset = null;
             UpdateDownload();
         }
@@ -668,6 +695,239 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         Changed(full || section == "studio");
     }
 
+    // ------------------------------------------------------------------ geometry (M1)
+
+    private static Rect CropOf(JsonObject geometry) =>
+        geometry["crop"] is JsonArray { Count: 4 } c && Json.Double(c[2]) > 0 && Json.Double(c[3]) > 0
+            ? new Rect(Json.Double(c[0]), Json.Double(c[1]), Json.Double(c[2]), Json.Double(c[3]))
+            : new Rect(0, 0, 1, 1);
+
+    /// <summary>The straightened frame before the crop, in pixels.</summary>
+    private (double Width, double Height) FullFrame()
+    {
+        if (_photo is not { } photo)
+        {
+            return (1, 1);
+        }
+
+        var turned = Json.Int(Json.Section(_settings, "geometry")["rotation"]) % 180 == 90;
+        return turned ? (photo.Height, photo.Width) : (photo.Width, photo.Height);
+    }
+
+    private double AspectRatio(string? key)
+    {
+        var (fw, fh) = FullFrame();
+        double ratio;
+        switch (key)
+        {
+            case null or "free":
+                return 0;
+            case "original":
+                ratio = fw / fh;
+                break;
+            default:
+                var parts = key.Split(':');
+                ratio = double.Parse(parts[0], CultureInfo.InvariantCulture) / double.Parse(parts[1], CultureInfo.InvariantCulture);
+                break;
+        }
+
+        // The ratio follows the orientation of the current crop (a 3:2 on a vertical crop is 2:3).
+        var portrait = CropRect.Width * fw < CropRect.Height * fh;
+        return portrait == ratio > 1 ? 1 / ratio : ratio;
+    }
+
+    /// <summary>The largest crop with <paramref name="pixelRatio"/> (width / height in pixels) centred where <paramref name="current"/> is.</summary>
+    private Rect FitAspect(Rect current, double pixelRatio)
+    {
+        var (fw, fh) = FullFrame();
+        var q = pixelRatio * fh / fw; // the same ratio in fractions of the frame
+        var w = Math.Min(1, q);
+        var h = w / q;
+        if (h > 1)
+        {
+            h = 1;
+            w = q;
+        }
+
+        var cx = current.X + current.Width / 2;
+        var cy = current.Y + current.Height / 2;
+        return new Rect(Math.Clamp(cx - w / 2, 0, 1 - w), Math.Clamp(cy - h / 2, 0, 1 - h), w, h);
+    }
+
+    partial void OnCropRectChanged(Rect value) => OnPropertyChanged(nameof(CropAspectRatio));
+
+    partial void OnAngleChanged(double value) => Edit("geometry", "angle", Math.Round(value, 2));
+
+    partial void OnAspectChanged(DevelopOption? value)
+    {
+        OnPropertyChanged(nameof(CropAspectRatio));
+        if (value is null || _loadingPanel || _photo is null)
+        {
+            return;
+        }
+
+        PushUndo();
+        Json.Section(_settings, "geometry")["aspect"] = value.Key;
+        if (AspectRatio(value.Key) is > 0 and var ratio)
+        {
+            SetCropValue(FitAspect(CropRect, ratio));
+        }
+
+        Changed(full: false, render: !IsCropping);
+    }
+
+    private void SetCropValue(Rect r)
+    {
+        var w = Math.Clamp(r.Width, 0.01, 1);
+        var h = Math.Clamp(r.Height, 0.01, 1);
+        var rect = new Rect(Math.Clamp(r.X, 0, 1 - w), Math.Clamp(r.Y, 0, 1 - h), w, h);
+        CropRect = rect;
+        Json.Section(_settings, "geometry")["crop"] = new JsonArray(Math.Round(rect.X, 5), Math.Round(rect.Y, 5), Math.Round(rect.Width, 5), Math.Round(rect.Height, 5));
+    }
+
+    /// <summary>The crop drawn in the viewer (fractions of the straightened frame).</summary>
+    public void SetCrop(Rect rect)
+    {
+        if (_photo is null)
+        {
+            return;
+        }
+
+        PushUndo();
+        SetCropValue(rect);
+        Changed(full: false, render: !IsCropping);
+    }
+
+    [RelayCommand]
+    private void ToggleCrop()
+    {
+        if (!HasPhoto)
+        {
+            return;
+        }
+
+        IsCropping = !IsCropping;
+        if (IsCropping)
+        {
+            IsPicking = false;
+            ActualSize = false;
+        }
+
+        ScheduleHistogram();
+        _ = RefreshAsync(full: NoiseEnabled);
+    }
+
+    [RelayCommand]
+    private void CropDone()
+    {
+        if (IsCropping)
+        {
+            ToggleCrop();
+        }
+    }
+
+    [RelayCommand]
+    private void RotateRight() => Rotate(90);
+
+    [RelayCommand]
+    private void RotateLeft() => Rotate(-90);
+
+    /// <summary>Turns what is shown by <paramref name="degrees"/> (clockwise); the crop turns with it.</summary>
+    private void Rotate(int degrees)
+    {
+        if (_photo is null)
+        {
+            return;
+        }
+
+        PushUndo();
+        var geometry = Json.Section(_settings, "geometry");
+        // The rotation comes before the mirror: with the mirror on, turning what is shown clockwise is turning the photo the other way.
+        var step = Json.Bool(geometry["flip"]) ? -degrees : degrees;
+        geometry["rotation"] = (((Json.Int(geometry["rotation"]) + step) % 360) + 360) % 360;
+        var r = CropRect;
+        SetCropValue(degrees > 0 ? new Rect(1 - r.Y - r.Height, r.X, r.Height, r.Width) : new Rect(r.Y, 1 - r.X - r.Width, r.Height, r.Width));
+        Changed(full: false);
+    }
+
+    [RelayCommand]
+    private void Flip()
+    {
+        if (_photo is null)
+        {
+            return;
+        }
+
+        PushUndo();
+        var geometry = Json.Section(_settings, "geometry");
+        geometry["flip"] = !Json.Bool(geometry["flip"]);
+        geometry["angle"] = -Json.Double(geometry["angle"]); // the mirrored scene keeps its straightening
+        var r = CropRect;
+        SetCropValue(new Rect(1 - r.X - r.Width, r.Y, r.Width, r.Height));
+        _loadingPanel = true;
+        Angle = Json.Double(geometry["angle"]);
+        _loadingPanel = false;
+        Changed(full: false);
+    }
+
+    [RelayCommand]
+    private async Task AutoLevelAsync()
+    {
+        if (_path is not { } path)
+        {
+            return;
+        }
+
+        try
+        {
+            if (await _host.DevelopEngine.AutoLevelAsync(path, EngineSettings(), CancellationToken.None) is { } angle)
+            {
+                Angle = Math.Clamp(angle, -45, 45);
+                Message = Strings.Format("Develop.Level.Done", Angle.ToString("+0.0;-0.0;0.0", CultureInfo.CurrentCulture));
+            }
+            else
+            {
+                Message = Strings.Get("Develop.Level.None");
+            }
+        }
+        catch (DevelopEngineException e)
+        {
+            Message = e.Message;
+        }
+    }
+
+    [RelayCommand]
+    private void ResetGeometry()
+    {
+        if (_photo is null || _engineInfo is null)
+        {
+            return;
+        }
+
+        PushUndo();
+        _settings["geometry"] = _engineInfo.Defaults["geometry"]?.DeepClone() ?? new JsonObject();
+        LoadPanel();
+        Changed(full: false);
+    }
+
+    private void Changed(bool full, bool render)
+    {
+        if (render)
+        {
+            Changed(full);
+            return;
+        }
+
+        AutoText = string.Empty;
+        if (Active is { } item)
+        {
+            item.IsDeveloped = true;
+            UpdateCounters();
+        }
+
+        ScheduleSave();
+    }
+
     private void Changed(bool full)
     {
         AutoText = string.Empty;
@@ -734,7 +994,19 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     // ------------------------------------------------------------------ preview
 
     /// <summary>Settings sent to the engine: with the noise reduction off its strengths are zero.</summary>
-    private JsonObject EngineSettings() => DevelopJson.ForEngine(_settings);
+    private JsonObject EngineSettings()
+    {
+        var settings = DevelopJson.ForEngine(_settings);
+        if (IsCropping)
+        {
+            Json.Section(settings, "geometry")["crop"] = new JsonArray(0.0, 0.0, 1.0, 1.0); // the whole frame, the viewer draws the crop
+        }
+
+        return settings;
+    }
+
+    /// <summary>The output frame (full resolution): the engine's once a render arrived, the photo's before.</summary>
+    private (int Width, int Height) Frame => _frame.Width > 0 ? _frame : _photo is { } p ? (p.Width, p.Height) : (1, 1);
 
     private void CancelRenders()
     {
@@ -759,10 +1031,11 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
             if (ActualSize)
             {
                 // 100%: the visible region, with the noise reduction (fast on a region).
-                var w = Math.Min(Viewport.Width, photo.Width);
-                var h = Math.Min(Viewport.Height, photo.Height);
-                var x = (int)Math.Clamp(_centre.X - w / 2.0, 0, photo.Width - w);
-                var y = (int)Math.Clamp(_centre.Y - h / 2.0, 0, photo.Height - h);
+                var (fw, fh) = Frame;
+                var w = Math.Min(Viewport.Width, fw);
+                var h = Math.Min(Viewport.Height, fh);
+                var x = (int)Math.Clamp(_centre.X - w / 2.0, 0, fw - w);
+                var y = (int)Math.Clamp(_centre.Y - h / 2.0, 0, fh - h);
                 IsComputing = NoiseEnabled;
                 OnPropertyChanged(nameof(NoiseBadge));
                 var progress = new Progress<DevelopProgress>(p => { NoiseProgress = p.Fraction; OnPropertyChanged(nameof(NoiseBadge)); });
@@ -847,6 +1120,15 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         var before = Load(render.BeforeFile);
         var after = withAfter && render.AfterFile is { } a ? Load(a) : null;
         var difference = withAfter && render.DifferenceFile is { } d ? Load(d) : null;
+        if (render.Frame.Width > 0 && render.Frame != _frame)
+        {
+            _frame = render.Frame;
+            if (!ActualSize)
+            {
+                _centre = new Point(_frame.Width / 2.0, _frame.Height / 2.0);
+            }
+        }
+
         Region = new Rect(render.Region.X, render.Region.Y, render.Region.Width, render.Region.Height);
         Before = before;
         After = withAfter ? after : (NoiseEnabled ? null : before);
@@ -955,6 +1237,9 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         "Develop.Redo" => RedoCommand,
         "Develop.Editor" => OpenInEditorCommand,
         "Develop.Escape" => EscapeCommand,
+        "Develop.Crop" => ToggleCropCommand,
+        "Develop.SelectAll" => SelectAllCommand,
+        "Develop.CropDone" => CropDoneCommand,
         _ => base.ResolveCommand(id),
     };
 
@@ -987,6 +1272,16 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
 
         item.IsSelected = true;
         Active = item;
+    }
+
+    /// <summary>Ctrl+A (M3): every photo of the strip selected, for «apply to the selected» and the export.</summary>
+    [RelayCommand]
+    private void SelectAll()
+    {
+        foreach (var photo in Photos)
+        {
+            photo.IsSelected = true;
+        }
     }
 
     [RelayCommand]
@@ -1039,7 +1334,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
 
         try
         {
-            var (temperature, tint) = await _host.DevelopEngine.PickWhiteBalanceAsync(path, point.X, point.Y, CancellationToken.None);
+            var (temperature, tint) = await _host.DevelopEngine.PickWhiteBalanceAsync(path, point.X, point.Y, EngineSettings(), CancellationToken.None);
             PushUndo();
             _loadingPanel = true;
             WhiteBalance = WhiteBalanceModes.First(m => m.Key == "temperature");
@@ -1160,7 +1455,7 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
         ArgumentNullException.ThrowIfNull(before);
         ArgumentNullException.ThrowIfNull(after);
         var result = new List<(string, string)>();
-        foreach (var section in new[] { "develop", "tone", "denoise", "studio" })
+        foreach (var section in new[] { "develop", "tone", "denoise", "studio", "geometry" })
         {
             var a = after[section] as JsonObject ?? [];
             var b = before[section] as JsonObject ?? [];
@@ -1252,7 +1547,11 @@ public sealed partial class DevelopViewModel : PageViewModel, IPhotoSource, IDis
     [RelayCommand]
     private void Escape()
     {
-        if (IsPicking)
+        if (IsCropping)
+        {
+            ToggleCrop();
+        }
+        else if (IsPicking)
         {
             IsPicking = false;
         }

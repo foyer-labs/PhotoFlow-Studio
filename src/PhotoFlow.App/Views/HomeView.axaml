@@ -20,6 +20,14 @@
             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
               <TextBlock Classes="subtitle" Text="{Binding Card.Title, FallbackValue=''}" />
               <TextBlock Classes="data tertiary" Text="{Binding Card.Summary, FallbackValue=''}" />
+              <!-- M6: may the card be formatted? -->
+              <TextBlock Classes="label" TextWrapping="Wrap" Foreground="{DynamicResource PF.Brush.Outcome.Best}" Text="{Binding Card.Safety.Text, FallbackValue=''}"
+                         IsVisible="{Binding Card.IsSafe, FallbackValue=False}" />
+              <TextBlock Classes="label" TextWrapping="Wrap" Foreground="{DynamicResource PF.Brush.State.Warning}" Text="{Binding Card.Safety.Text, FallbackValue=''}"
+                         IsVisible="{Binding Card.IsUnsafe, FallbackValue=False}" />
+              <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding Card.Safety.Text, FallbackValue=''}"
+                         IsVisible="{Binding Card.IsImporting, FallbackValue=False}" />
+              <TextBlock Classes="micro secondary" Text="{Binding CardMessage}" IsVisible="{Binding CardMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
               <Button Classes="secondary" Command="{Binding IgnoreCardCommand}">
@@ -28,6 +36,7 @@
                   <Border Classes="key"><TextBlock Text="Esc" /></Border>
                 </StackPanel>
               </Button>
+              <Button Classes="secondary" Command="{Binding EjectCardCommand}" Content="{l:Tr Home.Card.Eject}" IsVisible="{Binding Card.IsSafe, FallbackValue=False}" />
               <Button Classes="secondary" Command="{Binding ChooseWhatToImportCommand}" Content="{l:Tr Home.Card.Choose}" />
               <Button x:Name="ImportCardButton" Classes="primary" Command="{Binding ImportCardCommand}" IsEnabled="{Binding Card.HasNew, FallbackValue=False}">
                 <StackPanel Orientation="Horizontal" Spacing="8">

@@ -1076,7 +1076,7 @@
   <data name="Develop.Command.Undo" xml:space="preserve"><value>Annulla / ripeti</value></data>
   <data name="Develop.Command.Redo" xml:space="preserve"><value>Ripeti</value></data>
   <data name="Develop.Command.Editor" xml:space="preserve"><value>Editor esterno</value></data>
-  <data name="Develop.Command.Escape" xml:space="preserve"><value>Esci dal contagocce o dal 100%</value></data>
+  <data name="Develop.Command.Escape" xml:space="preserve"><value>Esci dal ritaglio, dal contagocce o dal 100%</value></data>
   <data name="Develop.Zoom" xml:space="preserve"><value>100%</value></data>
   <data name="Develop.Compare" xml:space="preserve"><value>Confronto</value></data>
   <data name="Develop.Pick" xml:space="preserve"><value>Contagocce</value></data>
@@ -1232,4 +1232,73 @@
   <data name="Export.State.Completed" xml:space="preserve"><value>Completata</value></data>
   <data name="Export.State.Cancelled" xml:space="preserve"><value>Interrotta: i file già scritti restano, nessun file a metà</value></data>
   <data name="Export.State.Failed" xml:space="preserve"><value>Non riuscita</value></data>
+  <data name="Develop.Command.Crop" xml:space="preserve"><value>Ritaglia</value></data>
+  <data name="Develop.Command.CropDone" xml:space="preserve"><value>Conferma il ritaglio</value></data>
+  <data name="Develop.Crop" xml:space="preserve"><value>Ritaglia</value></data>
+  <data name="Develop.Tip.Crop" xml:space="preserve"><value>Ritaglio e raddrizzamento sulla foto intera: trascina bordi e angoli, Invio o doppio clic per confermare</value></data>
+  <data name="Develop.Crop.Hint" xml:space="preserve"><value>Trascina bordi e angoli · Invio o doppio clic conferma · Esc esce</value></data>
+  <data name="Develop.Section.Geometry" xml:space="preserve"><value>INQUADRATURA</value></data>
+  <data name="Develop.Aspect.Original" xml:space="preserve"><value>Proporzioni originali</value></data>
+  <data name="Develop.Aspect.Free" xml:space="preserve"><value>Libero</value></data>
+  <data name="Develop.Aspect.Tip" xml:space="preserve"><value>Proporzioni del ritaglio: segue l'orientamento del ritaglio (3:2 su un ritaglio verticale è 2:3)</value></data>
+  <data name="Develop.Angle" xml:space="preserve"><value>Raddrizza</value></data>
+  <data name="Develop.Level" xml:space="preserve"><value>Livella</value></data>
+  <data name="Develop.Level.Tip" xml:space="preserve"><value>Raddrizza da solo: rende orizzontali o verticali le linee lunghe della foto (orizzonte, edifici)</value></data>
+  <data name="Develop.Level.Done" xml:space="preserve"><value>Raddrizzata di {0}°</value></data>
+  <data name="Develop.Level.None" xml:space="preserve"><value>Nessuna linea lunga da raddrizzare: usa il cursore.</value></data>
+  <data name="Develop.RotateLeft" xml:space="preserve"><value>Ruota a sinistra di 90°</value></data>
+  <data name="Develop.RotateRight" xml:space="preserve"><value>Ruota a destra di 90°</value></data>
+  <data name="Develop.Flip" xml:space="preserve"><value>Specchia in orizzontale</value></data>
+  <data name="Develop.Geometry.Reset" xml:space="preserve"><value>Ripristina</value></data>
+  <data name="Develop.Field.rotation" xml:space="preserve"><value>rotazione</value></data>
+  <data name="Develop.Field.flip" xml:space="preserve"><value>specchio</value></data>
+  <data name="Develop.Field.angle" xml:space="preserve"><value>raddrizzamento</value></data>
+  <data name="Develop.Field.crop" xml:space="preserve"><value>ritaglio</value></data>
+  <data name="Develop.Field.aspect" xml:space="preserve"><value>proporzioni</value></data>
+  <data name="Import.Rights" xml:space="preserve"><value>Autore e copyright di questo evento</value></data>
+  <data name="Import.Rights.Creator" xml:space="preserve"><value>Autore (es. Luca Rossi)</value></data>
+  <data name="Import.Rights.Copyright" xml:space="preserve"><value>© {anno} Nome Cognome</value></data>
+  <data name="Import.Rights.Note" xml:space="preserve"><value>Scritti negli XMP alla conferma della Revisione e nelle foto esportate. {anno} diventa l'anno di ogni foto. I valori restano per i prossimi import; email, sito e condizioni d'uso sono in Impostazioni › Generali.</value></data>
+  <data name="Settings.Rights" xml:space="preserve"><value>AUTORE E DIRITTI</value></data>
+  <data name="Settings.Rights.Creator" xml:space="preserve"><value>Autore</value></data>
+  <data name="Settings.Rights.Copyright" xml:space="preserve"><value>Copyright</value></data>
+  <data name="Settings.Rights.Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Settings.Rights.Website" xml:space="preserve"><value>Sito</value></data>
+  <data name="Settings.Rights.Usage" xml:space="preserve"><value>Condizioni d'uso</value></data>
+  <data name="Settings.Rights.UsageHint" xml:space="preserve"><value>es. Vietato l'uso commerciale senza autorizzazione</value></data>
+  <data name="Settings.Rights.Note" xml:space="preserve"><value>Scritti nelle foto (XMP, campi IPTC che Lightroom e Bridge mostrano come autore e copyright) alla conferma della Revisione e in ogni foto esportata, insieme a parole chiave e persone. Ogni import può cambiare autore e copyright per il suo evento. {anno} diventa l'anno della foto.</value></data>
+  <data name="Review.Command.Label" xml:space="preserve"><value>Etichetta</value></data>
+  <data name="Review.Command.SelectAll" xml:space="preserve"><value>Seleziona tutte</value></data>
+  <data name="Review.Marked" xml:space="preserve"><value>{0} selezionate · P, X, stelle ed etichette valgono per tutte · Esc toglie la selezione</value></data>
+  <data name="Review.DevelopMarked" xml:space="preserve"><value>Sviluppa le selezionate · {0}</value></data>
+  <data name="Label.Red" xml:space="preserve"><value>Rosso</value></data>
+  <data name="Label.Yellow" xml:space="preserve"><value>Giallo</value></data>
+  <data name="Label.Green" xml:space="preserve"><value>Verde</value></data>
+  <data name="Label.Blue" xml:space="preserve"><value>Blu</value></data>
+  <data name="Label.Purple" xml:space="preserve"><value>Viola</value></data>
+  <data name="Browse.Filter.Label" xml:space="preserve"><value>Etichetta</value></data>
+  <data name="Browse.Marked" xml:space="preserve"><value>{0} selezionate</value></data>
+  <data name="Browse.Bulk.TagHint" xml:space="preserve"><value>Tag per tutte…</value></data>
+  <data name="Browse.Bulk.AddTag" xml:space="preserve"><value>Aggiungi tag</value></data>
+  <data name="Browse.Bulk.Export" xml:space="preserve"><value>Esporta</value></data>
+  <data name="Browse.Bulk.Clear" xml:space="preserve"><value>Togli selezione · Esc</value></data>
+  <data name="Browse.Bulk.Done" xml:space="preserve"><value>Fatto su {0} foto.</value></data>
+  <data name="Browse.Bulk.TagDone" xml:space="preserve"><value>Tag «{0}» aggiunto a {1} foto.</value></data>
+  <data name="Import.Cameras" xml:space="preserve"><value>Fotocamere e orari</value></data>
+  <data name="Import.Camera.Detail" xml:space="preserve"><value>{0} foto · {1}</value></data>
+  <data name="Import.Camera.Photos" xml:space="preserve"><value>{0} foto</value></data>
+  <data name="Import.Camera.Corrected" xml:space="preserve"><value>primo scatto corretto: {0}</value></data>
+  <data name="Import.Camera.OffsetHint" xml:space="preserve"><value>± orario</value></data>
+  <data name="Import.Camera.OffsetTip" xml:space="preserve"><value>Correzione dell'orologio di questa fotocamera: +5 (minuti), -1:30 (ore e minuti), +0:00:45 (con i secondi). Vuoto: nessuna.</value></data>
+  <data name="Import.Camera.Note" xml:space="preserve"><value>Con due corpi macchina allinea gli orari: in Revisione e Sviluppo le foto si alternano nell'ordine vero degli scatti. Il file originale non cambia; i doppioni si riconoscono comunque.</value></data>
+  <data name="Import.Camera.Invalid" xml:space="preserve"><value>Correzione dell'orario non valida: scrivi per esempio +5, -1:30 o +0:00:45.</value></data>
+  <data name="Import.Event.Continues" xml:space="preserve"><value>Stesso evento di un import già fatto (un'altra scheda): le foto si aggiungono e la numerazione continua da {0}.</value></data>
+  <data name="Home.Card.Safety.Importing" xml:space="preserve"><value>Import in corso: non formattare ancora la scheda.</value></data>
+  <data name="Home.Card.Safety.Failed" xml:space="preserve"><value>{0} file non sono stati copiati: non formattare la scheda, riprova l'import.</value></data>
+  <data name="Home.Card.Safety.Safe" xml:space="preserve"><value>✓ Scheda al sicuro: tutte le {0} foto sono nel catalogo, copiate e verificate in {1} posti ({2}). Puoi formattarla nella fotocamera.</value></data>
+  <data name="Home.Card.Safety.OneCopy" xml:space="preserve"><value>Le {0} foto sono nel catalogo ma in un solo posto ({1}): fai un backup prima di formattare la scheda.</value></data>
+  <data name="Home.Card.Safety.OneCopyNas" xml:space="preserve"><value>Le {0} foto sono in {1}; la copia sul NAS è ancora in corso: aspetta prima di formattare la scheda.</value></data>
+  <data name="Home.Card.Eject" xml:space="preserve"><value>Espelli</value></data>
+  <data name="Home.Card.Ejected" xml:space="preserve"><value>Scheda espulsa: puoi toglierla.</value></data>
+  <data name="Home.Card.EjectFailed" xml:space="preserve"><value>Non riesco a espellerla: usa «Rimozione sicura» di Windows.</value></data>
 </root>

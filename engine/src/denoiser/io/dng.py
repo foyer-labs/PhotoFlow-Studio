@@ -24,6 +24,7 @@ _UNIQUE_MODEL = 50708
 _BLACK_REPEAT_DIM, _BLACK_LEVEL, _WHITE_LEVEL = 50713, 50714, 50717
 _COLOR_MATRIX1, _ILLUMINANT1 = 50721, 50778
 _AS_SHOT_NEUTRAL, _BASELINE_EXPOSURE = 50728, 50730
+_DEFAULT_CROP_ORIGIN, _DEFAULT_CROP_SIZE = 50719, 50720
 _MAKE, _MODEL, _ORIENTATION = 271, 272, 274
 _XMP = 700
 _PHOTOMETRIC_CFA, _PHOTOMETRIC_LINEAR_RAW = 32803, 34892
@@ -45,7 +46,8 @@ XYZ_TO_SRGB = np.array(
 )
 
 #: Orientamento LibRaw -> orientamento EXIF/TIFF.
-_FLIP_TO_ORIENTATION = {0: 1, 3: 3, 5: 8, 6: 6}
+FLIP_TO_ORIENTATION = {0: 1, 3: 3, 5: 8, 6: 6}
+_FLIP_TO_ORIENTATION = FLIP_TO_ORIENTATION
 
 
 @dataclass
@@ -109,6 +111,14 @@ def baseline_exposure_from_dng_bytes(data: bytes) -> float:
         return 0.0
 
 
+def _crop_tags(crop: tuple[int, int, int, int] | None) -> list[tuple]:
+    """Ritaglio (x, y, larghezza, altezza) nelle coordinate dei dati salvati: DefaultCropOrigin/Size."""
+    if crop is None:
+        return []
+    x, y, w, h = (int(v) for v in crop)
+    return [(_DEFAULT_CROP_ORIGIN, "I", 2, (x, y), True), (_DEFAULT_CROP_SIZE, "I", 2, (w, h), True)]
+
+
 def _common_tags(make: str, model: str, baseline_exposure: float, xmp: bytes | None = None) -> list[tuple]:
     unique = f"{make} {model}".strip() or "Denoiser"
     tags = [
@@ -135,20 +145,25 @@ def write_bayer_dng(
     baseline_exposure: float = 0.0,
     description: str | None = None,
     xmp: bytes | None = None,
+    orientation: int | None = None,
+    crop: tuple[int, int, int, int] | None = None,
 ) -> Path:
-    """``sensor.camera_neutral``, se c'è, è il bilanciamento con cui aprire il DNG: sostituisce quello
+    """``orientation``: codice EXIF (predefinito: quello della fotocamera); ``crop``: DefaultCrop.
+
+    ``sensor.camera_neutral``, se c'è, è il bilanciamento con cui aprire il DNG: sostituisce quello
     del DNG d'origine."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     tags = _common_tags(make, model, baseline_exposure, xmp)
     tags += [
-        (_ORIENTATION, "H", 1, (_FLIP_TO_ORIENTATION.get(sensor.flip, 1),), True),
+        (_ORIENTATION, "H", 1, (orientation or _FLIP_TO_ORIENTATION.get(sensor.flip, 1),), True),
         (_CFA_REPEAT_DIM, "H", 2, (2, 2), True),
         (_CFA_PATTERN, "B", 4, tuple(int(v) for v in sensor.pattern.ravel()), True),
         (_BLACK_REPEAT_DIM, "H", 2, (2, 2), True),
         (_BLACK_LEVEL, "2I", 4, _rational(sensor.black.ravel(), 100), True),
         (_WHITE_LEVEL, "I", 1, (int(round(sensor.white)),), True),
     ]
+    tags += _crop_tags(crop)
     if sensor.source_color_tags:
         tags += [t for t in sensor.source_color_tags if t[0] != _AS_SHOT_NEUTRAL or sensor.camera_neutral is None]
         if sensor.camera_neutral is not None:
@@ -183,8 +198,11 @@ def write_linear_dng(
     baseline_exposure: float = 0.0,
     description: str | None = None,
     xmp: bytes | None = None,
+    orientation: int | None = None,
+    crop: tuple[int, int, int, int] | None = None,
 ) -> Path:
-    """``linear_rgb``: RGB lineare (primari sRGB) già orientato e bilanciato, float in [0, 1]."""
+    """``linear_rgb``: RGB lineare (primari sRGB) già orientato e bilanciato, float in [0, 1].
+    ``orientation`` e ``crop``: rotazione/specchio (codice EXIF) e DefaultCrop scelti nello sviluppo."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     data = np.round(np.clip(linear_rgb, 0.0, 1.0) * 65535).astype(np.uint16)
@@ -196,6 +214,9 @@ def write_linear_dng(
         (_ILLUMINANT1, "H", 1, (_ILLUMINANT_D65,), True),
         (_AS_SHOT_NEUTRAL, "2I", 3, _rational([1.0, 1.0, 1.0]), True),
     ]
+    if orientation and orientation != 1:
+        tags.append((_ORIENTATION, "H", 1, (orientation,), True))
+    tags += _crop_tags(crop)
     tifffile.imwrite(
         path,
         data,

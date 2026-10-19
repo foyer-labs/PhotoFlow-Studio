@@ -32,7 +32,10 @@ public sealed record DevelopPhoto(
     bool HasSidecarSettings,
     string SuggestedPreset);
 
-/// <summary>A preview: the "before" (development only) and, when asked, the "after" (with the noise reduction).</summary>
+/// <summary>
+/// A preview: the "before" (development only) and, when asked, the "after" (with the noise reduction). <paramref name="Region"/>
+/// and <paramref name="Frame"/> are in the coordinates of the output (after rotation, straightening and crop) at full resolution.
+/// </summary>
 public sealed record DevelopRender(
     string BeforeFile,
     string? AfterFile,
@@ -40,13 +43,16 @@ public sealed record DevelopRender(
     int Width,
     int Height,
     (int X, int Y, int Width, int Height) Region,
-    int? Reduction);
+    int? Reduction,
+    (int Width, int Height) Frame = default);
 
 /// <summary>
 /// A photo to export with its settings (taken when it joins the queue) and extra name placeholders. <paramref name="Auto"/>:
-/// never developed, the engine applies the preset suggested by the measured noise (decision S8).
+/// never developed, the engine applies the preset suggested by the measured noise (decision S8). <paramref name="Metadata"/>:
+/// author, rights, keywords, people… written in the exported file (M2).
 /// </summary>
-public sealed record DevelopExportItem(long AssetId, string Path, JsonObject Settings, IReadOnlyDictionary<string, string> NameValues, bool Auto = false);
+public sealed record DevelopExportItem(long AssetId, string Path, JsonObject Settings, IReadOnlyDictionary<string, string> NameValues, bool Auto = false,
+    JsonObject? Metadata = null);
 
 /// <summary>Output of an export: <c>ok</c>, <c>saltata</c> (skipped) or <c>errore</c>.</summary>
 public sealed record DevelopExportResult(string Path, string Outcome, string? Output, IReadOnlyList<string> Notes);
@@ -77,8 +83,11 @@ public interface IDevelopEngine
     /// <summary>Histogram (red, green, blue, luminance × 256) of the developed photo.</summary>
     Task<int[][]> HistogramAsync(string path, JsonObject settings, CancellationToken ct);
 
-    /// <summary>Temperature and tint that make the point neutral (eyedropper).</summary>
-    Task<(double Temperature, double Tint)> PickWhiteBalanceAsync(string path, double x, double y, CancellationToken ct);
+    /// <summary>Temperature and tint that make the point neutral (eyedropper); the point is in the output of <paramref name="settings"/>.</summary>
+    Task<(double Temperature, double Tint)> PickWhiteBalanceAsync(string path, double x, double y, JsonObject settings, CancellationToken ct);
+
+    /// <summary>Straightening angle that levels the long lines of the photo (degrees, clockwise), or null when there are none.</summary>
+    Task<double?> AutoLevelAsync(string path, JsonObject settings, CancellationToken ct);
 
     Task<JsonObject> ApplyPresetAsync(string name, JsonObject settings, CancellationToken ct);
 

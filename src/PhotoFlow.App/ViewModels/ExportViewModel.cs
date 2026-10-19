@@ -100,6 +100,7 @@ public sealed partial class ExportViewModel : PageViewModel, IDisposable
     private readonly IShellNavigator _navigator;
     private JsonObject? _defaults;
     private string? _eventName;
+    private Job? _job;
 
     public ExportViewModel(PhotoFlowHost host, IShellNavigator navigator)
     {
@@ -237,7 +238,8 @@ public sealed partial class ExportViewModel : PageViewModel, IDisposable
         }
 
         var jobs = await _host.Catalog.Jobs.ListRecentAsync(1, CancellationToken.None);
-        if (jobs.FirstOrDefault() is { } job)
+        _job = jobs.FirstOrDefault();
+        if (_job is { } job)
         {
             _eventName = job.EventName;
             var best = await DevelopSources.BestOfJobAsync(_host.Catalog, job.Id, CancellationToken.None);
@@ -344,6 +346,7 @@ public sealed partial class ExportViewModel : PageViewModel, IDisposable
         try
         {
             _defaults ??= (await _host.DevelopEngine.HelloAsync(CancellationToken.None)).Defaults;
+            var rights = (scope.Key is "best" or "event" ? JobRights.Of(_job) : null) ?? _host.Settings.Rights.ToInfo();
             var items = new List<DevelopExportItem>();
             var seq = 0;
             foreach (var id in scope.AssetIds)
@@ -363,7 +366,8 @@ public sealed partial class ExportViewModel : PageViewModel, IDisposable
                     ["stelle"] = (decision?.Rating ?? 0).ToString(CultureInfo.InvariantCulture),
                     ["seq"] = seq.ToString("000", CultureInfo.InvariantCulture),
                 };
-                items.Add(new DevelopExportItem(id, path, DevelopJson.ForEngine(settings ?? (JsonObject)_defaults.DeepClone()), values, Auto: settings is null));
+                var metadata = await DeliveryMetadata.ForAssetAsync(_host.Catalog, id, rights, CancellationToken.None);
+                items.Add(new DevelopExportItem(id, path, DevelopJson.ForEngine(settings ?? (JsonObject)_defaults.DeepClone()), values, Auto: settings is null, metadata));
             }
 
             if (items.Count == 0)

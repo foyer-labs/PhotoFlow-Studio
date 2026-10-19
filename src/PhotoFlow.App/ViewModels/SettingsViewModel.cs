@@ -1369,6 +1369,49 @@ public sealed partial class SettingsViewModel : PageViewModel
                 : null;
     }
 
+    // Author and rights (M2): written in the XMP at the confirmation and in the exported photos
+
+    public string RightsCreator
+    {
+        get => _host.Settings.Rights.Creator ?? string.Empty;
+        set => SaveRights(r => r with { Creator = Clean(value) });
+    }
+
+    public string RightsCopyright
+    {
+        get => _host.Settings.Rights.Copyright ?? string.Empty;
+        set => SaveRights(r => r with { Copyright = Clean(value) });
+    }
+
+    public string RightsEmail
+    {
+        get => _host.Settings.Rights.Email ?? string.Empty;
+        set => SaveRights(r => r with { Email = Clean(value) });
+    }
+
+    public string RightsWebsite
+    {
+        get => _host.Settings.Rights.Website ?? string.Empty;
+        set => SaveRights(r => r with { Website = Clean(value) });
+    }
+
+    public string RightsUsage
+    {
+        get => _host.Settings.Rights.UsageTerms ?? string.Empty;
+        set => SaveRights(r => r with { UsageTerms = Clean(value) });
+    }
+
+    private static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    private void SaveRights(Func<RightsSettings, RightsSettings> change)
+    {
+        var updated = change(_host.Settings.Rights);
+        if (updated != _host.Settings.Rights)
+        {
+            _ = SaveAsync(s => s with { Rights = updated }, null);
+        }
+    }
+
     // Updates (spec §11)
 
     public string VersionText => Strings.Format("Settings.Updates.Version", AppUpdates.CurrentVersion);

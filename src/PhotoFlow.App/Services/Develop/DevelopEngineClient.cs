@@ -202,9 +202,11 @@ public sealed class DevelopEngineClient(IAppPaths paths) : IDevelopEngine, IAsyn
     private static DevelopRender ToRender(JsonObject r)
     {
         var region = r["region"] as JsonArray ?? [];
+        var frame = r["frame"] as JsonArray ?? [];
         return new DevelopRender(Json.String(r["before"]), Json.NullableString(r["after"]), Json.NullableString(r["difference"]), Json.Int(r["width"]),
             Json.Int(r["height"]), region.Count == 4 ? (Json.Int(region[0]), Json.Int(region[1]), Json.Int(region[2]), Json.Int(region[3])) : (0, 0, 0, 0),
-            r["reduction"] is null ? null : Json.Int(r["reduction"]));
+            r["reduction"] is null ? null : Json.Int(r["reduction"]),
+            frame.Count == 2 ? (Json.Int(frame[0]), Json.Int(frame[1])) : default);
     }
 
     public async Task<int[][]> HistogramAsync(string path, JsonObject settings, CancellationToken ct)
@@ -213,10 +215,17 @@ public sealed class DevelopEngineClient(IAppPaths paths) : IDevelopEngine, IAsyn
         return (r["histogram"] as JsonArray ?? []).Select(row => (row as JsonArray ?? []).Select(v => Json.Int(v)).ToArray()).ToArray();
     }
 
-    public async Task<(double Temperature, double Tint)> PickWhiteBalanceAsync(string path, double x, double y, CancellationToken ct)
+    public async Task<(double Temperature, double Tint)> PickWhiteBalanceAsync(string path, double x, double y, JsonObject settings, CancellationToken ct)
     {
-        var r = await CallAsync("pick_wb", new JsonObject { ["path"] = path, ["x"] = x, ["y"] = y }, null, ct).ConfigureAwait(false);
+        var r = await CallAsync("pick_wb", new JsonObject { ["path"] = path, ["x"] = x, ["y"] = y, ["settings"] = settings.DeepClone() }, null, ct)
+            .ConfigureAwait(false);
         return (Json.Double(r["temperature"]), Json.Double(r["tint"]));
+    }
+
+    public async Task<double?> AutoLevelAsync(string path, JsonObject settings, CancellationToken ct)
+    {
+        var r = await CallAsync("auto_level", new JsonObject { ["path"] = path, ["settings"] = settings.DeepClone() }, null, ct).ConfigureAwait(false);
+        return Json.NullableDouble(r["angle"]);
     }
 
     public async Task<JsonObject> ApplyPresetAsync(string name, JsonObject settings, CancellationToken ct)
@@ -238,7 +247,13 @@ public sealed class DevelopEngineClient(IAppPaths paths) : IDevelopEngine, IAsyn
                 values[key] = value;
             }
 
-            list.Add(new JsonObject { ["path"] = item.Path, ["settings"] = item.Settings.DeepClone(), ["name_values"] = values, ["auto"] = item.Auto });
+            var entry = new JsonObject { ["path"] = item.Path, ["settings"] = item.Settings.DeepClone(), ["name_values"] = values, ["auto"] = item.Auto };
+            if (item.Metadata is { Count: > 0 } metadata)
+            {
+                entry["metadata"] = metadata.DeepClone();
+            }
+
+            list.Add(entry);
         }
 
         var r = await CallAsync("export", new JsonObject

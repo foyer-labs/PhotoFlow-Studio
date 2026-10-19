@@ -32,6 +32,15 @@
     <Style Selector="Border.badge.Best"><Setter Property="Background" Value="{DynamicResource PF.Brush.Outcome.Best}" /></Style>
     <Style Selector="Border.badge.Similar"><Setter Property="Background" Value="{DynamicResource PF.Brush.Outcome.Similar}" /></Style>
     <Style Selector="Border.badge.None"><Setter Property="IsVisible" Value="False" /></Style>
+    <Style Selector="Border.mark">
+      <Setter Property="CornerRadius" Value="3" />
+      <Setter Property="Padding" Value="4,0" />
+      <Setter Property="Background" Value="{DynamicResource PF.Brush.Accent}" />
+    </Style>
+    <Style Selector="Border.mark TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource PF.Brush.Window}" />
+      <Setter Property="FontSize" Value="{StaticResource PF.FontSize.Micro}" />
+    </Style>
     <Style Selector="Border.badge TextBlock">
       <Setter Property="Foreground" Value="{DynamicResource PF.Brush.Window}" />
       <Setter Property="FontFamily" Value="{StaticResource PF.Font.Mono}" />
@@ -72,6 +81,7 @@
           <StackPanel Spacing="2">
             <TextBlock Classes="subtitle" Text="{Binding JobTitle}" />
             <TextBlock Classes="micro tertiary" Text="{Binding JobMeta}" />
+            <TextBlock Classes="micro" Foreground="{DynamicResource PF.Brush.Accent}" Text="{Binding MarkedText}" IsVisible="{Binding HasMarked}" />
           </StackPanel>
           <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
             <TextBlock Classes="micro tertiary" Text="{l:Tr Review.YourDecisions}" />
@@ -119,8 +129,9 @@
                 <DataTemplate x:DataType="vm:OutcomeFilterViewModel">
                   <Button Classes="chip" Classes.active="{Binding IsActive}"
                           Command="{Binding $parent[UserControl].((vm:ReviewViewModel)DataContext).SetFilterCommand}" CommandParameter="{Binding}">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                      <TextBlock Classes="label" Text="{Binding Label}" />
+                    <StackPanel Orientation="Horizontal" Spacing="6" ToolTip.Tip="{Binding Label}">
+                      <TextBlock Classes="label" Text="{Binding Label}" IsVisible="{Binding !IsColor}" />
+                      <v:ColorLabelDot Label="{Binding ColorLabel}" IsVisible="{Binding IsColor}" VerticalAlignment="Center" />
                       <TextBlock Classes="micro tertiary" VerticalAlignment="Center" Text="{Binding Count}" />
                     </StackPanel>
                   </Button>
@@ -206,6 +217,8 @@
                           <Image Source="{Binding Thumbnail}" Stretch="Uniform" Margin="2" Opacity="{Binding IsDiscard, Converter={x:Static vm:Converters.DiscardOpacity}}" />
                           <Rectangle IsVisible="{Binding IsToReview}" Stroke="{DynamicResource PF.Brush.Outcome.ToReview}" StrokeThickness="2" StrokeDashArray="3,2" />
                           <Rectangle IsVisible="{Binding IsCompared}" Stroke="{DynamicResource PF.Brush.Accent}" StrokeThickness="1" StrokeDashArray="1,2" Margin="3" />
+                          <Rectangle IsVisible="{Binding IsMarked}" Fill="{DynamicResource PF.Brush.Accent}" Opacity="0.18" />
+                          <Border Classes="mark" IsVisible="{Binding IsMarked}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="4,22,4,4"><TextBlock Text="✓" /></Border>
                           <StackPanel Orientation="Horizontal" Spacing="3" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4">
                             <Border Classes="badge"
                                     Classes.Discard="{Binding OutcomeKey, Converter={x:Static vm:Converters.IsOutcome}, ConverterParameter=Discard}"
@@ -219,10 +232,13 @@
                           </StackPanel>
                           <TextBlock Classes="micro" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6,4" Text="{Binding RankText}" />
                           <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Bottom" Margin="6,2" Background="{DynamicResource PF.Brush.Veil}">
-                            <Panel>
-                              <TextBlock Classes="micro" Text="{Binding StarsText}" IsVisible="{Binding StarsText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
-                              <TextBlock Classes="micro tertiary" Text="{Binding Name}" TextTrimming="CharacterEllipsis" IsVisible="{Binding StarsText, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
-                            </Panel>
+                            <DockPanel>
+                              <v:ColorLabelDot DockPanel.Dock="Left" Label="{Binding ColorLabel}" Margin="0,0,4,0" />
+                              <Panel>
+                                <TextBlock Classes="micro" Text="{Binding StarsText}" IsVisible="{Binding StarsText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                                <TextBlock Classes="micro tertiary" Text="{Binding Name}" TextTrimming="CharacterEllipsis" IsVisible="{Binding StarsText, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
+                              </Panel>
+                            </DockPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
                               <TextBlock Classes="micro tertiary" Text="{Binding ShortReason}" TextTrimming="CharacterEllipsis" MaxWidth="90" />
                               <TextBlock Classes="micro tertiary" Text="RAW+JPG" IsVisible="{Binding HasPair}" />

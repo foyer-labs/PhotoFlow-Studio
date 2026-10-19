@@ -224,6 +224,37 @@ public sealed class DevelopEngineTests : IDisposable
         Assert.NotEmpty(progress);
     }
 
+    [Fact]
+    public async Task Rotates_crops_and_exports_the_framing()
+    {
+        Assert.SkipUnless(DevelopEngineClient.IsAvailable, "Motore di sviluppo non disponibile (engine/.venv)");
+        var photo = Path.Combine(_temp.Path, "foto.jpg");
+        WriteNoisyJpeg(photo, 320, 240);
+        await using var engine = new DevelopEngineClient(new global::PhotoFlow.Core.Paths.DefaultAppPaths(_temp.Sub("dati")));
+        var settings = (await engine.OpenAsync(photo, null, Ct)).Settings;
+        var geometry = Json.Section(settings, "geometry");
+        geometry["rotation"] = 90;
+        geometry["crop"] = new JsonArray(0.0, 0.5, 1.0, 0.5);
+
+        var fit = await engine.RenderAsync(photo, settings, null, 160, false, null, Ct);
+        Assert.Equal((240, 160), fit.Frame);
+        Assert.Equal(160, fit.Width);
+        Assert.InRange(fit.Height, 106, 107); // 240 × 160 at 2/3, rounded
+        var region = await engine.RenderAsync(photo, settings, (10, 10, 50, 40), 0, false, null, Ct);
+        Assert.Equal((10, 10, 50, 40), region.Region);
+        var (temperature, _) = await engine.PickWhiteBalanceAsync(photo, 100, 100, settings, Ct);
+        Assert.InRange(temperature, 2000, 15000);
+        Assert.True(await engine.AutoLevelAsync(photo, settings, Ct) is null or (>= -45 and <= 45));
+
+        var output = ExportRecipes.Get(ExportRecipes.Client).ToOutput(copyMetadata: false);
+        output["folder"] = _temp.Sub("uscita");
+        var result = Assert.Single(await engine.ExportAsync(
+            [new DevelopExportItem(1, photo, DevelopJson.ForEngine(settings), new Dictionary<string, string>())], output, "rename", "tiff", null, Ct));
+        Assert.Equal("ok", result.Outcome);
+        using var exported = SkiaSharp.SKBitmap.Decode(result.Output);
+        Assert.Equal((240, 160), (exported.Width, exported.Height));
+    }
+
     private static void WriteNoisyJpeg(string path, int width, int height)
     {
         var random = new Random(1);

@@ -175,7 +175,9 @@ public sealed class PhotoFlowHost : IAsyncDisposable
     public IMetadataReader MetadataReader { get; }
 
     /// <summary>The XMP writer with the current preferences (captions in <c>dc:description</c>) and the sync of external changes.</summary>
-    public XmpPublisher CreatePublisher() => new(Catalog, MetadataWriter, Settings.Xmp.WriteCaptions, MetadataReader);
+    /// <param name="rights">Author and rights of the event (M2), otherwise those of the settings.</param>
+    public XmpPublisher CreatePublisher(RightsInfo? rights = null) =>
+        new(Catalog, MetadataWriter, Settings.Xmp.WriteCaptions, MetadataReader, rights ?? Settings.Rights.ToInfo());
 
     /// <summary>Imports the XMP changes made by other programs (spec §4).</summary>
     public ExternalXmpSync CreateXmpSync() => new(Catalog, MetadataReader);

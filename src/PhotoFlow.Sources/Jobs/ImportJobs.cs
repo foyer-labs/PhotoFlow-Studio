@@ -28,7 +28,10 @@ public static class ImportJobs
         string profileId,
         FaceMode? faces,
         CancellationToken ct,
-        TagLevels? tags = null)
+        TagLevels? tags = null,
+        RightsInfo? rights = null,
+        IReadOnlyDictionary<string, TimeSpan>? clockOffsets = null,
+        int sequenceStart = 0)
     {
         ArgumentNullException.ThrowIfNull(catalog);
         ArgumentNullException.ThrowIfNull(plan);
@@ -41,7 +44,9 @@ public static class ImportJobs
             new Library(0, Path.GetFileName(Path.TrimEndingDirectorySeparator(primary.RootPath)) is { Length: > 0 } name ? name : primary.RootPath,
                 primary.RootPath, WritePolicy.EmbeddedForNonRaw, false, LibraryOrigin.Import, null), ct).ConfigureAwait(false);
 
-        var settings = new ImportJobSettings(libraryId, sourceRoot, destinations, profileId, Faces: faces, Tags: tags);
+        var offsets = clockOffsets?.Where(o => o.Value != TimeSpan.Zero).ToDictionary(o => o.Key, o => (long)o.Value.TotalMilliseconds, StringComparer.Ordinal);
+        var settings = new ImportJobSettings(libraryId, sourceRoot, destinations, profileId, Faces: faces, Tags: tags, Rights: rights,
+            ClockOffsetsMs: offsets is { Count: > 0 } ? offsets : null, SequenceStart: sequenceStart, SequenceEnd: plan.LastSequence);
         var jobId = await catalog.Jobs.CreateAsync(new Job(
             0, JobType.Import, sourceRoot, eventName, eventDate, profileId, false, null, JobState.Pending, JobPriority.Normal,
             ImportJobRunner.SerializeSettings(settings), DateTimeOffset.UtcNow), ct).ConfigureAwait(false);

@@ -32,6 +32,7 @@ public enum WritePolicy
 /// <param name="Regions">Named face regions (MWG), or null to leave the regions untouched.</param>
 /// <param name="RemovedFlatKeywords">Keywords PhotoFlow may have written before that no longer apply (tags removed by the user or blacklisted); other keywords are never touched.</param>
 /// <param name="DescriptionAlternatives">Other languages of <c>dc:description</c> (language → text) besides x-default (phase 5b, D5b-6).</param>
+/// <param name="Rights">Author and rights (PhotoFlow Studio, M2), or null to leave them untouched.</param>
 public sealed record MetadataChanges(
     int? Rating,
     string? Label,
@@ -41,7 +42,27 @@ public sealed record MetadataChanges(
     FaceRegions? Regions = null,
     IReadOnlyList<string>? RemovedFlatKeywords = null,
     IReadOnlyList<string>? RemovedHierarchicalKeywords = null,
-    IReadOnlyDictionary<string, string>? DescriptionAlternatives = null);
+    IReadOnlyDictionary<string, string>? DescriptionAlternatives = null,
+    RightsInfo? Rights = null);
+
+/// <summary>
+/// Author, copyright and contacts written in the photos (IPTC Core in XMP; PhotoFlow Studio, M2). In
+/// <paramref name="Copyright"/> «{anno}» becomes the year the photo was taken.
+/// </summary>
+public sealed record RightsInfo(string? Creator, string? Copyright, string? Email = null, string? Website = null, string? UsageTerms = null)
+{
+    public const string YearPlaceholder = "{anno}";
+
+    public bool IsEmpty => string.IsNullOrWhiteSpace(Creator) && string.IsNullOrWhiteSpace(Copyright) && string.IsNullOrWhiteSpace(Email)
+        && string.IsNullOrWhiteSpace(Website) && string.IsNullOrWhiteSpace(UsageTerms);
+
+    /// <summary>The rights of a photo taken in <paramref name="year"/> (this year when unknown).</summary>
+    public RightsInfo ForYear(int? year) => this with
+    {
+        Copyright = Copyright?.Replace(YearPlaceholder, (year ?? DateTime.Now.Year).ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase)
+            .Replace("{yyyy}", (year ?? DateTime.Now.Year).ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal),
+    };
+}
 
 /// <summary>
 /// Face regions to write (spec §4, §7: MWG regions with the name). Regions already in the file with a name that is

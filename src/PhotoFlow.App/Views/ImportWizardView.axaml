@@ -79,6 +79,28 @@
             <TextBlock Classes="label" Margin="0,16,0,0" Text="{l:Tr Import.EventDate}" />
             <CalendarDatePicker SelectedDate="{Binding EventDate}" Width="200" />
             <TextBlock Classes="label tertiary" Text="{Binding CaptureRange}" />
+            <TextBlock Classes="label" Foreground="{DynamicResource PF.Brush.Accent}" TextWrapping="Wrap" Text="{Binding ContinueText}" IsVisible="{Binding ContinuesEvent}" />
+            <!-- M5: the cameras of the card and their clocks -->
+            <StackPanel Spacing="6" Margin="0,12,0,0" IsVisible="{Binding HasCameras}">
+              <TextBlock Classes="label" Text="{l:Tr Import.Cameras}" />
+              <ItemsControl ItemsSource="{Binding Cameras}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:CameraClockViewModel">
+                    <Grid ColumnDefinitions="*,110" ColumnSpacing="12" Margin="0,0,0,6">
+                      <StackPanel Spacing="1">
+                        <TextBlock Classes="label" Text="{Binding Model}" />
+                        <TextBlock Classes="micro tertiary" Text="{Binding Detail}" />
+                        <TextBlock Classes="micro" Foreground="{DynamicResource PF.Brush.Accent}" Text="{Binding CorrectedText}"
+                                   IsVisible="{Binding CorrectedText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                      </StackPanel>
+                      <TextBox Grid.Column="1" Classes="field" Classes.error="{Binding HasError}" Text="{Binding OffsetText}" PlaceholderText="{l:Tr Import.Camera.OffsetHint}"
+                               ToolTip.Tip="{l:Tr Import.Camera.OffsetTip}" VerticalAlignment="Top" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Import.Camera.Note}" />
+            </StackPanel>
             <TextBlock Classes="label" Margin="0,16,0,0" Text="{l:Tr Import.PathPreview}" />
             <Border Classes="card" Padding="12">
               <TextBlock x:Name="PathPreview" Classes="data" TextWrapping="Wrap" Text="{Binding PathPreview}" />
@@ -178,6 +200,12 @@
             <RadioButton GroupName="xmp" IsChecked="{Binding PolicySidecar}" Content="{l:Tr Import.Xmp.Sidecar}" />
             <RadioButton GroupName="xmp" IsChecked="{Binding PolicyCatalog}" Content="{l:Tr Import.Xmp.Catalog}" />
             <TextBlock Classes="label tertiary" Text="{l:Tr Import.Xmp.AfterConfirm}" />
+            <TextBlock Classes="label" Margin="0,16,0,0" Text="{l:Tr Import.Rights}" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+              <TextBox x:Name="RightsCreator" Classes="field" Text="{Binding RightsCreator}" PlaceholderText="{l:Tr Import.Rights.Creator}" />
+              <TextBox Grid.Column="1" Classes="field" Text="{Binding RightsCopyright}" PlaceholderText="{l:Tr Import.Rights.Copyright}" />
+            </Grid>
+            <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Import.Rights.Note}" />
           </StackPanel>
           <Border Grid.Column="1" Classes="card" Padding="16" VerticalAlignment="Top">
             <StackPanel Spacing="8">

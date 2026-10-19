@@ -68,6 +68,9 @@
             <Button Classes="chip" Classes.active="{Binding IsPicking}" Command="{Binding PickCommand}" ToolTip.Tip="{l:Tr Develop.Tip.Pick}">
               <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Develop.Pick}" /><TextBlock Classes="micro tertiary" Text="W" /></StackPanel>
             </Button>
+            <Button Classes="chip" Classes.active="{Binding IsCropping}" Command="{Binding ToggleCropCommand}" ToolTip.Tip="{l:Tr Develop.Tip.Crop}">
+              <StackPanel Orientation="Horizontal" Spacing="6"><TextBlock Classes="label" Text="{l:Tr Develop.Crop}" /><TextBlock Classes="micro tertiary" Text="C" /></StackPanel>
+            </Button>
             <Button Classes="ghost" Command="{Binding UndoCommand}" ToolTip.Tip="{l:Tr Develop.Command.Undo}"><TextBlock Classes="label" Text="↶" /></Button>
             <Button Classes="ghost" Command="{Binding RedoCommand}" ToolTip.Tip="{l:Tr Develop.Command.Redo}"><TextBlock Classes="label" Text="↷" /></Button>
             <Button Classes="primary" Command="{Binding ExportCommand}">
@@ -83,7 +86,12 @@
       <Panel Grid.Row="1">
         <d:DevelopViewer x:Name="Viewer" Before="{Binding Before}" After="{Binding After}" Difference="{Binding Difference}" Region="{Binding Region}"
                          ActualSize="{Binding ActualSize}" Mode="{Binding CompareMode}" ShowOriginal="{Binding ShowOriginal}" Picking="{Binding IsPicking}"
-                         BeforeLabel="{l:Tr Develop.Label.Before}" AfterLabel="{Binding AfterLabel}" />
+                         BeforeLabel="{l:Tr Develop.Label.Before}" AfterLabel="{Binding AfterLabel}"
+                         Cropping="{Binding IsCropping}" CropRect="{Binding CropRect}" CropAspect="{Binding CropAspectRatio}" />
+        <Border IsVisible="{Binding IsCropping}" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="12" Padding="12,6" CornerRadius="4"
+                Background="{DynamicResource PF.Brush.Panel}" BorderBrush="{DynamicResource PF.Brush.Border}" BorderThickness="1">
+          <TextBlock Classes="micro secondary" Text="{l:Tr Develop.Crop.Hint}" />
+        </Border>
         <ProgressBar Classes="thin" VerticalAlignment="Top" Minimum="0" Maximum="1" Value="{Binding NoiseProgress}" IsVisible="{Binding IsComputing}" />
         <!-- Empty: where the photos come from -->
         <StackPanel IsVisible="{Binding IsEmpty}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" Width="480">
@@ -151,6 +159,22 @@
 
           <TextBlock Classes="panelHead" Text="{l:Tr Develop.Section.Start}" />
           <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding Presets}" SelectedItem="{Binding Preset}" PlaceholderText="{l:Tr Develop.Preset.Choose}" />
+
+          <TextBlock Classes="panelHead" Text="{l:Tr Develop.Section.Geometry}" />
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
+            <Button Classes="secondary" Classes.active="{Binding IsCropping}" Command="{Binding ToggleCropCommand}" ToolTip.Tip="{l:Tr Develop.Tip.Crop}">
+              <StackPanel Orientation="Horizontal" Spacing="8"><TextBlock Text="{l:Tr Develop.Crop}" /><Border Classes="key"><TextBlock Text="C" /></Border></StackPanel>
+            </Button>
+            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding AspectOptions}" SelectedItem="{Binding Aspect}" ToolTip.Tip="{l:Tr Develop.Aspect.Tip}" />
+          </Grid>
+          <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Angle}" /><Slider Grid.Column="1" Minimum="-45" Maximum="45" SmallChange="0.1" Value="{Binding Angle}" Tag="0" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Angle, StringFormat={}{0:+0.0;-0.0;0.0}°}" /></Grid>
+          <WrapPanel Orientation="Horizontal">
+            <Button Classes="ghost" Command="{Binding AutoLevelCommand}" Content="{l:Tr Develop.Level}" ToolTip.Tip="{l:Tr Develop.Level.Tip}" />
+            <Button Classes="ghost" Command="{Binding RotateLeftCommand}" Content="↺" ToolTip.Tip="{l:Tr Develop.RotateLeft}" />
+            <Button Classes="ghost" Command="{Binding RotateRightCommand}" Content="↻" ToolTip.Tip="{l:Tr Develop.RotateRight}" />
+            <Button Classes="ghost" Command="{Binding FlipCommand}" Content="⇋" ToolTip.Tip="{l:Tr Develop.Flip}" />
+            <Button Classes="ghost" Command="{Binding ResetGeometryCommand}" Content="{l:Tr Develop.Geometry.Reset}" />
+          </WrapPanel>
 
           <TextBlock Classes="panelHead" Text="{l:Tr Develop.Section.Light}" />
           <Grid Classes="row" ColumnDefinitions="92,*,44"><TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Develop.Exposure}" /><Slider Grid.Column="1" Minimum="-5" Maximum="5" SmallChange="0.05" Value="{Binding Exposure}" Tag="0" /><TextBlock Grid.Column="2" Classes="value" Text="{Binding Exposure, StringFormat={}{0:+0.00;-0.00;0.00}}" /></Grid>

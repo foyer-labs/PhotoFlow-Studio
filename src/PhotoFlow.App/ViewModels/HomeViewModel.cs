@@ -33,11 +33,22 @@ public enum HomeState
 }
 
 /// <summary>A card found by the detector, with its import plan ("1.064 nuove · 248 già importate").</summary>
-public sealed class CardBannerViewModel(CardVolume volume, ImportPlan plan)
+public sealed class CardBannerViewModel(CardVolume volume, ImportPlan plan, CardSafetyInfo? safety = null)
 {
     public CardVolume Volume { get; } = volume;
 
     public ImportPlan Plan { get; } = plan;
+
+    /// <summary>«Scheda al sicuro» (M6): may the card be formatted?</summary>
+    public CardSafetyInfo Safety { get; } = safety ?? CardSafetyInfo.None;
+
+    public bool HasSafety => Safety.State != CardSafetyState.None;
+
+    public bool IsSafe => Safety.State == CardSafetyState.Safe;
+
+    public bool IsUnsafe => Safety.State is CardSafetyState.Failed or CardSafetyState.OneCopy;
+
+    public bool IsImporting => Safety.State == CardSafetyState.Importing;
 
     public string Title => Strings.Format("Home.Card.Title", Volume.Label, Volume.RootPath.TrimEnd('\\', '/'));
 
@@ -292,6 +303,21 @@ public sealed partial class HomeViewModel : PageViewModel, IDisposable
     [RelayCommand]
     private void IgnoreCard() => Card = null;
 
+    [ObservableProperty]
+    private string? _cardMessage;
+
+    /// <summary>«Espelli» (M6): safe removal of the card, as in Explorer.</summary>
+    [RelayCommand]
+    private void EjectCard()
+    {
+        if (Card is not { } card)
+        {
+            return;
+        }
+
+        CardMessage = CardEjector.TryEject(card.Volume.RootPath) ? Strings.Get("Home.Card.Ejected") : Strings.Get("Home.Card.EjectFailed");
+    }
+
     /// <summary>Opens the procedure on a folder chosen by the user (the view shows the folder picker).</summary>
     public void ImportFolder(string folder) => _navigator.ShowPage(_wizardFactory(null, folder));
 
@@ -373,6 +399,11 @@ public sealed partial class HomeViewModel : PageViewModel, IDisposable
         if (status.State != JobState.Running)
         {
             _ = ActivateAsync();
+            if (Card is { } card && status.State == JobState.Completed)
+            {
+                OnCardInserted(this, card.Volume); // the card banner says now whether the card is safe (M6)
+            }
+
             return;
         }
 
@@ -395,7 +426,8 @@ public sealed partial class HomeViewModel : PageViewModel, IDisposable
             }
 
             var plan = await _host.Planner.PlanAsync(scanned, string.Empty, null, _host.PathTemplate, CancellationToken.None);
-            Ui.Post(() => Card = new CardBannerViewModel(volume, plan));
+            var safety = await CardSafety.AssessAsync(_host.Catalog, volume, plan, CancellationToken.None);
+            Ui.Post(() => Card = new CardBannerViewModel(volume, plan, safety));
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException)
         {

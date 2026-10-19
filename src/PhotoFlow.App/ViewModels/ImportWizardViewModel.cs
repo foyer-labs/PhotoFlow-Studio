@@ -11,6 +11,7 @@ using PhotoFlow.App.Commands;
 using PhotoFlow.App.Localization;
 using PhotoFlow.App.Services;
 using PhotoFlow.Core.Analysis;
+using PhotoFlow.Core.Catalog;
 using PhotoFlow.Core.Ingest;
 using PhotoFlow.Core.Metadata;
 using PhotoFlow.Core.Sources;
@@ -104,7 +105,23 @@ public sealed partial class ImportWizardViewModel : PageViewModel
         _xmpPolicy = defaults.XmpPolicy;
         RecentEvents = defaults.RecentEvents;
         _eventName = string.Empty;
+        _rightsCreator = host.Settings.Rights.Creator ?? string.Empty;
+        _rightsCopyright = host.Settings.Rights.Copyright ?? string.Empty;
     }
+
+    /// <summary>Author of the photos of this event (M2), from the settings; written in the XMP at the confirmation.</summary>
+    [ObservableProperty]
+    private string _rightsCreator;
+
+    /// <summary>Copyright of this event; «{anno}» becomes the year of each photo.</summary>
+    [ObservableProperty]
+    private string _rightsCopyright;
+
+    private Core.Metadata.RightsInfo Rights => _host.Settings.Rights.ToInfo() with
+    {
+        Creator = string.IsNullOrWhiteSpace(RightsCreator) ? null : RightsCreator.Trim(),
+        Copyright = string.IsNullOrWhiteSpace(RightsCopyright) ? null : RightsCopyright.Trim(),
+    };
 
     public override string Title => Strings.Get("Import.Title");
 
@@ -167,6 +184,65 @@ public sealed partial class ImportWizardViewModel : PageViewModel
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PathPreview), nameof(SummaryEvent))]
     private DateTime? _eventDate;
+
+    /// <summary>The cameras of the card with their clock corrections (M5).</summary>
+    public ObservableCollection<CameraClockViewModel> Cameras { get; } = [];
+
+    public bool HasCameras => Cameras.Count > 0;
+
+    /// <summary>Last number used by the same event (another card of the same day): this import goes on from there.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ContinuesEvent), nameof(ContinueText), nameof(PathPreview))]
+    private int _sequenceStart;
+
+    public bool ContinuesEvent => SequenceStart > 0;
+
+    public string ContinueText => Strings.Format("Import.Event.Continues", (SequenceStart + 1).ToString("N0", CultureInfo.CurrentCulture));
+
+    private List<Job> _previousImports = [];
+
+    partial void OnEventNameChanged(string value) => UpdateSequenceStart();
+
+    partial void OnEventDateChanged(DateTime? value) => UpdateSequenceStart();
+
+    private void UpdateSequenceStart() => _ = UpdateSequenceStartAsync();
+
+    /// <summary>Same event name and date of an import already made (M5): the numbering goes on, nothing is overwritten.</summary>
+    private async Task UpdateSequenceStartAsync()
+    {
+        var name = EventNameOrDefault;
+        var date = EventDate is { } d ? DateOnly.FromDateTime(d.Date) : _plan?.ProposedEventDate;
+        var last = 0;
+        foreach (var job in _previousImports.Where(j => string.Equals(j.EventName, name, StringComparison.CurrentCultureIgnoreCase) && j.EventDate == date))
+        {
+            last = Math.Max(last, await LastSequenceAsync(job));
+        }
+
+        SequenceStart = last;
+    }
+
+    private async Task<int> LastSequenceAsync(Job job)
+    {
+        try
+        {
+            var settings = ImportJobRunner.DeserializeSettings(job.SettingsSnapshotJson);
+            if (settings.SequenceEnd is { } end)
+            {
+                return end;
+            }
+
+            // An import made before M5: one number per photo (RAW and JPEG share it).
+            var items = await _host.Catalog.Jobs.GetItemsAsync(job.Id, CancellationToken.None);
+            return settings.SequenceStart + items.Select(i => Path.GetFileNameWithoutExtension(i.TargetRelativePath ?? i.SourcePath)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
+        }
+        catch (Exception e) when (e is System.Text.Json.JsonException or InvalidDataException)
+        {
+            return 0;
+        }
+    }
+
+    private Dictionary<string, TimeSpan> ClockOffsets() =>
+        Cameras.Where(c => c.Offset is { } o && o != TimeSpan.Zero).ToDictionary(c => c.Model, c => c.Offset!.Value, StringComparer.Ordinal);
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedCount), nameof(SummarySource), nameof(StartLabel), nameof(CanStart))]
@@ -403,7 +479,7 @@ public sealed partial class ImportWizardViewModel : PageViewModel
 
             var date = EventDate is { } d ? DateOnly.FromDateTime(d.Date) : _plan!.ProposedEventDate;
             var relative = _host.PathTemplate.Render(new PathTemplateContext(
-                EventNameOrDefault, date, 1, first.Exif?.Model, Path.GetFileNameWithoutExtension(first.File.Item.RelativePath), Path.GetExtension(first.File.Item.RelativePath).TrimStart('.')));
+                EventNameOrDefault, date, SequenceStart + 1, first.Exif?.Model, Path.GetFileNameWithoutExtension(first.File.Item.RelativePath), Path.GetExtension(first.File.Item.RelativePath).TrimStart('.')));
             return Path.Combine(root, relative);
         }
     }
@@ -459,6 +535,15 @@ public sealed partial class ImportWizardViewModel : PageViewModel
             SourceTitle = _card is { } card ? Strings.Format("Import.Source.Card", card.Label, card.RootPath.TrimEnd('\\', '/')) : _sourceRoot;
             SourceDetail = Strings.Format("Import.Source.Detail", _plan.Files.Count.ToString("N0", CultureInfo.CurrentCulture), Formats.Bytes(_plan.TotalBytes));
             CaptureRange = _plan.FirstCapture is { } f && _plan.LastCapture is { } l ? Strings.Format("Import.Event.FromShots", Formats.CaptureRange(f, l)) : string.Empty;
+            Cameras.Clear();
+            foreach (var camera in _plan.Cameras)
+            {
+                Cameras.Add(new CameraClockViewModel(camera));
+            }
+
+            OnPropertyChanged(nameof(HasCameras));
+            _previousImports = [.. (await _host.Catalog.Jobs.ListRecentAsync(200, CancellationToken.None)).Where(j => j.Type == JobType.Import)];
+            await UpdateSequenceStartAsync();
             BuildDestinations();
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException)
@@ -537,9 +622,20 @@ public sealed partial class ImportWizardViewModel : PageViewModel
 
         var name = EventNameOrDefault;
         var date = EventDate is { } d ? DateOnly.FromDateTime(d.Date) : _plan.ProposedEventDate;
-        var plan = await _host.Planner.PlanAsync(_scanned, name, date, _host.PathTemplate, CancellationToken.None);
+        if (Cameras.Any(c => c.HasError))
+        {
+            Step = 1;
+            Error = Strings.Get("Import.Camera.Invalid");
+            return;
+        }
+
+        await UpdateSequenceStartAsync();
+        var offsets = ClockOffsets();
+        var plan = await _host.Planner.PlanAsync(_scanned, name, date, _host.PathTemplate, CancellationToken.None, offsets, SequenceStart);
         var destinations = Destinations.Select(v => v.Destination).ToList();
-        var jobId = await ImportJobs.CreateAsync(_host.Catalog, plan, Selection, _sourceRoot, destinations, name, date, SelectedProfile.Profile.Id, Faces, CancellationToken.None, TagLevels);
+        var rights = Rights;
+        var jobId = await ImportJobs.CreateAsync(_host.Catalog, plan, Selection, _sourceRoot, destinations, name, date, SelectedProfile.Profile.Id, Faces, CancellationToken.None, TagLevels,
+            rights, offsets, SequenceStart);
         if (AutomaticProfile)
         {
             await _host.Catalog.Jobs.SetAutomaticProfileAsync(jobId, true, SelectedProfile.Profile.Id, CancellationToken.None);
@@ -562,6 +658,7 @@ public sealed partial class ImportWizardViewModel : PageViewModel
                 SecondaryRoots = destinations.Where(x => x.Kind == DestinationKind.Secondary).Select(x => x.RootPath).ToList(),
                 DeferredRoots = destinations.Where(x => x.Kind == DestinationKind.Deferred).Select(x => x.RootPath).ToList(),
             },
+            Rights = s.Rights with { Creator = rights.Creator, Copyright = rights.Copyright },
         }, CancellationToken.None);
         _ = _host.Jobs.StartAsync(jobId);
         _navigator.ShowSection(SectionCatalog.Jobs);

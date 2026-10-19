@@ -78,17 +78,26 @@ public sealed record SearchSuggestion(SuggestionKind Kind, long Id, string Label
 }
 
 /// <summary>A photo of the results grid; the thumbnail loads when the row becomes visible.</summary>
-public sealed partial class BrowseItemViewModel(long assetId, string? thumbnailPath, string stars) : ObservableObject
+public sealed partial class BrowseItemViewModel(long assetId, string? thumbnailPath, string stars, string? colorLabel = null) : ObservableObject
 {
     private Bitmap? _thumbnail;
     private bool _loading;
 
     public long AssetId { get; } = assetId;
 
-    public string Stars { get; } = stars;
+    [ObservableProperty]
+    private string _stars = stars;
+
+    /// <summary>Colour label (M4).</summary>
+    [ObservableProperty]
+    private string? _colorLabel = colorLabel;
 
     [ObservableProperty]
     private bool _isSelected;
+
+    /// <summary>Part of the multiple selection (M3: Ctrl+click, Ctrl+A).</summary>
+    [ObservableProperty]
+    private bool _isMarked;
 
     public Bitmap? Thumbnail
     {
@@ -211,6 +220,11 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
         new("Browse.Faces", new KeyGesture(Key.V), "Browse.Command.Faces"),
         new("Browse.AddFace", new KeyGesture(Key.N), "Browse.Command.AddFace", StatusGroupKey: "Browse.Command.AddFace"),
         new("Browse.Escape", new KeyGesture(Key.Escape), "Common.Cancel"),
+        new("Browse.Label", new KeyGesture(Key.D6), "Review.Command.Label", StatusGroupKey: "Review.Command.Label", Parameter: "Red"),
+        new("Browse.Label", new KeyGesture(Key.D7), "Review.Command.Label", Parameter: "Yellow"),
+        new("Browse.Label", new KeyGesture(Key.D8), "Review.Command.Label", Parameter: "Green"),
+        new("Browse.Label", new KeyGesture(Key.D9), "Review.Command.Label", Parameter: "Blue"),
+        new("Browse.SelectAll", new KeyGesture(Key.A, KeyModifiers.Control), "Review.Command.SelectAll", StatusGroupKey: "Review.Command.SelectAll"),
     ]);
 
     private readonly PhotoFlowHost _host;
@@ -231,7 +245,17 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
         YearOptions = [new OptionItem<int?>(null, any), .. Enumerable.Range(1990, DateTime.Today.Year - 1989).Reverse().Select(y => new OptionItem<int?>(y, y.ToString(CultureInfo.InvariantCulture)))];
         RatingOptions = [new OptionItem<int?>(null, any), .. Enumerable.Range(1, 5).Select(r => new OptionItem<int?>(r, Strings.Format("Browse.Filter.RatingValue", r)))];
         OutcomeOptions = [new OptionItem<CullingOutcome?>(null, any), .. Enum.GetValues<CullingOutcome>().Select(o => new OptionItem<CullingOutcome?>(o, Strings.Get("Outcome." + o)))];
+        LabelOptions = [new OptionItem<string?>(null, any), .. ColorLabels.Keys.Select(l => new OptionItem<string?>(l, Strings.Get("Label." + l)))];
     }
+
+    public IReadOnlyList<OptionItem<string?>> LabelOptions { get; }
+
+    public OptionItem<string?> LabelOption { get => LabelOptions.First(o => o.Value == LabelFilter); set { LabelFilter = value?.Value; _ = SearchAsync(); } }
+
+    /// <summary>Only the photos with this colour label (M4).</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(LabelOption))]
+    private string? _labelFilter;
 
     /// <summary>The facets panel (tags in groups AND/OR, events, people, with counts).</summary>
     public BrowseFacetsViewModel Facets { get; }
@@ -255,6 +279,8 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
         "Browse.Faces" => Editor.ToggleFacesCommand,
         "Browse.AddFace" => Editor.StartAddFaceCommand,
         "Browse.Escape" => EscapeCommand,
+        "Browse.Label" => SetLabelCommand,
+        "Browse.SelectAll" => MarkAllCommand,
         _ => base.ResolveCommand(id),
     };
 
@@ -494,7 +520,7 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
     {
         Tokens.Clear();
         Facets.Reset();
-        (FreeText, QueryText, YearFrom, YearTo, Camera, MinRating, Outcome, SimilarTo) = (null, null, null, null, null, null, null, null);
+        (FreeText, QueryText, YearFrom, YearTo, Camera, MinRating, Outcome, SimilarTo, LabelFilter) = (null, null, null, null, null, null, null, null, null);
         await SearchAsync();
     }
 
@@ -513,7 +539,7 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
         MinRating,
         Outcome,
         _host.EmbeddingModelVersion,
-        int.MaxValue));
+        int.MaxValue)) with { Label = LabelFilter };
 
     public async Task SearchAsync()
     {
@@ -548,6 +574,7 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
             _hits = [.. results.Hits];
             _shown = 0;
             _items = [];
+            MarkedCount = 0;
             await ShowMoreAsync();
             ResultText = Strings.Format(results.ByMeaning ? "Browse.Results.Meaning" : "Browse.Results.Date",
                 results.Total.ToString("N0", CultureInfo.CurrentCulture), clock.Elapsed.TotalSeconds.ToString("0.0", CultureInfo.CurrentCulture));
@@ -583,9 +610,12 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
         var page = _hits.Skip(_shown).Take(PageSize).ToList();
         var assets = await _host.Catalog.Assets.GetManyAsync(page.Select(h => h.AssetId).ToList(), CancellationToken.None);
         var ratings = new Dictionary<long, int?>();
+        var labels = new Dictionary<long, string?>();
         foreach (var hit in page)
         {
-            ratings[hit.AssetId] = (await _host.Catalog.Decisions.GetAsync(hit.AssetId, CancellationToken.None))?.Rating;
+            var decision = await _host.Catalog.Decisions.GetAsync(hit.AssetId, CancellationToken.None);
+            ratings[hit.AssetId] = decision?.Rating;
+            labels[hit.AssetId] = decision?.Label;
         }
 
         foreach (var hit in page)
@@ -593,7 +623,7 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
             var thumbnail = assets.TryGetValue(hit.AssetId, out var asset)
                 ? new[] { asset.FullHash, asset.QuickHash }.OfType<string>().Select(_host.Thumbnails.PathFor).FirstOrDefault(File.Exists)
                 : null;
-            _items.Add(new BrowseItemViewModel(hit.AssetId, thumbnail, ratings[hit.AssetId] is { } r && r > 0 ? new string('★', r) : string.Empty));
+            _items.Add(new BrowseItemViewModel(hit.AssetId, thumbnail, ratings[hit.AssetId] is { } r && r > 0 ? new string('★', r) : string.Empty, labels[hit.AssetId]));
         }
 
         _shown += page.Count;
@@ -689,7 +719,6 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
         Selected = _items[Math.Clamp(index + step, 0, _items.Count - 1)];
     }
 
-    public void Click(BrowseItemViewModel item) => Selected = item;
 
     partial void OnSelectedChanged(BrowseItemViewModel? oldValue, BrowseItemViewModel? newValue)
     {
@@ -758,15 +787,126 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
     [RelayCommand]
     private async Task SetStarsAsync(string? value)
     {
-        if (Selected is not { } item || !int.TryParse(value, CultureInfo.InvariantCulture, out var stars))
+        if (Targets() is not { Count: > 0 } targets || !int.TryParse(value, CultureInfo.InvariantCulture, out var stars))
         {
             return;
         }
 
-        var decision = await _host.Catalog.Decisions.GetAsync(item.AssetId, CancellationToken.None);
-        await _host.Catalog.Decisions.SetUserAsync(item.AssetId, decision?.UserOutcome, stars == 0 ? null : stars, decision?.Label, CancellationToken.None);
-        Message = await PhotoEditorViewModel.RewriteXmpAsync(_host, item.AssetId) ? null : Strings.Get("Browse.XmpFailed");
-        await LoadDetailAsync(item);
+        var ok = await BulkEdits.SetStarsAsync(_host, [.. targets.Select(t => t.AssetId)], stars, CancellationToken.None);
+        foreach (var target in targets)
+        {
+            target.Stars = stars is >= 1 and <= 5 ? new string('★', stars) : string.Empty;
+        }
+
+        Message = ok ? (targets.Count > 1 ? Strings.Format("Browse.Bulk.Done", targets.Count) : null) : Strings.Get("Browse.XmpFailed");
+        await LoadDetailAsync(Selected);
+    }
+
+    /// <summary>6–9 (M4): the colour label on the photo or on the multiple selection; the same key again takes it off.</summary>
+    [RelayCommand]
+    private async Task SetLabelAsync(string? label)
+    {
+        if (Targets() is not { Count: > 0 } targets || label is null || !ColorLabels.Keys.Contains(label))
+        {
+            return;
+        }
+
+        var value = targets.All(t => t.ColorLabel == label) ? null : label;
+        var ok = await BulkEdits.SetLabelAsync(_host, [.. targets.Select(t => t.AssetId)], value, CancellationToken.None);
+        foreach (var target in targets)
+        {
+            target.ColorLabel = value;
+        }
+
+        Message = ok ? (targets.Count > 1 ? Strings.Format("Browse.Bulk.Done", targets.Count) : null) : Strings.Get("Browse.XmpFailed");
+    }
+
+    // --- Multiple selection (M3) ---
+
+    /// <summary>What stars, labels and tags act on: the multiple selection if there is one, otherwise the selected photo.</summary>
+    private List<BrowseItemViewModel> Targets()
+    {
+        var marked = _items.Where(i => i.IsMarked).ToList();
+        return marked.Count > 0 ? marked : Selected is { } item ? [item] : [];
+    }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasMarked), nameof(MarkedText), nameof(DevelopText))]
+    private int _markedCount;
+
+    public bool HasMarked => MarkedCount > 0;
+
+    public string MarkedText => Strings.Format("Browse.Marked", MarkedCount.ToString("N0", CultureInfo.CurrentCulture));
+
+    public string DevelopText => MarkedCount > 0 ? Strings.Format("Review.DevelopMarked", MarkedCount.ToString("N0", CultureInfo.CurrentCulture)) : Strings.Get("Browse.Develop");
+
+    /// <summary>Text of the tag to add to the multiple selection.</summary>
+    [ObservableProperty]
+    private string? _bulkTag;
+
+    /// <summary>Click selects; with Ctrl (M3) the photo goes in or out of the multiple selection.</summary>
+    public void Click(BrowseItemViewModel item, bool add)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        if (add)
+        {
+            if (MarkedCount == 0 && Selected is { } current && current != item)
+            {
+                current.IsMarked = true;
+            }
+
+            item.IsMarked = !item.IsMarked;
+            MarkedCount = _items.Count(i => i.IsMarked);
+        }
+
+        Selected = item;
+    }
+
+    [RelayCommand]
+    private void MarkAll()
+    {
+        foreach (var item in _items)
+        {
+            item.IsMarked = true;
+        }
+
+        MarkedCount = _items.Count;
+    }
+
+    [RelayCommand]
+    private void ClearMarks()
+    {
+        foreach (var item in _items.Where(i => i.IsMarked))
+        {
+            item.IsMarked = false;
+        }
+
+        MarkedCount = 0;
+    }
+
+    [RelayCommand]
+    private async Task AddBulkTagAsync()
+    {
+        if (string.IsNullOrWhiteSpace(BulkTag) || Targets() is not { Count: > 0 } targets)
+        {
+            return;
+        }
+
+        var text = BulkTag.Trim();
+        BulkTag = null;
+        var ok = await BulkEdits.AddTagAsync(_host, [.. targets.Select(t => t.AssetId)], text, CancellationToken.None);
+        Message = ok ? Strings.Format("Browse.Bulk.TagDone", text, targets.Count) : Strings.Get("Browse.XmpFailed");
+        await Facets.LoadAsync(CancellationToken.None);
+        await LoadDetailAsync(Selected);
+    }
+
+    [RelayCommand]
+    private async Task ExportMarkedAsync()
+    {
+        if (await SendToWorkingSetAsync(forExport: true))
+        {
+            Navigator?.ShowSection(SectionCatalog.Export);
+        }
     }
 
     /// <summary>Navigation to the regeneration (set by the shell).</summary>
@@ -775,7 +915,9 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
     /// <summary>The results of the search become the working selection (decision S5).</summary>
     public Task<bool> SendToWorkingSetAsync(bool forExport)
     {
-        var ids = _items.Select(i => i.AssetId).Distinct().ToList();
+        // The multiple selection (M3) if there is one, otherwise all the results.
+        var source = _items.Any(i => i.IsMarked) ? _items.Where(i => i.IsMarked) : _items;
+        var ids = source.Select(i => i.AssetId).Distinct().ToList();
         if (ids.Count == 0)
         {
             return Task.FromResult(false);
@@ -877,9 +1019,18 @@ public sealed partial class BrowseViewModel : PageViewModel, IPhotoSource
     [RelayCommand]
     private void Escape()
     {
-        if (!Editor.Escape() && IsLargePreview)
+        if (Editor.Escape())
+        {
+            return;
+        }
+
+        if (IsLargePreview)
         {
             IsLargePreview = false;
+        }
+        else if (HasMarked)
+        {
+            ClearMarks();
         }
     }
 

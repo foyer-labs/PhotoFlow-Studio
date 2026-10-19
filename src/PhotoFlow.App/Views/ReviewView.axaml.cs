@@ -68,7 +68,10 @@ public sealed partial class ReviewView : UserControl
 
     private void OnRowFocusRequested(object? sender, ReviewRow row) => RowsList.ScrollIntoView(row);
 
-    /// <summary>Click selects; Shift+click adds or removes the photo from the comparison (2b); a double click opens it large (P21).</summary>
+    /// <summary>
+    /// Click selects; Ctrl+click adds or removes the photo from the multiple selection (M3); Shift+click from the comparison (2b);
+    /// a double click opens it large (P21).
+    /// </summary>
     private void OnCellPressed(object? sender, PointerPressedEventArgs e)
     {
         if (sender is not Control { Tag: ReviewItemViewModel item } || _viewModel is null)
@@ -76,7 +79,11 @@ public sealed partial class ReviewView : UserControl
             return;
         }
 
-        if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            _viewModel.ToggleMark(item); // multiple selection (M3)
+        }
+        else if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
         {
             _viewModel.ToggleCompared(item);
         }

@@ -215,6 +215,8 @@
           <ComboBox ItemsSource="{Binding RatingOptions}" SelectedItem="{Binding RatingOption}" />
           <TextBlock Classes="label tertiary" VerticalAlignment="Center" Margin="8,0,0,0" Text="{l:Tr Browse.Filter.Outcome}" />
           <ComboBox ItemsSource="{Binding OutcomeOptions}" SelectedItem="{Binding OutcomeOption}" />
+          <TextBlock Classes="label tertiary" VerticalAlignment="Center" Margin="8,0,0,0" Text="{l:Tr Browse.Filter.Label}" />
+          <ComboBox ItemsSource="{Binding LabelOptions}" SelectedItem="{Binding LabelOption}" />
           <Button Classes="ghost" Command="{Binding ResetCommand}" Content="{l:Tr Browse.Reset}" />
           <Button Classes="ghost" Command="{Binding RegenerateResultsCommand}" Content="{l:Tr Browse.Regenerate}" />
         </StackPanel>
@@ -227,8 +229,16 @@
 
       <!-- The results, and the next step for them (decision S4): develop them -->
       <Grid Grid.Row="3" ColumnDefinitions="*,Auto" Margin="16,0,16,6">
-        <TextBlock Classes="label tertiary" VerticalAlignment="Center" Text="{Binding ResultText}" />
-        <Button Grid.Column="1" Classes="secondary" Command="{Binding DevelopResultsCommand}" Content="{l:Tr Browse.Develop}" ToolTip.Tip="{l:Tr Browse.Develop.Tip}"
+        <TextBlock Classes="label tertiary" VerticalAlignment="Center" Text="{Binding ResultText}" IsVisible="{Binding !HasMarked}" />
+        <!-- Multiple selection (M3): what can be done on all of it -->
+        <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding HasMarked}">
+          <TextBlock Classes="label" Foreground="{DynamicResource PF.Brush.Accent}" VerticalAlignment="Center" Text="{Binding MarkedText}" />
+          <TextBox x:Name="BulkTagBox" Classes="field" Width="200" Text="{Binding BulkTag}" PlaceholderText="{l:Tr Browse.Bulk.TagHint}" />
+          <Button Classes="ghost" Command="{Binding AddBulkTagCommand}" Content="{l:Tr Browse.Bulk.AddTag}" />
+          <Button Classes="ghost" Command="{Binding ExportMarkedCommand}" Content="{l:Tr Browse.Bulk.Export}" />
+          <Button Classes="ghost" Command="{Binding ClearMarksCommand}" Content="{l:Tr Browse.Bulk.Clear}" />
+        </StackPanel>
+        <Button Grid.Column="1" Classes="secondary" Command="{Binding DevelopResultsCommand}" Content="{Binding DevelopText}" ToolTip.Tip="{l:Tr Browse.Develop.Tip}"
                 IsVisible="{Binding !IsEmpty}" />
       </Grid>
 
@@ -268,7 +278,15 @@
                             Margin="0,0,6,6" Tag="{Binding}" PointerPressed="OnCellPressed">
                       <Panel>
                         <Image Source="{Binding Thumbnail}" Stretch="Uniform" Margin="2" />
-                        <TextBlock Classes="micro" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="6,4" Text="{Binding Stars}" />
+                        <Rectangle IsVisible="{Binding IsMarked}" Fill="{DynamicResource PF.Brush.Accent}" Opacity="0.18" />
+                        <Border IsVisible="{Binding IsMarked}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="6" Padding="4,0" CornerRadius="3"
+                                Background="{DynamicResource PF.Brush.Accent}">
+                          <TextBlock Classes="micro" Foreground="{DynamicResource PF.Brush.Window}" Text="✓" />
+                        </Border>
+                        <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="6,4">
+                          <v:ColorLabelDot Label="{Binding ColorLabel}" VerticalAlignment="Center" />
+                          <TextBlock Classes="micro" Text="{Binding Stars}" />
+                        </StackPanel>
                       </Panel>
                     </Border>
                   </DataTemplate>

@@ -81,8 +81,11 @@ public interface IAssetStore
     /// <summary>Camera models in the catalog, for the EXIF filter.</summary>
     Task<IReadOnlyList<string>> ListCamerasAsync(CancellationToken ct);
 
-    /// <summary>"Already imported" identity: quick hash plus capture time (spec §4).</summary>
+    /// <summary>"Already imported" identity: quick hash plus capture time as written by the camera (spec §4).</summary>
     Task<Asset?> FindByIdentityAsync(string quickHash, DateTimeOffset? capturedAt, CancellationToken ct);
+
+    /// <summary>Clock correction of the camera (M5): the capture time becomes the camera's plus <paramref name="offset"/>.</summary>
+    Task SetClockOffsetAsync(long assetId, TimeSpan offset, CancellationToken ct);
 
     Task<Asset?> FindByFullHashAsync(string fullHash, CancellationToken ct);
 

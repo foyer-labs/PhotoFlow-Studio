@@ -54,11 +54,23 @@ public sealed partial class ReviewItemViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Outcome), nameof(OutcomeKey), nameof(OutcomeGlyph), nameof(IsManual), nameof(Stars), nameof(StarsText), nameof(OutcomeLabel),
-        nameof(OriginLabel), nameof(Why), nameof(IsDiscard), nameof(IsBest), nameof(IsToReview), nameof(ShortReason))]
+        nameof(OriginLabel), nameof(Why), nameof(IsDiscard), nameof(IsBest), nameof(IsToReview), nameof(ShortReason), nameof(ColorLabel), nameof(LabelKey),
+        nameof(HasColorLabel))]
     private Decision? _decision;
 
     [ObservableProperty]
     private bool _isSelected;
+
+    /// <summary>Part of the multiple selection (M3: Ctrl+click, Ctrl+A): P, X, stars and labels act on all of it.</summary>
+    [ObservableProperty]
+    private bool _isMarked;
+
+    /// <summary>The colour label chosen by the user (M4: keys 6–9), as in Lightroom: Red, Yellow, Green, Blue.</summary>
+    public string? ColorLabel => Decision?.Label;
+
+    public string LabelKey => ColorLabel ?? "None";
+
+    public bool HasColorLabel => ColorLabel is not null;
 
     /// <summary>Part of the comparison (Shift+click in the grid, C on a burst).</summary>
     [ObservableProperty]
@@ -210,13 +222,26 @@ public sealed record ReviewHeaderRow(ReviewGroupViewModel Group) : ReviewRow;
 public sealed record ReviewRowViewModel(IReadOnlyList<ReviewItemViewModel> Items) : ReviewRow;
 
 /// <summary>Outcome filter chip with its count (board 2a).</summary>
-public sealed partial class OutcomeFilterViewModel(CullingOutcome? outcome) : ObservableObject
+/// <summary>The colour labels (M4), the names Lightroom and Bridge write in <c>xmp:Label</c>; keys 6–9 for the first four.</summary>
+public static class ColorLabels
+{
+    public static readonly IReadOnlyList<string> Keys = ["Red", "Yellow", "Green", "Blue", "Purple"];
+
+    public static readonly IReadOnlyList<string> Keyed = ["Red", "Yellow", "Green", "Blue"];
+}
+
+public sealed partial class OutcomeFilterViewModel(CullingOutcome? outcome, string? colorLabel = null) : ObservableObject
 {
     public CullingOutcome? Outcome { get; } = outcome;
 
-    public string Label => Outcome is { } o ? Strings.Get("Outcome." + o) : Strings.Get("Review.Filter.All");
+    /// <summary>A colour label filter (M4): the photos with that label.</summary>
+    public string? ColorLabel { get; } = colorLabel;
 
-    public string Key => Outcome?.ToString() ?? "All";
+    public bool IsColor => ColorLabel is not null;
+
+    public string Label => ColorLabel is { } c ? Strings.Get("Label." + c) : Outcome is { } o ? Strings.Get("Outcome." + o) : Strings.Get("Review.Filter.All");
+
+    public string Key => ColorLabel ?? Outcome?.ToString() ?? "All";
 
     [ObservableProperty]
     private int _count;

@@ -19,6 +19,14 @@ public sealed partial class BrowseView : UserControl
         RowsList.SizeChanged += (_, e) => UpdateColumns(e.NewSize.Width);
         QueryBox.AddHandler(KeyDownEvent, OnQueryKeyDown, RoutingStrategies.Tunnel);
         QueryBox.SelectionChanged += OnSuggestionChosen;
+        BulkTagBox.KeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Enter && _viewModel is not null)
+            {
+                _viewModel.AddBulkTagCommand.Execute(null);
+                e.Handled = true;
+            }
+        };
         DataContextChanged += (_, _) =>
         {
             if (_viewModel is not null)
@@ -93,7 +101,7 @@ public sealed partial class BrowseView : UserControl
     {
         if (sender is Control { Tag: BrowseItemViewModel item } && _viewModel is not null)
         {
-            _viewModel.Click(item);
+            _viewModel.Click(item, e.KeyModifiers.HasFlag(KeyModifiers.Control) || e.KeyModifiers.HasFlag(KeyModifiers.Meta));
             Focus();
             if (e.ClickCount == 2)
             {

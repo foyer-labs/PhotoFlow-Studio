@@ -288,6 +288,22 @@
             <TextBlock Classes="label secondary" TextWrapping="Wrap" Text="{Binding UpdateText}" IsVisible="{Binding UpdateText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
           </StackPanel>
 
+          <!-- Author and rights (M2) -->
+          <TextBlock Classes="overline" Text="{l:Tr Settings.Rights}" />
+          <Grid ColumnDefinitions="140,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6" ColumnSpacing="12" MaxWidth="720" HorizontalAlignment="Left">
+            <TextBlock Classes="label" VerticalAlignment="Center" Text="{l:Tr Settings.Rights.Creator}" />
+            <TextBox Grid.Column="1" Classes="field" Text="{Binding RightsCreator, UpdateSourceTrigger=LostFocus}" PlaceholderText="{l:Tr Import.Rights.Creator}" />
+            <TextBlock Grid.Row="1" Classes="label" VerticalAlignment="Center" Text="{l:Tr Settings.Rights.Copyright}" />
+            <TextBox Grid.Row="1" Grid.Column="1" Classes="field" Text="{Binding RightsCopyright, UpdateSourceTrigger=LostFocus}" PlaceholderText="{l:Tr Import.Rights.Copyright}" />
+            <TextBlock Grid.Row="2" Classes="label" VerticalAlignment="Center" Text="{l:Tr Settings.Rights.Email}" />
+            <TextBox Grid.Row="2" Grid.Column="1" Classes="field" Text="{Binding RightsEmail, UpdateSourceTrigger=LostFocus}" />
+            <TextBlock Grid.Row="3" Classes="label" VerticalAlignment="Center" Text="{l:Tr Settings.Rights.Website}" />
+            <TextBox Grid.Row="3" Grid.Column="1" Classes="field" Text="{Binding RightsWebsite, UpdateSourceTrigger=LostFocus}" />
+            <TextBlock Grid.Row="4" Classes="label" VerticalAlignment="Center" Text="{l:Tr Settings.Rights.Usage}" />
+            <TextBox Grid.Row="4" Grid.Column="1" Classes="field" Text="{Binding RightsUsage, UpdateSourceTrigger=LostFocus}" PlaceholderText="{l:Tr Settings.Rights.UsageHint}" />
+          </Grid>
+          <TextBlock Classes="micro tertiary" TextWrapping="Wrap" Text="{l:Tr Settings.Rights.Note}" />
+
           <TextBlock Classes="overline" Text="{l:Tr Settings.Language}" />
           <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}" MinWidth="240">
             <ComboBox.ItemTemplate>

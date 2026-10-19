@@ -11,14 +11,15 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
 
+from . import geometry
 from .algorithms import get_algorithm
 from .bayer import denoised_sensor_data
 from .develop import camera_raw_xmp, target_multipliers, wb_matrix, wb_ratio
 from .image import Domain, ImageData
 from .io import load_image, save_image
-from .io.dng import neutral_from_multipliers, write_bayer_dng, write_linear_dng
+from .io.dng import FLIP_TO_ORIENTATION, neutral_from_multipliers, write_bayer_dng, write_linear_dng
 from .io.formats import is_supported, kind_of
-from .io.metadata import copy_metadata
+from .io.metadata import copy_metadata, write_delivery_metadata
 from .io.naming import output_path, unique_path
 from .pipeline import Analysis, ProgressFn, analyze, denoise_region, render, uses_sensor_stage
 from .settings import Settings
@@ -87,8 +88,10 @@ def export_image(
     destination: Path,
     progress: ProgressFn | None = None,
     notes: list[str] | None = None,
+    metadata: dict | None = None,
 ) -> Path:
-    """Elabora l'intera foto, la salva nel formato scelto e copia i metadati dell'originale.
+    """Elabora l'intera foto, la salva nel formato scelto e copia i metadati dell'originale; ``metadata``:
+    autore, diritti, parole chiave… da scrivere in più (vedi :func:`io.metadata.delivery_arguments`).
 
     Il file viene scritto con un nome temporaneo e rinominato solo alla fine: un'elaborazione
     interrotta (errore, annullamento, chiusura) non lascia mai un file a metà.
@@ -98,12 +101,18 @@ def export_image(
         raise ValueError("Il file di uscita coinciderebbe con l'originale: cambia cartella o nome in «Salvataggio».")
     # Nome temporaneo unico: due esportazioni verso lo stesso file non si pestano i piedi.
     temporary = destination.with_name(f"{destination.stem}.parziale-{uuid.uuid4().hex[:8]}{destination.suffix}")
+    if settings.output.format == "dng" and abs(settings.geometry.angle) > 1e-6 and notes is not None:
+        notes.append("Il raddrizzamento non va nel DNG (rotazione e ritaglio sì): rifallo nel programma di sviluppo.")
     try:
         written = _write_output(image, analysis, settings, temporary, progress)
         if settings.output.copy_metadata and image.meta.source.is_file():
             if progress is not None:
                 progress(1.0, "Copia dei metadati")
             problem = copy_metadata(image.meta.source, written, strip_gps=settings.output.strip_gps)
+            if problem and notes is not None:
+                notes.append(problem)
+        if metadata:
+            problem = write_delivery_metadata(written, metadata)
             if problem and notes is not None:
                 notes.append(problem)
         if progress is not None:
@@ -122,20 +131,26 @@ def _write_output(
     description = settings_description(settings)
     if out.format == "dng":
         return _export_dng(image, analysis, settings, destination, description, progress)
-    pixels = render(image, analysis, settings, progress=progress)
+    pixels = geometry.apply(render(image, analysis, settings, progress=progress), settings.geometry)
+    alpha = image.alpha if out.format != "jpeg" else None
+    if alpha is not None:
+        alpha = geometry.apply(alpha, settings.geometry)
     if out.max_side and max(pixels.shape[:2]) > out.max_side:
         import cv2
 
         h, w = pixels.shape[:2]
         scale = out.max_side / max(h, w)
-        pixels = cv2.resize(pixels, (max(1, round(w * scale)), max(1, round(h * scale))), interpolation=cv2.INTER_AREA)
+        size = (max(1, round(w * scale)), max(1, round(h * scale)))
+        pixels = cv2.resize(pixels, size, interpolation=cv2.INTER_AREA)
+        if alpha is not None:
+            alpha = cv2.resize(alpha, size, interpolation=cv2.INTER_AREA)
     return save_image(
         pixels,
         destination,
         out.format,
         bit_depth=out.bit_depth,
         jpeg_quality=out.jpeg_quality,
-        alpha=image.alpha if out.format != "jpeg" else None,
+        alpha=alpha,
         exif_bytes=image.meta.exif_bytes,
         description=description,
         icc_profile=image.meta.icc_profile,
@@ -171,14 +186,21 @@ def _export_dng(
             sensor.camera_neutral = neutral_from_multipliers(
                 target_multipliers(settings.develop, color, analysis.auto_wb))
         # L'esposizione di base del DNG d'origine (es. da Adobe DNG Converter) va conservata.
+        # Rotazione e ritaglio: orientamento e DefaultCrop, sui dati del sensore così come sono.
+        camera = FLIP_TO_ORIENTATION.get(sensor.flip, 1)
+        height, width = sensor.cfa.shape[:2]
         return write_bayer_dng(destination, sensor, make, model, exposure + sensor.source_baseline_exposure,
-                               description, xmp)
+                               description, xmp, orientation=geometry.compose_orientation(camera, settings.geometry),
+                               crop=geometry.default_crop(width, height, camera, settings.geometry))
     linear = denoise_region(image, analysis, settings, progress=progress)
     if color is not None:
         matrix = wb_matrix(wb_ratio(settings.develop, color, analysis.auto_wb), color)
         if matrix is not None:
             linear = linear @ matrix.T.astype(np.float32)
-    return write_linear_dng(destination, linear, make, model, exposure, description, xmp)
+    height, width = linear.shape[:2]
+    return write_linear_dng(destination, linear, make, model, exposure, description, xmp,
+                            orientation=geometry.compose_orientation(1, settings.geometry),
+                            crop=geometry.default_crop(width, height, 1, settings.geometry))
 
 
 #: Cosa fare quando il file di uscita esiste già (esportazione di più foto).
@@ -216,6 +238,7 @@ def export_one(
     taken: frozenset[Path] = frozenset(),
     name_values: dict[str, str] | None = None,
     adjust=None,
+    metadata: dict | None = None,
 ) -> tuple[str, Path | None, list[str]]:
     """Esporta una foto di un'esportazione multipla.  ``name_values``: segnaposto in più per il nome. Restituisce (esito, file salvato, note); esito
     "ok" o "saltata".
@@ -237,7 +260,7 @@ def export_one(
     analysis = analyze(image)
     if adjust is not None:  # es. il preset suggerito dal rumore misurato, per le foto mai sviluppate
         settings = adjust(image, analysis, settings)
-    saved = export_image(image, analysis, settings, destination, progress, notes)
+    saved = export_image(image, analysis, settings, destination, progress, notes, metadata)
     return "ok", saved, notes
 
 

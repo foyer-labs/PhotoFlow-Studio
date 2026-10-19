@@ -122,6 +122,36 @@ public sealed class ExifToolMetadataWriter : IMetadataWriter
             }
         }
 
+        // Author and rights (M2), IPTC Core in XMP: what Lightroom and Bridge show as creator and copyright.
+        if (changes.Rights is { IsEmpty: false } rights)
+        {
+            if (!string.IsNullOrWhiteSpace(rights.Creator))
+            {
+                args.Add("-XMP-dc:Creator=" + SingleLine(rights.Creator));
+            }
+
+            if (!string.IsNullOrWhiteSpace(rights.Copyright))
+            {
+                args.Add("-XMP-dc:Rights=" + SingleLine(rights.Copyright));
+                args.Add("-XMP-xmpRights:Marked=True");
+            }
+
+            if (!string.IsNullOrWhiteSpace(rights.UsageTerms))
+            {
+                args.Add("-XMP-xmpRights:UsageTerms=" + SingleLine(rights.UsageTerms));
+            }
+
+            if (!string.IsNullOrWhiteSpace(rights.Email))
+            {
+                args.Add("-XMP-iptcCore:CreatorWorkEmail=" + SingleLine(rights.Email));
+            }
+
+            if (!string.IsNullOrWhiteSpace(rights.Website))
+            {
+                args.Add("-XMP-iptcCore:CreatorWorkURL=" + SingleLine(rights.Website));
+            }
+        }
+
         return args;
     }
 
